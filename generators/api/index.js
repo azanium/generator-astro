@@ -12,6 +12,7 @@ var mkdirp = require('mkdirp');
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
+    this.projectname = this.config.get('projectname');
   }
 
   prompting() {
@@ -21,37 +22,43 @@ module.exports = class extends Generator {
       {
         type:     'input',
         name:     'name',
-        message:  'What is your project name?',
-        default:  this.projectname
-      },
-      {
-        type:     'input',
-        name:     'version',
-        message:  'Version number',
-        default:  '1.0.0'
-      },
-      {
-        type:     'input',
-        name:     'description',
-        message:  'Description',
-        default:  ''
-      },
-      {
-        type:     'input',
-        name:     'author',
-        message:  `Author's name`,
-        default:  ''
-      },
-      {
-        type:     'input',
-        name:     'license',
-        message:  `License`,
-        default:  'MIT'
+        message:  'What is your api endpoint name?',
+        default:  'something'
       }
     ]).then(answers => {
       this.props = answers;
       done();
     }) 
+  }
+
+  writing() {
+    var props = this.props;
+    var copy = this.fs.copy.bind(this.fs);
+    var copyTpl = this.fs.copyTpl.bind(this.fs);
+    var tPath = this.templatePath.bind(this);
+    var dPath = this.destinationPath.bind(this);
+
+    const name = props.name.toLowerCase();
+
+    /**
+     * Controller
+     */
+    copyTpl(tPath('_controller.js'), dPath(`src/api/controllers/${name}.controller.js`), props);
+
+    /**
+     * Route
+     */
+    copyTpl(tPath('_route.js'), dPath(`src/api/routes/${this.apiversion}/${name}.route.js`), props);
+
+    /**
+     * Validation
+     */
+    copyTpl(tPath('_validation.js'), dPath(`src/api/validations/${name}.validation.js`), props);
+
+    /**
+     * Integration Test
+     */
+    copyTpl(tPath('_test.js'), dPath(`src/api/tests/${name}.validation.js`), props);
   }
 
 }

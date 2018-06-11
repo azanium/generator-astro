@@ -3,7 +3,7 @@ package-lock.json
 
 # Environment variables
 .env
-
+.yo-rc.json
 # Logs
 logs
 *.log

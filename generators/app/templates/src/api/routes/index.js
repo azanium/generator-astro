@@ -3,12 +3,12 @@ const express = require('express');
 const router = express.Router();
 
 /**
- * GET v1/status
+ * GET <%= apiversion %>/status
  */
 router.get('/status', (req, res) => res.send('OK'));
 
 /**
- * GET v1/docs
+ * GET <%= apiversion %>/docs
  */
 router.use('/docs', express.static('docs'));
 

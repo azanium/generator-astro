@@ -5,7 +5,7 @@ const compress = require('compression');
 const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
-const routes = require('../api/routes/v1');
+const routes = require('../api/routes/<%= apiversion %>');
 const { logs } = require('./vars');
 const error = require('../api/middlewares/error');
 
@@ -37,8 +37,8 @@ app.use(cors());
 
 // enable authentication
 
-// mount api v1 routes
-app.use('<%= apibase %>', routes);
+// mount api <%= apiversion %> routes
+app.use('/<%= apibase %>/<%= apiversion %>', routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(error.converter);

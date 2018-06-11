@@ -1,7 +1,0 @@
-{
-  "generator-astro": {
-    "promptValues": {
-      "apibase": "/api/v1"
-    }
-  }
-}

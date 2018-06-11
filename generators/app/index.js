@@ -23,38 +23,50 @@ module.exports = class extends Generator {
 
   propmting() {
     var done = this.async();
+    var that = this;
 
     this.prompt([
       {
         type:     'input',
         name:     'name',
         message:  'What is your project name?',
-        default:  this.projectname
+        default:  this.projectname,
+        store:    true
       }, 
       {
         type:     'input',
         name:     'apibase',
         message:  'Your API base path?',
-        default:  '/api/v1',
+        default:  'api',
+        store:    true
+      },
+      {
+        type:     'input',
+        name:     'apiversion',
+        message:  'Your API version?',
+        default:  'v1',
         store:    true
       },
       {
         type:     'input',
         name:     'version',
         message:  'Version number',
-        default:  '1.0.0'
+        default:  that.config.get('version') || '0.1.0',
+        store:    true
       },
       {
         type:     'input',
         name:     'description',
         message:  'Description',
-        default:  ''
+        default:  '',
+        store:    true
       },
       {
         type:     'input',
         name:     'author',
         message:  `Author's name`,
-        default:  'Suhendra Ahmad'
+        default:  that.config.get('author') || 'Suhendra Ahmad',
+        store:    true
       },
       {
         type:     'input',
@@ -77,7 +89,7 @@ module.exports = class extends Generator {
     var dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
-
+    
     /**
      * package.json
      */
@@ -108,28 +120,18 @@ module.exports = class extends Generator {
     copyTpl(tPath('src/config/_express.js'), dPath('src/config/express.js'), props);
     copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
 
-    // copy(tPath('src/api/'), dPath('src/api/'));
-    /* copy(tPath('src/api/middlewares'), dPath('src/api/middlewares'));
-    copy(tPath('src/api/models'), dPath('src/api/models'));
-    copy(tPath('src/api/routes'), dPath('src/api/routes'));
-    copy(tPath('src/api/services'), dPath('src/api/services'));
-    copy(tPath('src/api/tests'), dPath('src/api/tests'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/controllers'));
+    copy(tPath('src/api/middlewares'), dPath('src/api/middlewares'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/models'));
+    copyTpl(tPath(`src/api/routes/index.js`), dPath(`src/api/routes/${props.apiversion}/index.js`), props);
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/services'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/integration'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/unit'));
     copy(tPath('src/api/utils'), dPath('src/api/utils'));
-    copy(tPath('src/api/validations'), dPath('src/api/validations'));
-    */
-
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/controllers'));
-   copy(tPath('src/api/middlewares'), dPath('src/api/middlewares'));
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/models'));
-   copy(tPath('src/api/routes/v1/index.js'), dPath('src/api/routes/v1/index.js'));
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/services'));
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/integration'));
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/unit'));
-   copy(tPath('src/api/utils'), dPath('src/api/utils'));
-   mkdirp.sync(path.join(this.destinationPath(), 'src/api/validations'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api/validations'));
   }
 
   install() {
-    // this.installDependencies({bower: false});
+    this.installDependencies({bower: false});
   }
 }
