@@ -2,7 +2,7 @@
 
 module.exports = {
   // POST /v1/auth/register
-  <%= name %>: {
+  stuff: {
     body: {
     },
   },

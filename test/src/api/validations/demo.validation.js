@@ -1,8 +1,8 @@
-// const Joi = require('joi');
+const Joi = require('joi');
 
 module.exports = {
   // POST /v1/auth/register
-  <%= name %>: {
+  login: {
     body: {
     },
   },

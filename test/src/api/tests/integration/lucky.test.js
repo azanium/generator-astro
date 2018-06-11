@@ -8,7 +8,7 @@ const app = require('../../../index');
 const sandbox = sinon.createSandbox();
 
 
-describe('<%= name %>', () => {
+describe('strike', () => {
   let body;
 
   beforeEach(async () => {
@@ -17,10 +17,10 @@ describe('<%= name %>', () => {
 
   afterEach(() => sandbox.restore());
 
-  describe('POST /api/v1/<%= apigroup %>', () => {
-    it('should integrate api /<%= name %>', () => {
+  describe('POST /api/v1/strike', () => {
+    it('should strike', () => {
       return request(app)
-        .post('/api/v1/<%= apigroup %>/<%= name %>')
+        .post('/api/v1/strike')
         .send(body)
         .expect(httpStatus.OK)
         .then((res) => {
