@@ -1,10 +1,7 @@
 const express = require('express');
 const validate = require('express-validation');
 const controller = require('../../controllers/<%= apigroup %>.controller');
-
-const {
-  <%= name %>,
-} = require('../../validations/<%= apigroup %>.validation');
+const validation = require('../../validations/<%= apigroup %>.validation');
 
 const router = express.Router();
 
@@ -23,6 +20,6 @@ const router = express.Router();
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  */
 router.route('/<%= name %>')
-  .<%= method %>(validate(<%= name %>), controller.<%= name %>);
+  .<%= method %>(validate(validation.<%= name %>), controller.<%= name %>);
 
 module.exports = router;

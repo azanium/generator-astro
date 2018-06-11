@@ -24,7 +24,6 @@ module.exports = class extends Generator {
     var done = this.async();
     var that = this;
 
-    console.log("projectname", this.projectname);
     this.prompt([
       {
         type:     'input',
@@ -53,6 +52,7 @@ module.exports = class extends Generator {
       }
     ]).then(answers => {
       that.props = answers;
+      that.props.injectRoute = false;
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exting');
@@ -71,7 +71,8 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    //var done = this.async();
+    var that = this;
+    var done = this.async();
     var props = this.props;
     var copyTpl = this.fs.copyTpl.bind(this.fs);
     var tPath = this.templatePath.bind(this);
@@ -87,34 +88,44 @@ module.exports = class extends Generator {
     /**
      * Controller
      */
-    //copyTpl(tPath('_controller.js'), dPath(`src/api/controllers/${controllerName}`), props);
+    if (!this.fs.exists(dPath(`src/api/controllers/${controllerName}`))) {
+      copyTpl(tPath('_controller.js'), dPath(`src/api/controllers/${controllerName}`), props);
+    }
 
     /**
      * Route
      */
-    //copyTpl(tPath('_route.js'), dPath(`src/api/routes/${this.apiversion}/${routeName}`), props);
-
+    if (!this.fs.exists(dPath(`src/api/routes/${this.apiversion}/${routeName}`))) {
+      copyTpl(tPath('_route.js'), dPath(`src/api/routes/${this.apiversion}/${routeName}`), props);
+    }
+    
     /**
      * Validation
      */
-    //copyTpl(tPath('_validation.js'), dPath(`src/api/validations/${validationName}`), props);
+    if (!this.fs.exists(dPath(`src/api/validations/${validationName}`))) {
+      copyTpl(tPath('_validation.js'), dPath(`src/api/validations/${validationName}`), props);
+    }
 
     /**
      * Integration Test
      */
-    //copyTpl(tPath('_test.js'), dPath(`src/api/tests/integration/${testName}`), props);
+    if (!this.fs.exists(dPath(`src/api/tests/integration/${testName}`))) {
+      copyTpl(tPath('_test.js'), dPath(`src/api/tests/integration/${testName}`), props);
+    }
 
-    //done();
+    done();
   }
 
   injectApiRoutes() {
-    var done = this.async();
+    // var done = this.async();
+
     var props = this.props;
     var dPath = this.destinationPath.bind(this);
 
     const name = props.name.toLowerCase();
     const apigroup = props.apigroup.toLowerCase();
     const routeName = `${apigroup}.route`;
+    const apiRouteFile = dPath(`src/api/routes/${this.apiversion}/${routeName}.js`);
 
     /**
      * Inject codes
@@ -145,7 +156,8 @@ module.exports = class extends Generator {
 
             if (decl.id.name.trim() === `${apigroup}Routes` && arg.trim() === `./${routeName}`) {
               // We found that const route = require('') already exist, so prevent from re-injecting
-              injectRequire = false;        
+              injectRequire = false;
+              return false;
             }
           }          
           this.traverse(path);
@@ -158,7 +170,10 @@ module.exports = class extends Generator {
             const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${apigroup}`;
             const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${apigroup}Routes`;
             const isValid = callee.object.name === 'router' && callee.property.name === 'use' && validFirstArgument && validSecondArgument;
-            injectRouterUse = !isValid
+            if (isValid) {
+              injectRouterUse = !isValid
+              return false;
+            }
           }
           this.traverse(path);
         }
@@ -185,7 +200,6 @@ module.exports = class extends Generator {
             return false;
           }
           var callee = statement.expression.callee;
-          console.log("calee", statement.expression.arguments);
           return callee.object.name === 'router' && callee.property.name === 'use';
         });
 
@@ -202,10 +216,65 @@ module.exports = class extends Generator {
         }
       }
 
-      rimraf(routesFile, () => {
-        this.fs.write(routesFile, recast.print(ast).code);
-        done();
-      })
+      /**
+       * xxx.route.js router injection
+       */
+      
+      if (this.fs.exists(apiRouteFile)) {
+        var routeAst = recast.parse(this.fs.read(apiRouteFile));
+        var routeBody = routeAst.program.body;
+        var injectApiRoute = true;
+
+        recast.visit(routeAst, {
+          visitCallExpression: function(path) {
+            const callee = path.node.callee;
+            if (callee.type === 'MemberExpression') {
+              const args = path.node.arguments;
+              const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
+              const isValid = callee.object.name === 'router' && callee.property.name === 'route' && validFirstArgument;
+              if (isValid) {
+                injectApiRoute = !isValid;
+                return false;
+              }
+            }
+            this.traverse(path);
+          }
+        });
+
+        if (injectApiRoute) {
+          var middlewareString = ['router.route(\'/', name, '\')\n', '\t.', props.method, '(validate(validation.', name, '), ', 'controller.', name, ');'].join('');
+          var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
+            if (!statement.expression || !statement.expression.callee) {
+              return false;
+            }
+            var callee = statement.expression.callee;
+            return callee.object.name === 'router' && callee.property.name === 'use';
+          });
+          
+          if (lastMiddlewareIndex === -1) {
+            var exportRouterIndex = _.findIndex(body, function (statement) {
+              return statement.type === 'ExportDefaultDeclaration';
+            });
+            routeBody.splice(exportRouterIndex < 0 ? 0 : exportRouterIndex, 0, middlewareString);
+          } else {
+            var actualMiddlewareCode = recast.print(body[lastMiddlewareIndex]).code;
+            routeBody.splice(lastMiddlewareIndex < 0 ? 0 : lastMiddlewareIndex, 0, middlewareString);
+          }
+        }
+      }
+
+      if (injectRouterUse || injectRequire) {
+        rimraf(routesFile, () => {
+          this.fs.write(routesFile, recast.print(ast).code);
+        })
+      }
+
+      if (injectApiRoute) {
+        rimraf(apiRouteFile, () => {  
+          this.fs.write(apiRouteFile, recast.print(routeAst).code);
+        });
+      }
+
     }
   }
 
