@@ -1,0 +1,4 @@
+version: "2"
+services:
+  <%= name %>:
+    command: yarn dev -- -L
