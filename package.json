@@ -1,0 +1,36 @@
+{
+  "name": "generator-astro",
+  "version": "0.0.1",
+  "description": "Yeoman generator for Astro ExpressJS API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azanium/generator-astro.git"
+  },
+  "keywords": [
+    "yeoman-generator",
+    "node",
+    "nodejs",
+    "express",
+    "expressjs",
+    "astro"
+  ],
+  "author": "Suhendra Ahmad <syuaibi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/azanium/generator-astro/issues"
+  },
+  "homepage": "https://github.com/azanium/generator-astro#readme",
+  "dependencies": {
+    "decamelize": "^2.0.0",
+    "uppercamelcase": "^3.0.0",
+    "yeoman-generator": "^2.0.5",
+    "yosay": "^2.0.2"
+  },
+  "files": [
+    "app"
+  ]
+}
