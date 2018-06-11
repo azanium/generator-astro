@@ -4,10 +4,14 @@ package-lock.json
 # Environment variables
 .env
 .yo-rc.json
+
 # Logs
 logs
 *.log
 npm-debug.log*
+
+# OSX
+.DS_Store
 
 # Documentation
 docs

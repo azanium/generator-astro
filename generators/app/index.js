@@ -19,6 +19,8 @@ module.exports = class extends Generator {
     //const humanProjectName = humanize(this.projectname);
     this.projectname = camelize(slugify(this.projectname));
     this.props = {}
+
+    console.log(yosay('Welcome to Astro RESTful API generator!'))
   }
 
   propmting() {
@@ -30,43 +32,37 @@ module.exports = class extends Generator {
         type:     'input',
         name:     'name',
         message:  'What is your project name?',
-        default:  this.projectname,
-        store:    true
+        default:  this.projectname
       }, 
       {
         type:     'input',
         name:     'apibase',
         message:  'Your API base path?',
         default:  'api',
-        store:    true
       },
       {
         type:     'input',
         name:     'apiversion',
         message:  'Your API version?',
         default:  'v1',
-        store:    true
       },
       {
         type:     'input',
         name:     'version',
         message:  'Version number',
         default:  that.config.get('version') || '0.1.0',
-        store:    true
       },
       {
         type:     'input',
         name:     'description',
         message:  'Description',
         default:  '',
-        store:    true
       },
       {
         type:     'input',
         name:     'author',
         message:  `Author's name`,
         default:  that.config.get('author') || 'Suhendra Ahmad',
-        store:    true
       },
       {
         type:     'input',
@@ -89,7 +85,7 @@ module.exports = class extends Generator {
     var dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
-    
+
     /**
      * package.json
      */
@@ -129,6 +125,19 @@ module.exports = class extends Generator {
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/unit'));
     copy(tPath('src/api/utils'), dPath('src/api/utils'));
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/validations'));
+
+    this.config.save();
+
+    // copy(tPath('.yo-rc.json'), dPath('.yo-rc.json'));
+    //this.fs.delete(tPath('.yo-rc.json'));
+    this.on('end', function() {
+      this.config.set('name', props.name);
+      this.config.set('apibase', props.apibase);
+      this.config.set('apiversion', props.apiversion);
+      this.config.set('version', props.version);
+      this.config.set('description', props.description);
+      this.config.set('author', props.author);
+    })
   }
 
   install() {

@@ -12,21 +12,35 @@ var mkdirp = require('mkdirp');
 module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
-    this.projectname = this.config.get('projectname');
+
+    this.projectname = this.config.get('name');
+    this.apiversion = this.config.get('apiversion');
   }
 
   prompting() {
     var done = this.async();
+    var that = this;
 
+    console.log("projectname", this.projectname);
     this.prompt([
       {
         type:     'input',
         name:     'name',
         message:  'What is your api endpoint name?',
-        default:  'something'
+        default:  this.config.get('last_endpoint') || 'helloworld'
       }
     ]).then(answers => {
-      this.props = answers;
+      that.props = answers;
+
+      if (that.projectname == undefined || that.apiversion == undefined) {
+        console.log('Invalid Astro project!, exting');
+        process.exit();
+      }
+
+      this.on('end', function() {
+        this.config.set('last_endpoint', that.props.name);
+      });  
+
       done();
     }) 
   }
