@@ -6,7 +6,7 @@ const shelljs = require('shelljs');
 const path = require('path');
 var humanize = require('underscore.string/humanize');
 var slugify = require('underscore.string/slugify');
-var camelize = require('underscore.string/camelize');
+var decamelize = require('decamelize');
 var mkdirp = require('mkdirp');
 
 module.exports = class extends Generator {
@@ -16,8 +16,7 @@ module.exports = class extends Generator {
     // Process argument
     this.argument('projectname', { type: String, required: false });
     this.projectname = this.projectname || 'astro-service';
-    //const humanProjectName = humanize(this.projectname);
-    this.projectname = camelize(slugify(this.projectname));
+    this.projectname = decamelize(slugify(this.projectname), '-');
     this.props = {}
 
     console.log(yosay('Welcome to Astro RESTful API generator!'))

@@ -259,7 +259,7 @@ module.exports = class extends Generator {
         if (injectApiRoute) {
           var middlewareString = [
             `/**`,
-            `  * @api {${props.method}} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}`,
+            `  * @api {${props.method}} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}  ${name}`,
             `  * @apiDescription ${props.apidesc}`,
             `  * @apiVersion 1.0.0`,
             `  * @apiName ${name}`,
