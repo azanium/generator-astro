@@ -125,12 +125,17 @@ module.exports = class extends Generator {
     const name = props.name.toLowerCase();
     const apigroup = props.apigroup.toLowerCase();
     const routeName = `${apigroup}.route`;
+    const controllerName = `${apigroup}.controller`;
+    
+    // Files
+    const routesFile = dPath(`src/api/routes/${this.apiversion}/index.js`);
     const apiRouteFile = dPath(`src/api/routes/${this.apiversion}/${routeName}.js`);
+    const apiControllerFile = dPath(`src/api/controllers/${controllerName}.js`);
 
     /**
      * Inject codes
      */
-    const routesFile = dPath(`src/api/routes/${this.apiversion}/index.js`);
+    
     if (this.fs.exists(routesFile)) {
 
       // console.log('Building route...');
@@ -263,6 +268,41 @@ module.exports = class extends Generator {
         }
       }
 
+      /**
+       * API Controller File Injection
+       */
+      if (this.fs.exists(apiControllerFile)) {
+        var controllerAst = recast.parse(this.fs.read(apiControllerFile));
+        var controllerBody = controllerAst.program.body;
+        var injectApiController = true;
+
+        recast.visit(controllerAst, {
+          visitAssignmentExpression: function(path) {          
+            let left = path.node.left;
+            if (left.object.name === 'exports' && left.property.name === name) {
+              injectApiController = true;
+              return false;
+            }
+            this.traverse(path);
+          },
+
+        });
+
+        if (injectApiController) {
+          var lastExportIndex = _.findLastIndex(controllerBody, function (statement) {
+            const expr = statement.expression;
+            return expr && expr.type === 'AssignmentExpression'
+          });
+          
+          const exportString = `/**\n * ${name}\n * @public\n */\nexports.${name} = async (req, res, next) => {\n\ttry {\n\t\tres.status(httpStatus.OK);\n\t\treturn res.json({ message: 'OK' });\n\t} catch (error) {\n\t\treturn next(error);\n\t}\n};\n`
+          controllerBody.splice(lastExportIndex < 0 ? 0 : lastExportIndex, 0, exportString);
+        }
+      }
+
+      /**
+       * Flush the ASTs
+       */
+
       if (injectRouterUse || injectRequire) {
         rimraf(routesFile, () => {
           this.fs.write(routesFile, recast.print(ast).code);
@@ -275,6 +315,11 @@ module.exports = class extends Generator {
         });
       }
 
+      if (injectApiController) {
+        rimraf(apiControllerFile, () => {
+          this.fs.write(apiControllerFile, recast.print(controllerAst).code);
+        })
+      }
     }
   }
 
