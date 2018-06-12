@@ -1,9 +1,6 @@
-// const Joi = require('joi');
+const Joi = require('joi');
 
-module.exports = {
-  // POST /v1/auth/register
-  <%= name %>: {
-    body: {
-    },
-  },
-};
+// <%= upperMethod %> <%= apibase %>/<%= apiversion %>/<%= apigroup %>/<%= name %>
+exports.<%= name %> = {
+  body: { }
+}

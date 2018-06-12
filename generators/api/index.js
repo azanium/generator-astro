@@ -11,6 +11,9 @@ var mkdirp = require('mkdirp');
 var recast = require('recast');
 var _ = require('lodash');
 var rimraf = require('rimraf');
+var n = require("ast-types").namedTypes;
+var b = require("ast-types").builders;
+var json5 = require('json5');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -53,6 +56,8 @@ module.exports = class extends Generator {
     ]).then(answers => {
       that.props = answers;
       that.props.injectRoute = false;
+      that.props.apibase = that.config.get('apibase');
+      that.props.apiversion = that.config.get('apiversion');
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exting');
@@ -64,6 +69,8 @@ module.exports = class extends Generator {
         this.config.set('last_endpoint', that.props.name);
         this.config.set('last_apidewsc', that.props.apidesc);
         this.config.set('last_method', that.props.method);
+        this.config.set('apibase', that.props.apibase);
+        this.config.set('apiversion', that.props.apiversion);
       });  
 
       done();
@@ -84,6 +91,7 @@ module.exports = class extends Generator {
     const routeName = `${apigroup}.route.js`;
     const validationName = `${apigroup}.validation.js`;
     const testName = `${apigroup}.test.js`;
+    props.upperMethod = props.method.toUpperCase();
 
     /**
      * Controller
@@ -126,11 +134,13 @@ module.exports = class extends Generator {
     const apigroup = props.apigroup.toLowerCase();
     const routeName = `${apigroup}.route`;
     const controllerName = `${apigroup}.controller`;
+    const validationName = `${apigroup}.validation`;
     
     // Files
     const routesFile = dPath(`src/api/routes/${this.apiversion}/index.js`);
     const apiRouteFile = dPath(`src/api/routes/${this.apiversion}/${routeName}.js`);
     const apiControllerFile = dPath(`src/api/controllers/${controllerName}.js`);
+    const apiValidationFile = dPath(`src/api/validations/${validationName}.js`);
 
     /**
      * Inject codes
@@ -280,7 +290,7 @@ module.exports = class extends Generator {
           visitAssignmentExpression: function(path) {          
             let left = path.node.left;
             if (left.object.name === 'exports' && left.property.name === name) {
-              injectApiController = true;
+              injectApiController = false;
               return false;
             }
             this.traverse(path);
@@ -294,8 +304,50 @@ module.exports = class extends Generator {
             return expr && expr.type === 'AssignmentExpression'
           });
           
-          const exportString = `/**\n * ${name}\n * @public\n */\nexports.${name} = async (req, res, next) => {\n\ttry {\n\t\tres.status(httpStatus.OK);\n\t\treturn res.json({ message: 'OK' });\n\t} catch (error) {\n\t\treturn next(error);\n\t}\n};\n`
+          const exportString = `/**\n * ${name}\n * @public\n */\nexports.${name} = async (req, res, next) => {\n\ttry {\n\t\tres.status(httpStatus.OK);\n\t\treturn res.json({ message: 'OK' });\n\t} catch (error) {\n\t\treturn next(error);\n\t}\n};`
           controllerBody.splice(lastExportIndex < 0 ? 0 : lastExportIndex, 0, exportString);
+        }
+      }
+
+      /**
+       * Validation File Injection
+       */
+      if (this.fs.exists(apiValidationFile)) {
+        var validationAst = recast.parse(this.fs.read(apiValidationFile));
+        var validationBody = validationAst.program.body;
+        var injectApiValidation = true;
+
+        recast.visit(validationAst, {
+          visitExpression: function(path) {          
+            const value = path.value;
+            if (value && value.type === 'MemberExpression' 
+              && value.object.name === 'exports' 
+              && value.property.name === name) {
+              injectApiValidation = false;
+              return false;
+            }
+            this.traverse(path);
+          },
+
+        });
+
+        if (injectApiValidation) {
+          
+          var lastValidationIndex = _.findLastIndex(validationBody, function (statement) {
+            var expr = statement.expression;
+            return expr 
+              && expr.type === 'AssignmentExpression'
+              && expr.left.object.name === 'exports';
+          });
+``
+          const validationString = [
+            `// ${props.method.toUpperCase()} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}`,
+            `exports.${name} = {`,
+            `\tbody: { }`,
+            '}'
+          ].join('\n');
+          validationBody.splice(lastValidationIndex, 0, validationString);
+          
         }
       }
 
@@ -318,7 +370,13 @@ module.exports = class extends Generator {
       if (injectApiController) {
         rimraf(apiControllerFile, () => {
           this.fs.write(apiControllerFile, recast.print(controllerAst).code);
-        })
+        });
+      }
+
+      if (injectApiValidation) {
+        rimraf(apiValidationFile, ()=> {
+          this.fs.write(apiValidationFile, recast.print(validationAst).code);
+        });
       }
     }
   }
