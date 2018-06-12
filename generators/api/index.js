@@ -148,8 +148,6 @@ module.exports = class extends Generator {
     
     if (this.fs.exists(routesFile)) {
 
-      // console.log('Building route...');
-
       var ast = recast.parse(this.fs.read(routesFile));
       var body = ast.program.body;
 
@@ -257,7 +255,24 @@ module.exports = class extends Generator {
         });
 
         if (injectApiRoute) {
-          var middlewareString = ['router.route(\'/', name, '\')\n', '\t.', props.method, '(validate(validation.', name, '), ', 'controller.', name, ');'].join('');
+          var middlewareString = [
+            `/**`,
+            `  * @api {${props.method}} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}`,
+            `  * @apiDescription ${props.apidesc}`,
+            `  * @apiVersion 1.0.0`,
+            `  * @apiName ${name}`,
+            `  * @apiGroup ${props.apigroup}`,
+            `  * @apiPermission public`,
+            `  *`,
+            `  * @apiParam  {String} <PARAM>  <PARAM DESCRIPTION>`,
+            `  *`,
+            `  * @apiSuccess (Created 200) {String} <MESSAGE>  <MESSAGE DESCRIPTION>`,
+            `  *`,
+            `  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values`,
+            `  */`,
+            `router.route('${name}')\n\t.${props.method}(validate(validation.${name}), controller.${name});`
+          ].join('\n');
+
           var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
             if (!statement.expression || !statement.expression.callee) {
               return false;
