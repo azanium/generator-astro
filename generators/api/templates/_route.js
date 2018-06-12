@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('express-validation');
-const controller = require('../../controllers/<%= apigroup %>.controller');
-const validation = require('../../validations/<%= apigroup %>.validation');
+const controller = require('@controllers/<%= apigroup %>.controller');
+const validation = require('@validations/<%= apigroup %>.validation');
 
 const router = express.Router();
 

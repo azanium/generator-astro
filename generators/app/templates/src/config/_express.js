@@ -5,9 +5,9 @@ const compress = require('compression');
 const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
-const routes = require('../api/routes/<%= apiversion %>');
 const { logs } = require('./vars');
-const error = require('../api/middlewares/error');
+const routes = require('@routes/<%= apiversion %>');
+const error = require('@middlewares/error');
 
 /**
 * Express instance

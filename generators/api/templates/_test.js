@@ -3,7 +3,7 @@ const request = require('supertest');
 const httpStatus = require('http-status');
 const { expect } = require('chai');
 const sinon = require('sinon');
-const app = require('../../../index');
+const app = require('@app/index');
 
 const sandbox = sinon.createSandbox();
 

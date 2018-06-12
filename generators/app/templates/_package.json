@@ -75,6 +75,7 @@
     "jwt-simple": "0.5.1",
     "lodash": "^4.17.4",
     "method-override": "^2.3.8",
+    "module-alias": "^2.0.6",
     "moment-timezone": "^0.5.13",
     "mongoose": "^4.9.7",
     "morgan": "^1.8.1",
@@ -100,5 +101,17 @@
     "sinon": "^4.0.1",
     "sinon-chai": "^3.0.0",
     "supertest": "^3.0.0"
+  },
+  "_moduleAliases": {
+    "@app"          : "src",
+    "@config"       : "src/config",
+    "@controllers"  : "src/api/controllers",
+    "@middlewares"  : "src/api/middlewares",
+    "@models"       : "src/api/models",
+    "@routes"       : "src/api/routes",
+    "@services"     : "src/api/services",
+    "@tests"        : "src/api/tests",
+    "@utils"        : "src/api/utils",
+    "@validations"  : "src/api/validations"
   }
 }
