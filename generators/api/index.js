@@ -243,11 +243,13 @@ module.exports = class extends Generator {
             const callee = path.node.callee;
             if (callee.type === 'MemberExpression') {
               const args = path.node.arguments;
-              const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
-              const isValid = callee.object.name === 'router' && callee.property.name === 'route' && validFirstArgument;
-              if (isValid) {
-                injectApiRoute = !isValid;
-                return false;
+              if (args[0]) {
+                const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
+                const isValid = callee.object.name === 'router' && callee.property.name === 'route' && validFirstArgument;
+                if (isValid) {
+                  injectApiRoute = false;
+                  return false;
+                }
               }
             }
             this.traverse(path);
@@ -272,7 +274,7 @@ module.exports = class extends Generator {
             `  *`,
             `  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values`,
             `  */`,
-            `router.route('${name}')\n\t.${props.method}(validate(validation.${name}), controller.${name});`
+            `router.route('/${name}')\n\t.${props.method}(validate(validation.${name}), controller.${name});`
           ].join('\n');
 
           var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {

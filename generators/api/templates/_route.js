@@ -13,9 +13,11 @@ const router = express.Router();
  * @apiGroup <%= apigroup %>
  * @apiPermission public
  *
- * @apiParam  {String} <PARAM>  <PARAM DESCRIPTION>
+ * @apiParam  {String} code  Test Code
  *
- * @apiSuccess (Created 200) {String} <MESSAGE>  <MESSAGE DESCRIPTION>
+ * @apiSuccess {Number} responseCode     HTTP Response Code
+ * @apiSuccess {String} responseMessage  Response message
+ * @apiSuccess {Object} response         Response object
  *
  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values
  */
