@@ -1,8 +1,0 @@
-version: "2"
-services:
-  test:
-    build: .
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
