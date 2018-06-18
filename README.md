@@ -3,6 +3,11 @@
 
 Generator Project for building RESTful APIs and microservices using Node.js, Express and Docker support.
 
+
+## Wishlists
+
+ - Use winston and winston-cloudwatch for AWS support
+
 ## Features
 
  - No transpilers, just vanilla javascript
