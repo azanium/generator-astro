@@ -362,8 +362,8 @@ module.exports = class extends Generator {
           const validationString = [
             `// ${props.method.toUpperCase()} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}`,
             `exports.${name} = {`,
-            `\tbody: { }`,
-            '}'
+            `\tbody: { },`,
+            '};'
           ].join('\n');
           validationBody.splice(lastValidationIndex, 0, validationString);
           
