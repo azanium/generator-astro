@@ -6,8 +6,9 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
 const { logs } = require('./vars');
-const routes = require('@routes/<%= apiversion %>');
-const error = require('@middlewares/error');
+const error = require('../api/middlewares/error');
+const routes = require('../api/routes/<%= apiversion %>');
+
 
 /**
 * Express instance
