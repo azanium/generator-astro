@@ -1,6 +1,7 @@
-const Joi = require('joi');
+// const Joi = require('joi');
 
 // <%= upperMethod %> <%= apibase %>/<%= apiversion %>/<%= apigroup %>/<%= name %>
 exports.<%= name %> = {
-  body: { }
-}
+  body: { },
+};
+

@@ -274,7 +274,7 @@ module.exports = class extends Generator {
             `  *`,
             `  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values`,
             `  */`,
-            `router.route('/${name}')\n\t.${props.method}(validate(validation.${name}), controller.${name});`
+            `router.route('/${name}')\n  .${props.method}(validate(validation.${name}), controller.${name});`
           ].join('\n');
 
           var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
