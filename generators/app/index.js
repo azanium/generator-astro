@@ -94,6 +94,7 @@ module.exports = class extends Generator {
      * Etc
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
+    copy(tPath('_.eslintrc'), dPath('.eslintrc'));
     copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
     copyTpl(tPath('_README.md'), dPath('README'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
