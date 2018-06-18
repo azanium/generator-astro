@@ -1,4 +1,4 @@
-/* eslint-disable arrow-body-style */
+///* eslint-disable arrow-body-style */
 const request = require('supertest');
 const httpStatus = require('http-status');
 const { expect } = require('chai');
