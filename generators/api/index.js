@@ -97,28 +97,28 @@ module.exports = class extends Generator {
      * Controller
      */
     if (!this.fs.exists(dPath(`src/api/controllers/${controllerName}`))) {
-      copyTpl(tPath('_controller.js'), dPath(`src/api/controllers/${controllerName}`), props);
+      copyTpl(tPath('_controller.ejs'), dPath(`src/api/controllers/${controllerName}`), props);
     }
 
     /**
      * Route
      */
     if (!this.fs.exists(dPath(`src/api/routes/${this.apiversion}/${routeName}`))) {
-      copyTpl(tPath('_route.js'), dPath(`src/api/routes/${this.apiversion}/${routeName}`), props);
+      copyTpl(tPath('_route.ejs'), dPath(`src/api/routes/${this.apiversion}/${routeName}`), props);
     }
     
     /**
      * Validation
      */
     if (!this.fs.exists(dPath(`src/api/validations/${validationName}`))) {
-      copyTpl(tPath('_validation.js'), dPath(`src/api/validations/${validationName}`), props);
+      copyTpl(tPath('_validation.ejs'), dPath(`src/api/validations/${validationName}`), props);
     }
 
     /**
      * Integration Test
      */
     if (!this.fs.exists(dPath(`src/api/tests/integration/${testName}`))) {
-      copyTpl(tPath('_test.js'), dPath(`src/api/tests/integration/${testName}`), props);
+      copyTpl(tPath('_test.ejs'), dPath(`src/api/tests/integration/${testName}`), props);
     }
 
     done();
