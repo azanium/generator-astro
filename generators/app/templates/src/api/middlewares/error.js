@@ -1,7 +1,12 @@
 const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
+const _ = require('lodash');
+
 const APIError = require('../utils/APIError');
 const { env } = require('../../config/vars');
+const {
+  getErrorCode, routes, services, codes, wrapError,
+} = require('../utils/ErrorCode');
 
 /**
  * Error handler. Send stacktrace only during development
@@ -9,14 +14,16 @@ const { env } = require('../../config/vars');
  */
 const handler = (err, req, res, next) => {
   const response = {
-    code: err.status,
-    message: err.message || httpStatus[err.status],
-    errors: err.errors,
-    stack: err.stack,
+    responseCode: err.status,
+    responseMessage: err.message || httpStatus[err.status],
+    response: {
+      errors: err.errors,
+      stack: err.stack,
+    },
   };
 
   if (env !== 'development') {
-    delete response.stack;
+    delete response.response.stack;
   }
 
   res.status(err.status);
@@ -25,26 +32,100 @@ const handler = (err, req, res, next) => {
 };
 exports.handler = handler;
 
+
+/**
+ * Convert Validaton error into APIError
+ *
+ * @param  {Object} err   Error object
+ * @param  {Object} req   Request object
+ */
+const convertValidationError = (err, req) => {
+  const formattedErrors = [];
+  err.errors.forEach((error) => {
+    formattedErrors.push(wrapError(
+      [req.path.replace('/', '').split('/').join(':'), codes.validationError].join(':'),
+      'We seems to have a problem!',
+      'We have some trouble validating your data - please contact our customer support',
+      error.messages[0],
+      _.omit(error, ['messages']),
+    ));
+  });
+
+  return new APIError({
+    message: 'Validation error',
+    errors: formattedErrors,
+    route: err.route ? err.route : routes.root,
+    status: err.status,
+    stack: err.stack,
+  });
+};
+
+exports.convertValidationError = convertValidationError;
+
+/**
+ * Convert generic error into APIError
+ *
+ * @param  {Object} err   Error object
+ * @param  {Object} req   Request object
+ * @oublic
+ */
+const convertGenericError = (err, req) => {
+  const wrappedError = wrapError(
+    err.code || [req.path.replace('/', '').split('/').join(':'), codes.unknown].join(':'),
+    'We seems to have a problem!',
+    'Our internal system is having problem, please contact our administrator!',
+    err.message, [],
+  );
+
+  return new APIError({
+    message: 'Internal server error',
+    errors: [wrappedError],
+    route: routes.root,
+    status: httpStatus.INTERNAL_SERVER_ERROR,
+    stack: err.stack,
+  });
+};
+
+exports.convertGenericError = convertGenericError;
+
+/**
+ * Generate not found error for APIError
+ *
+ * @param  {Object} err   Error object
+ * @param  {Object} req   Request object
+ * @oublic
+ */
+const generateNotFoundError = () => {
+  const errors = [
+    {
+      errorCode: getErrorCode(routes.root, services.route, codes.notFound),
+      errorTitle: 'Oops! We have a problem.',
+      errorDescription: `We couldn't find what you're looking for - please contact our administrator!`,
+      errorDebugDescription: 'Invalid API route',
+      errorAttributes: {},
+    },
+  ];
+
+  return new APIError({
+    message: 'Not found',
+    errors,
+    route: routes.root,
+    status: httpStatus.NOT_FOUND,
+  });
+};
+
+exports.generateNotFoundError = generateNotFoundError;
+
 /**
  * If error is not an instanceOf APIError, convert it.
  * @public
  */
 exports.converter = (err, req, res, next) => {
   let convertedError = err;
-
   if (err instanceof expressValidation.ValidationError) {
-    convertedError = new APIError({
-      message: 'Validation error',
-      errors: err.errors,
-      status: err.status,
-      stack: err.stack,
-    });
+    convertedError = convertValidationError(err, req);
   } else if (!(err instanceof APIError)) {
-    convertedError = new APIError({
-      message: err.message,
-      status: err.status,
-      stack: err.stack,
-    });
+    convertedError = convertGenericError(err, req);
   }
 
   return handler(convertedError, req, res);
@@ -54,10 +135,5 @@ exports.converter = (err, req, res, next) => {
  * Catch 404 and forward to error handler
  * @public
  */
-exports.notFound = (req, res, next) => {
-  const err = new APIError({
-    message: 'Not found',
-    status: httpStatus.NOT_FOUND,
-  });
-  return handler(err, req, res);
-};
+exports.notFound = (req, res, next) => handler(generateNotFoundError(), req, res);
+

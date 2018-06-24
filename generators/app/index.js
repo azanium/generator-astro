@@ -115,6 +115,8 @@ module.exports = class extends Generator {
     copy(tPath('src/index.js'), dPath('src/index.js'));
     copyTpl(tPath('src/config/_express.js'), dPath('src/config/express.js'), props);
     copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
+    copy(tPath('src/api/utils/APIError.js'), dPath('src/api/utils/APIError.js'));
+    copyTpl(tPath('src/api/utils/_ErrorCode.js'), dPath('src/api/utils/ErrorCode.js'), props);
 
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/controllers'));
     copy(tPath('src/api/middlewares'), dPath('src/api/middlewares'));
@@ -123,13 +125,17 @@ module.exports = class extends Generator {
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/services'));
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/integration'));
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/unit'));
-    copy(tPath('src/api/utils'), dPath('src/api/utils'));
+    // copy(tPath('src/api/utils'), dPath('src/api/utils'));
     mkdirp.sync(path.join(this.destinationPath(), 'src/api/validations'));
+
+    /**
+     * tests
+     */
+    copy(tPath('src/api/tests/unit/middlewares/error.test.js'), dPath('src/api/tests/unit/middlewares/error.test.js'));
+    copy(tPath('src/api/tests/unit/utils/APIError.test.js'), dPath('src/api/tests/unit/utils/APIError.test.js'));
 
     this.config.save();
 
-    // copy(tPath('.yo-rc.json'), dPath('.yo-rc.json'));
-    //this.fs.delete(tPath('.yo-rc.json'));
     this.on('end', function() {
       this.config.set('name', props.name);
       this.config.set('apibase', props.apibase);
