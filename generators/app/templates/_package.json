@@ -119,5 +119,13 @@
     "@tests"        : "src/api/tests",
     "@utils"        : "src/api/utils",
     "@validations"  : "src/api/validations"
+  },
+  "nyc": {
+    "include": "src",
+    "exclude": [
+      "**/*.spec.js",
+      "**/*.test.js",
+      "src/api/routes/**"
+    ]
   }
 }

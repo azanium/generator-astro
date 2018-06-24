@@ -165,6 +165,15 @@ describe('Middleware - error', () => {
     sinon.assert.calledOnce(this.endStub);
   });
 
+  it('error converter should convert APIError', () => {
+    const error = convertValidationError(validationError, req);
+    converter(error, req, res);
+
+    sinon.assert.calledWith(this.statusStub, httpStatus.BAD_REQUEST);
+    sinon.assert.calledOnce(this.jsonStub);
+    sinon.assert.calledOnce(this.endStub);
+  });
+
   it('notFound middleware should generate not found error', () => {
     notFound(req, res);
 
@@ -176,6 +185,28 @@ describe('Middleware - error', () => {
   it('handler middleware should return http status message for error without message', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
+    handler(err, req, res);
+
+    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
+    sinon.assert.calledOnce(this.jsonStub);
+    sinon.assert.calledOnce(this.endStub);
+  });
+
+  it('handler middleware should return error with error stack', () => {
+    const err = new Error();
+    err.status = httpStatus.INTERNAL_SERVER_ERROR;
+    process.env.NODE_ENV = 'development';
+    handler(err, req, res);
+
+    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
+    sinon.assert.calledOnce(this.jsonStub);
+    sinon.assert.calledOnce(this.endStub);
+  });
+
+  it('handler middleware should return error without error stack', () => {
+    const err = new Error();
+    err.status = httpStatus.INTERNAL_SERVER_ERROR;
+    process.env.NODE_ENV = 'development';
     handler(err, req, res);
 
     sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);

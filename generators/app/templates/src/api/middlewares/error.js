@@ -3,7 +3,6 @@ const expressValidation = require('express-validation');
 const _ = require('lodash');
 
 const APIError = require('../utils/APIError');
-const { env } = require('../../config/vars');
 const {
   getErrorCode, routes, services, codes, wrapError,
 } = require('../utils/ErrorCode');
@@ -22,7 +21,7 @@ const handler = (err, req, res, next) => {
     },
   };
 
-  if (env !== 'development') {
+  if (process.env.NODE_ENV !== 'development') {
     delete response.response.stack;
   }
 
