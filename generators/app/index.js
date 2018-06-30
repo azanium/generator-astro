@@ -95,11 +95,17 @@ module.exports = class extends Generator {
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
     copy(tPath('_.eslintrc'), dPath('.eslintrc'));
-    copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
     copyTpl(tPath('_README.md'), dPath('README'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
 
+    /**
+     * License
+     */
+    if (props.license === 'MIT') {
+      copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
+    }
+    
     /**
      * Docker
      */
@@ -118,8 +124,9 @@ module.exports = class extends Generator {
      * api folder
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/api'));
-    copyTpl(tPath(`src/api/index.js`), dPath(`src/api/${props.apiversion}/index.js`), props);
+    copyTpl(tPath(`src/api/_index.ejs`), dPath(`src/api/index.js`), props);
     mkdirp.sync(path.join(this.destinationPath(), `src/api/${props.apiversion}/controllers`));
+    copy(tPath(`src/api/apiversion/index.js`), dPath(`src/api/${props.apiversion}/index.js`));
 
     /**
      * config folder

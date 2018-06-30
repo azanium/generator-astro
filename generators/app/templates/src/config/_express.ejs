@@ -7,8 +7,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { logs } = require('./vars');
 const { errorMiddleware } = require('../middlewares/error');
-const api<%= apiversion %> = require('../api/<%= apiversion %>');
-
+const api = require('../api');
 
 /**
 * Express instance
@@ -38,8 +37,8 @@ app.use(cors());
 
 // enable authentication
 
-// mount api <%= apiversion %> routes
-app.use('/<%= apibase %>/<%= apiversion %>', api<%= apiversion %>);
+// mount api routes
+app.use('/<%= apibase %>', api);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(errorMiddleware.converter);
