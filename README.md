@@ -65,7 +65,13 @@ yo astro:service
 Generate a new utility:
 
 ```
-yo astro:api
+yo astro:util
+```
+
+Generate a new boot task:
+
+```
+yo astro:boot
 ```
 
 Set environment variables:
