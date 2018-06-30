@@ -3,11 +3,6 @@
 
 Yeoman generator for building RESTful APIs and microservices using Node.js, ExpressJS and Docker support.
 
-
-## Wishlists
-
- - Use winston and winston-cloudwatch for AWS support
-
 ## Features
 
  - No transpilers, just vanilla javascript
@@ -25,8 +20,7 @@ Yeoman generator for building RESTful APIs and microservices using Node.js, Expr
  - Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
  - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io)
  - Git hooks with [husky](https://github.com/typicode/husky) 
- - Logging with [winston-cloudwatch](https://github.com/lazywithclass/winston-cloudwatch)
- - Optional logging with [morgan](https://github.com/expressjs/morgan)
+ - Logging with [winston](https://www.npmjs.com/package/winston), and [winston-cloudwatch](https://github.com/lazywithclass/winston-cloudwatch) for production log stream
  - API documentation geratorion with [apidoc](http://apidocjs.com)
  - Continuous integration support with [travisCI](https://travis-ci.org)
  - Monitoring with [pm2](https://github.com/Unitech/pm2)

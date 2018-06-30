@@ -140,6 +140,7 @@ module.exports = class extends Generator {
     mkdirp.sync(path.join(this.destinationPath(), `src/utils/ErrorCode`));
     copy(tPath('src/utils/ErrorCode/index.js'), dPath('src/utils/ErrorCode/index.js'));
     copyTpl(tPath('src/utils/ErrorCode/_ErrorCode.js'), dPath('src/utils/ErrorCode/ErrorCode.js'), props);
+    copy(tPath('src/utils/logger'), dPath('src/utils/logger'));
 
     /**
      * middlewares
