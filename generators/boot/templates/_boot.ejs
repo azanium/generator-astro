@@ -1,0 +1,15 @@
+/**
+ * <%= pascalizedeName %> Boot
+ *
+ */
+
+const { logger } = require('../../utils/logger');
+
+const <%= name %>Boot = (next) => {
+  logger.info('Starting <%= name %> boot task..');
+  next();
+};
+
+module.exports = {
+  <%= name %>Boot
+};

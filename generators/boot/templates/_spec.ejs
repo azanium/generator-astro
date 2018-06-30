@@ -1,9 +1,8 @@
 /* eslint-disable arrow-body-style */
 const sinon = require('sinon');
-// const { expect } = require('chai');
-const { <%= name %>Middleware } = require('./<%= name %>.middleware')
+const { <%= name %>Boot } = require('./<%= name %>.boot');
 
-describe('Middleware - <%= name %>Middleware', () => {
+describe('Boot - <%= name %>Boot', () => {
   let sandbox;
 
   beforeEach(async () => {
@@ -12,10 +11,10 @@ describe('Middleware - <%= name %>Middleware', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should pass request', () => {
+  it('should run task and pass sequence to next boot task', () => {
     const nextSpy = sandbox.spy();
 
-    <%= name %>Middleware({}, {}, nextSpy);
+    <%= name %>Boot(nextSpy);
 
     sinon.assert.calledOnce(nextSpy);
   });
