@@ -21,7 +21,7 @@ Generator Project for building RESTful APIs and microservices using Node.js, Exp
  - Load environment variables from .env files with [dotenv](https://github.com/rolodato/dotenv-safe)
  - Request validation with [joi](https://github.com/hapijs/joi)
  - Gzip compression with [compression](https://github.com/expressjs/compression)
- - Linting with [eslint](http://eslint.org) with [eslint-config-airbnb-base](https://www.npmjs.com/package/eslint-config-airbnb-base) 
+ - Linting with [eslint](http://eslint.org) with [eslint-config-astro](https://www.npmjs.com/package/eslint-config-astro) 
  - Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
  - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io)
  - Git hooks with [husky](https://github.com/typicode/husky) 
