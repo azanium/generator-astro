@@ -23,7 +23,7 @@ describe('Middleware - logger', () => {
 
     loggerMiddleware({
       skip: (req, res) => res.statusCode >= 400,
-      stream: streamStub,
+      stream: streamStub
     })(request, response, nextStub);
 
     sinon.assert.calledOnce(streamStub.write);
@@ -36,7 +36,7 @@ describe('Middleware - logger', () => {
 
     loggerMiddleware({
       skip: (req, res) => res.statusCode >= 400,
-      stream: streamStub,
+      stream: streamStub
     })(request, response, nextStub);
 
     sinon.assert.notCalled(streamStub.write);

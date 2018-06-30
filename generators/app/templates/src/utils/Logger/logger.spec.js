@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha');
 const sinon = require('sinon');
 const MockRequest = require('mock-express-request');
-const logger = require('./logger');
+const { logger } = require('./logger');
 
 const sandbox = sinon.createSandbox();
 
