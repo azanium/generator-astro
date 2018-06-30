@@ -21,7 +21,7 @@
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text mocha --timeout 20000 --exit --recursive \"src/**/*.*(spec|integration|test).js\"",
     "test:unit": "cross-env NODE_ENV=test mocha --exit --recursive \"src/**/*.spec.js\"",
     "test:integration": "cross-env NODE_ENV=test mocha --exit --timeout 20000 --recursive \"src/**/*.integration.test.js\"",
-    "test:watch": "cross-env NODE_ENV=test mocha --exit --watch src/api/tests/unit",
+    "test:watch": "cross-env NODE_ENV=test mocha --exit --watch src/**.spec.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "postcoverage": "opn coverage/lcov-report/index.html",
     "validate": "yarn lint && yarn test",
