@@ -1,12 +1,12 @@
 const httpStatus = require('http-status');
-const { routes } = require('./ErrorCode');
+const { routes } = require('./../ErrorCode');
 
 /**
  * @extends Error
  */
 class ExtendableError extends Error {
   constructor({
-    message, errors, route, status, isPublic, stack,
+    message, errors, route, status, isPublic, stack
   }) {
     super(message);
     this.name = this.constructor.name;
@@ -38,10 +38,10 @@ class APIError extends ExtendableError {
     route = routes.root,
     stack,
     status = httpStatus.INTERNAL_SERVER_ERROR,
-    isPublic = false,
+    isPublic = false
   }) {
     super({
-      message, errors, route, status, isPublic, stack,
+      message, errors, route, status, isPublic, stack
     });
   }
 }

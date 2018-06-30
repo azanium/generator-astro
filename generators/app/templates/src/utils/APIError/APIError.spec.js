@@ -2,7 +2,7 @@ const { describe, it } = require('mocha');
 const { expect } = require('chai');
 const httpStatus = require('http-status');
 const sinon = require('sinon');
-const APIError = require('../../../utils/APIError');
+const APIError = require('./APIError');
 
 const sandbox = sinon.createSandbox();
 
@@ -25,7 +25,7 @@ describe('Utils - APIError', () => {
     const sut = new APIError({
       message,
       errors,
-      stack,
+      stack
     });
     expect(sut).to.have.property('message');
     expect(sut).to.have.property('errors');
@@ -47,7 +47,7 @@ describe('Utils - APIError', () => {
       route,
       stack,
       status,
-      isPublic,
+      isPublic
     });
     expect(sut).to.have.property('message');
     expect(sut).to.have.property('errors');

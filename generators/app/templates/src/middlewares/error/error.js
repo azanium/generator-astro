@@ -2,10 +2,10 @@ const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
 const _ = require('lodash');
 
-const APIError = require('../utils/APIError');
+const { APIError } = require('../../utils/APIError');
 const {
-  getErrorCode, routes, services, codes, wrapError,
-} = require('../utils/ErrorCode');
+  getErrorCode, routes, services, codes, wrapError
+} = require('../../utils/ErrorCode');
 
 /**
  * Error handler. Send stacktrace only during development
@@ -17,15 +17,20 @@ const handler = (err, req, res, next) => {
     responseMessage: err.message || httpStatus[err.status],
     response: {
       errors: err.errors,
-      stack: err.stack,
-    },
+      stack: err.stack
+    }
   };
 
   if (process.env.NODE_ENV !== 'development') {
     delete response.response.stack;
   }
 
-  res.status(err.status);
+  if (err.status >= 100 && err.status < 600) {
+    res.status(err.status);
+  } else {
+    res.status(500);
+  }
+
   res.json(response);
   res.end();
 };
@@ -46,7 +51,7 @@ const convertValidationError = (err, req) => {
       'We seems to have a problem!',
       'We have some trouble validating your data - please contact our customer support',
       error.messages[0],
-      _.omit(error, ['messages']),
+      _.omit(error, ['messages'])
     ));
   });
 
@@ -55,7 +60,7 @@ const convertValidationError = (err, req) => {
     errors: formattedErrors,
     route: err.route ? err.route : routes.root,
     status: err.status,
-    stack: err.stack,
+    stack: err.stack
   });
 };
 
@@ -73,7 +78,7 @@ const convertGenericError = (err, req) => {
     err.code || [req.path.replace('/', '').split('/').join(':'), codes.unknown].join(':'),
     'We seems to have a problem!',
     'Our internal system is having problem, please contact our administrator!',
-    err.message, [],
+    err.message, []
   );
 
   return new APIError({
@@ -81,7 +86,7 @@ const convertGenericError = (err, req) => {
     errors: [wrappedError],
     route: routes.root,
     status: httpStatus.INTERNAL_SERVER_ERROR,
-    stack: err.stack,
+    stack: err.stack
   });
 };
 
@@ -101,15 +106,15 @@ const generateNotFoundError = () => {
       errorTitle: 'Oops! We have a problem.',
       errorDescription: `We couldn't find what you're looking for - please contact our administrator!`,
       errorDebugDescription: 'Invalid API route',
-      errorAttributes: {},
-    },
+      errorAttributes: {}
+    }
   ];
 
   return new APIError({
     message: 'Not found',
     errors,
     route: routes.root,
-    status: httpStatus.NOT_FOUND,
+    status: httpStatus.NOT_FOUND
   });
 };
 
@@ -135,4 +140,3 @@ exports.converter = (err, req, res, next) => {
  * @public
  */
 exports.notFound = (req, res, next) => handler(generateNotFoundError(), req, res);
-

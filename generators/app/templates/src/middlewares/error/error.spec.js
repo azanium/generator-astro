@@ -14,15 +14,15 @@ const {
   convertGenericError,
   convertValidationError,
   notFound,
-  handler,
-} = require('../../../middlewares/error');
+  handler
+} = require('./error');
 
 
 const sandbox = sinon.createSandbox();
 const response = new MockResponse();
 const request = new MockRequest({
   method: 'PUT',
-  url: '/api/v1/auth/login',
+  url: '/api/v1/auth/login'
 });
 
 describe('Middleware - error', () => {
@@ -31,11 +31,11 @@ describe('Middleware - error', () => {
   const validationError = new ValidationError([{
     location: 'body',
     messages: ['"nonce" is required'],
-    types: ['any.required'],
+    types: ['any.required']
   }], {
     flatten: true,
     status: 400,
-    statusText: 'validation error',
+    statusText: 'validation error'
   });
 
   beforeEach(() => {
@@ -207,6 +207,16 @@ describe('Middleware - error', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     process.env.NODE_ENV = 'development';
+    handler(err, req, res);
+
+    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
+    sinon.assert.calledOnce(this.jsonStub);
+    sinon.assert.calledOnce(this.endStub);
+  });
+
+  it('handler middleware should convert error with http status = 0, into internal server error', () => {
+    const err = new Error();
+    err.status = 0;
     handler(err, req, res);
 
     sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);

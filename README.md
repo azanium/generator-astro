@@ -51,7 +51,25 @@ yo astro
 
 Generate a new API:
 
-```bash
+```
+yo astro:api
+```
+
+Generate a new middleware:
+
+```
+yo astro:middleware
+```
+
+Generate a new service:
+
+```
+yo astro:service
+```
+
+Generate a new utility:
+
+```
 yo astro:api
 ```
 

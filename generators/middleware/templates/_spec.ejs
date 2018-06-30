@@ -1,0 +1,22 @@
+/* eslint-disable arrow-body-style */
+const sinon = require('sinon');
+// const { expect } = require('chai');
+const { <%= name %>Middleware } = require('./<%= name %>.middleware')
+
+describe('Middleware - <%= name %>Middleware', () => {
+  let sandbox;
+
+  beforeEach(async () => {
+    sandbox = sinon.createSandbox();
+  });
+
+  afterEach(() => sandbox.restore());
+
+  it('should pass request', () => {
+    const nextSpy = sandbox.spy();
+
+    helloMiddleware({}, {}, nextSpy);
+
+    sinon.assert.calledOnce(nextSpy);
+  });
+});

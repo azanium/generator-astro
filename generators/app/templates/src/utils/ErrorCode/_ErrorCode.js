@@ -1,11 +1,11 @@
 exports.routes = {
-  root: 'default',
+  root: 'default'
 };
 
 exports.services = {
   dynamoDB: 'dynamoDB',
   input: 'input',
-  route: 'route',
+  route: 'route'
 };
 
 exports.codes = {
@@ -13,7 +13,7 @@ exports.codes = {
   validationError: 'validationError',
   notFound: 'notFound',
   unknown: 'unknown',
-  recordNotFound: 'recordNotFound',
+  recordNotFound: 'recordNotFound'
 };
 
 exports.getErrorCode = (route, service, code) => {
@@ -27,7 +27,7 @@ exports.wrapError = (errCode, errTitle, errDesc, errDebugDesc, errAttributes) =>
     errorTitle: errTitle,
     errorDescription: errDesc,
     errorDebugDescription: errDebugDesc,
-    errorAttributes: errAttributes,
+    errorAttributes: errAttributes
   };
   return result;
 };

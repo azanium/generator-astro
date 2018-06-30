@@ -95,11 +95,17 @@ module.exports = class extends Generator {
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
     copy(tPath('_.eslintrc'), dPath('.eslintrc'));
-    copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
     copyTpl(tPath('_README.md'), dPath('README'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
 
+    /**
+     * License
+     */
+    if (props.license === 'MIT') {
+      copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
+    }
+    
     /**
      * Docker
      */
@@ -110,30 +116,47 @@ module.exports = class extends Generator {
     copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
 
     /**
-     * src
+     * index.js
      */
     copy(tPath('src/index.js'), dPath('src/index.js'));
-    copyTpl(tPath('src/config/_express.js'), dPath('src/config/express.js'), props);
-    copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
-    copy(tPath('src/api/utils/APIError.js'), dPath('src/api/utils/APIError.js'));
-    copyTpl(tPath('src/api/utils/_ErrorCode.js'), dPath('src/api/utils/ErrorCode.js'), props);
-
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/controllers'));
-    copy(tPath('src/api/middlewares'), dPath('src/api/middlewares'));
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/models'));
-    copyTpl(tPath(`src/api/routes/index.js`), dPath(`src/api/routes/${props.apiversion}/index.js`), props);
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/services'));
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/integration'));
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/tests/unit'));
-    // copy(tPath('src/api/utils'), dPath('src/api/utils'));
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api/validations'));
 
     /**
-     * tests
+     * api folder
      */
-    copy(tPath('src/api/tests/unit/middlewares/error.test.js'), dPath('src/api/tests/unit/middlewares/error.test.js'));
-    copy(tPath('src/api/tests/unit/utils/APIError.test.js'), dPath('src/api/tests/unit/utils/APIError.test.js'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/api'));
+    copyTpl(tPath(`src/api/_index.ejs`), dPath(`src/api/index.js`), props);
+    copy(tPath(`src/api/apiversion/index.js`), dPath(`src/api/${props.apiversion}/index.js`));
 
+    /**
+     * config folder
+     */
+    copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
+    copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
+    
+    /**
+     * utils
+     */
+    copy(tPath('src/utils/APIError'), dPath('src/utils/APIError'));
+    mkdirp.sync(path.join(this.destinationPath(), `src/utils/ErrorCode`));
+    copy(tPath('src/utils/ErrorCode/index.js'), dPath('src/utils/ErrorCode/index.js'));
+    copyTpl(tPath('src/utils/ErrorCode/_ErrorCode.js'), dPath('src/utils/ErrorCode/ErrorCode.js'), props);
+
+    /**
+     * middlewares
+     */
+    copy(tPath('src/middlewares'), dPath('src/middlewares'));
+
+    /**
+     * models
+     */
+    mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
+    
+    /**
+     * services
+     */
+    mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
+
+    
     this.config.save();
 
     this.on('end', function() {
