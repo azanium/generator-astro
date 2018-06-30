@@ -95,7 +95,7 @@
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.0",
     "eslint": "^4.2.0",
-    "eslint-config-airbnb-base": "^12.0.1",
+    "eslint-config-astro": "^1.0.3",
     "eslint-plugin-import": "^2.2.0",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
@@ -111,21 +111,18 @@
   "_moduleAliases": {
     "@app"          : "src",
     "@config"       : "src/config",
-    "@controllers"  : "src/api/controllers",
-    "@middlewares"  : "src/api/middlewares",
-    "@models"       : "src/api/models",
-    "@routes"       : "src/api/routes",
-    "@services"     : "src/api/services",
-    "@tests"        : "src/api/tests",
-    "@utils"        : "src/api/utils",
-    "@validations"  : "src/api/validations"
+    "@api"          : "src/api",
+    "@middlewares"  : "src/middlewares",
+    "@models"       : "src/models",
+    "@services"     : "src/services",
+    "@utils"        : "src/utils"
   },
   "nyc": {
     "include": "src",
     "exclude": [
       "**/*.spec.js",
       "**/*.test.js",
-      "src/api/routes/**"
+      "**/index.js"
     ]
   }
 }

@@ -1,15 +1,4 @@
 {
-  "rules": {
-    "no-console": 0,
-    "no-underscore-dangle": 0,
-    "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
-    "no-use-before-define": ["error", { "variables": false }],
-    "no-multi-str": 0,
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
-    "arrow-body-style": ["error", "as-needed"],
-    "quote-props": ["error", "consistent"],
-    "max-len": ["error", 150]
-  },
   "env": {
     "node": true,
     "mocha": true

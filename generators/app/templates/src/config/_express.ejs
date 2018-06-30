@@ -6,8 +6,8 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 const helmet = require('helmet');
 const { logs } = require('./vars');
-const error = require('../api/middlewares/error');
-const routes = require('../api/routes/<%= apiversion %>');
+const { errorMiddleware } = require('../middlewares/error');
+const api<%= apiversion %> = require('../api/<%= apiversion %>');
 
 
 /**
@@ -39,15 +39,15 @@ app.use(cors());
 // enable authentication
 
 // mount api <%= apiversion %> routes
-app.use('/<%= apibase %>/<%= apiversion %>', routes);
+app.use('/<%= apibase %>/<%= apiversion %>', api<%= apiversion %>);
 
 // if error is not an instanceOf APIError, convert it.
-app.use(error.converter);
+app.use(errorMiddleware.converter);
 
 // catch 404 and forward to error handler
-app.use(error.notFound);
+app.use(errorMiddleware.notFound);
 
 // error handler, send stacktrace only during development
-app.use(error.handler);
+app.use(errorMiddleware.handler);
 
 module.exports = app;
