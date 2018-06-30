@@ -17,10 +17,10 @@ describe('<%= name %>', () => {
 
   afterEach(() => sandbox.restore());
 
-  describe('POST /api/v1/<%= apigroup %>', () => {
+  describe('POST /api/<%= apiversion %>/<%= name %>', () => {
     it('should integrate api /<%= name %>', () => {
       return request(app)
-        .post('/api/v1/<%= apigroup %>/<%= name %>')
+        .post('/api/<%= apiversion %>/<%= name %>')
         .send(body)
         .expect(httpStatus.OK)
         .then((res) => {

@@ -125,7 +125,6 @@ module.exports = class extends Generator {
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/api'));
     copyTpl(tPath(`src/api/_index.ejs`), dPath(`src/api/index.js`), props);
-    mkdirp.sync(path.join(this.destinationPath(), `src/api/${props.apiversion}/controllers`));
     copy(tPath(`src/api/apiversion/index.js`), dPath(`src/api/${props.apiversion}/index.js`));
 
     /**

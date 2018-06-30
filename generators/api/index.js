@@ -1,19 +1,10 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-const yosay = require('yosay');
-const shelljs = require('shelljs');
-const path = require('path');
-var humanize = require('underscore.string/humanize');
-var slugify = require('underscore.string/slugify');
 var camelize = require('underscore.string/camelize');
-var mkdirp = require('mkdirp');
 var recast = require('recast');
 var _ = require('lodash');
 var rimraf = require('rimraf');
-var n = require("ast-types").namedTypes;
-var b = require("ast-types").builders;
-var json5 = require('json5');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -28,12 +19,6 @@ module.exports = class extends Generator {
     var that = this;
 
     this.prompt([
-      {
-        type:     'input',
-        name:     'apigroup',
-        message:  'What is your API group name?',
-        default:  this.config.get('last_apigroup') || 'apigroup'
-      },
       {
         type:     'input',
         name:     'name',
@@ -60,14 +45,13 @@ module.exports = class extends Generator {
       that.props.apiversion = that.config.get('apiversion');
 
       if (that.projectname == undefined || that.apiversion == undefined) {
-        console.log('Invalid Astro project!, exting');
+        console.log('Invalid Astro project!, exiting');
         process.exit();
       }
 
       this.on('end', function() {
-        this.config.set('last_apigroup', that.props.apigroup);
         this.config.set('last_endpoint', that.props.name);
-        this.config.set('last_apidewsc', that.props.apidesc);
+        this.config.set('last_apidesc', that.props.apidesc);
         this.config.set('last_method', that.props.method);
         this.config.set('apibase', that.props.apibase);
         this.config.set('apiversion', that.props.apiversion);
@@ -86,43 +70,43 @@ module.exports = class extends Generator {
     var dPath = this.destinationPath.bind(this);
 
     const name = props.name.toLowerCase();
-    const apigroup = props.apigroup.toLowerCase();
-    const controllerName = `${apigroup}.controller.js`;
-    const routeName = `${apigroup}.route.js`;
-    const validationName = `${apigroup}.validation.js`;
-    const testName = `${apigroup}.test.js`;
+    const controllerName = `${name}.controller.js`;
+    const validationName = `${name}.validation.js`;
+    const testName = `${name}.spec.js`;
+    const apiPath = `src/api/${this.apiversion}/${name}`;
     props.upperMethod = props.method.toUpperCase();
+
 
     /**
      * Controller
      */
-    if (!this.fs.exists(dPath(`src/api/controllers/${controllerName}`))) {
-      copyTpl(tPath('_controller.ejs'), dPath(`src/api/controllers/${controllerName}`), props);
+    if (!this.fs.exists(dPath(`${apiPath}/${controllerName}`))) {
+      copyTpl(tPath('_controller.ejs'), dPath(`${apiPath}/${controllerName}`), props);
     }
 
     /**
      * Route
      */
-    if (!this.fs.exists(dPath(`src/api/routes/${this.apiversion}/${routeName}`))) {
-      copyTpl(tPath('_route.ejs'), dPath(`src/api/routes/${this.apiversion}/${routeName}`), props);
+    if (!this.fs.exists(dPath(`${apiPath}/index.hs`))) {
+      copyTpl(tPath('_index.ejs'), dPath(`${apiPath}/index.js`), props);
     }
     
     /**
      * Validation
      */
-    if (!this.fs.exists(dPath(`src/api/validations/${validationName}`))) {
-      copyTpl(tPath('_validation.ejs'), dPath(`src/api/validations/${validationName}`), props);
+    if (!this.fs.exists(dPath(`${apiPath}/${validationName}`))) {
+      copyTpl(tPath('_validation.ejs'), dPath(`${apiPath}/${validationName}`), props);
     }
 
     /**
      * Integration Test
      */
-    if (!this.fs.exists(dPath(`src/api/tests/integration/${testName}`))) {
-      copyTpl(tPath('_test.ejs'), dPath(`src/api/tests/integration/${testName}`), props);
+    if (!this.fs.exists(dPath(`${apiPath}/${testName}`))) {
+      copyTpl(tPath('_spec.ejs'), dPath(`${apiPath}/${testName}`), props);
     }
 
     done();
-  }
+  } 
 
   injectApiRoutes() {
     // var done = this.async();
@@ -131,24 +115,17 @@ module.exports = class extends Generator {
     var dPath = this.destinationPath.bind(this);
 
     const name = props.name.toLowerCase();
-    const apigroup = props.apigroup.toLowerCase();
-    const routeName = `${apigroup}.route`;
-    const controllerName = `${apigroup}.controller`;
-    const validationName = `${apigroup}.validation`;
+    const routeName = `${name}`;
     
-    // Files
-    const routesFile = dPath(`src/api/routes/${this.apiversion}/index.js`);
-    const apiRouteFile = dPath(`src/api/routes/${this.apiversion}/${routeName}.js`);
-    const apiControllerFile = dPath(`src/api/controllers/${controllerName}.js`);
-    const apiValidationFile = dPath(`src/api/validations/${validationName}.js`);
+    const routeFile = dPath(`src/api/${this.apiversion}/index.js`);
 
     /**
      * Inject codes
      */
     
-    if (this.fs.exists(routesFile)) {
+    if (this.fs.exists(routeFile)) {
 
-      var ast = recast.parse(this.fs.read(routesFile));
+      var ast = recast.parse(this.fs.read(routeFile));
       var body = ast.program.body;
 
       var injectRequire = true;
@@ -167,7 +144,7 @@ module.exports = class extends Generator {
             let decl = declarations[0]
             var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
 
-            if (decl.id.name.trim() === `${apigroup}Routes` && arg.trim() === `./${routeName}`) {
+            if (decl.id.name.trim() === `${name}Route` && arg.trim() === `./${routeName}`) {
               // We found that const route = require('') already exist, so prevent from re-injecting
               injectRequire = false;
               return false;
@@ -180,8 +157,8 @@ module.exports = class extends Generator {
           const callee = path.node.callee;
           if (callee.type === 'MemberExpression') {
             const args = path.node.arguments;
-            const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${apigroup}`;
-            const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${apigroup}Routes`;
+            const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
+            const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${name}Route`;
             const isValid = callee.object.name === 'router' && callee.property.name === 'use' && validFirstArgument && validSecondArgument;
             if (isValid) {
               injectRouterUse = !isValid
@@ -193,21 +170,28 @@ module.exports = class extends Generator {
       });
 
       // Inject const = require()
+      let lastImportIndex;
       if (injectRequire) {
-        var lastImportIndex = _.findLastIndex(body, function(statement) {
+        lastImportIndex = _.findLastIndex(body, function(statement) {
           return statement.type === 'VariableDeclaration';
         });
         var actualImportCode = recast.print(body[lastImportIndex]).code;
-        var importString = ['const ', apigroup, 'Routes = require(\'./', routeName, '\');'].join('');
+        var importString = ['const ', name, 'Route = require(\'./', routeName, '\');'].join('');
+        
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 1, importString);
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 0, actualImportCode);
       }
       
+      console.log('last import', lastImportIndex);
+
+      ast = recast.parse(recast.print(ast).code);
+      body = ast.program.body;
+
       /**
        * Inject router.use() expression
        */
       if (injectRouterUse) {
-        var middlewareString = ['router.use(\'/', apigroup, '\', ', apigroup, 'Routes);'].join('');
+        var middlewareString = ['router.use(\'/', '\', ', name, 'Route);'].join('');
         var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
           if (!statement.expression || !statement.expression.callee) {
             return false;
@@ -216,189 +200,23 @@ module.exports = class extends Generator {
           return callee.object.name === 'router' && callee.property.name === 'use';
         });
 
-        
         if (lastMiddlewareIndex === -1) {
           var exportRouterIndex = _.findIndex(body, function (statement) {
-            return statement.type === 'ExportDefaultDeclaration';
+            return statement.type === 'ExpressionStatement' && statement.expression.right.name === 'router';
           });
-          body.splice(exportRouterIndex < 0 ? 0 : exportRouterIndex, 0, middlewareString);
+          body.splice(exportRouterIndex < 0 ? lastImportIndex : exportRouterIndex, 0, middlewareString);
         } else {
           var actualMiddlewareCode = recast.print(body[lastMiddlewareIndex]).code;
-          body.splice(lastMiddlewareIndex < 0 ? 0 : lastMiddlewareIndex, 1, middlewareString);
-          body.splice(lastMiddlewareIndex < 0 ? 0 : lastMiddlewareIndex, 0, actualMiddlewareCode);
+          body.splice(lastMiddlewareIndex < 0 ? lastImportIndex : lastMiddlewareIndex, 1, middlewareString);
+          body.splice(lastMiddlewareIndex < 0 ? lastImportIndex : lastMiddlewareIndex, 0, actualMiddlewareCode);
         }
       }
-
-      /**
-       * xxx.route.js router injection
-       */
-      
-      if (this.fs.exists(apiRouteFile)) {
-        var routeAst = recast.parse(this.fs.read(apiRouteFile));
-        var routeBody = routeAst.program.body;
-        var injectApiRoute = true;
-
-        recast.visit(routeAst, {
-          visitCallExpression: function(path) {
-            const callee = path.node.callee;
-            if (callee.type === 'MemberExpression') {
-              const args = path.node.arguments;
-              if (args[0]) {
-                const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
-                const isValid = callee.object.name === 'router' && callee.property.name === 'route' && validFirstArgument;
-                if (isValid) {
-                  injectApiRoute = false;
-                  return false;
-                }
-              }
-            }
-            this.traverse(path);
-          }
-        });
-
-        if (injectApiRoute) {
-          var middlewareString = [
-            `/**`,
-            `  * @api {${props.method}} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name} ${name}`,
-            `  * @apiDescription ${props.apidesc}`,
-            `  * @apiVersion 1.0.0`,
-            `  * @apiName ${name}`,
-            `  * @apiGroup ${props.apigroup}`,
-            `  * @apiPermission public`,
-            `  *`,
-            `  * @apiParam  {String} code  Test Code`,
-            `  *`,
-            `  * @apiSuccess {Number} responseCode     HTTP Response Code`,
-            `  * @apiSuccess {String} responseMessage  Response message`,
-            `  * @apiSuccess {Object} response         Response object`,
-            `  *`,
-            `  * @apiError (Bad Request 400)  ValidationError  Some parameters may contain invalid values`,
-            `  */`,
-            `router.route('/${name}')\n  .${props.method}(validate(validation.${name}), controller.${name});`
-          ].join('\n');
-
-          var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
-            if (!statement.expression || !statement.expression.callee) {
-              return false;
-            }
-            var callee = statement.expression.callee;
-            return callee.object.name === 'router' && callee.property.name === 'use';
-          });
-          
-          if (lastMiddlewareIndex === -1) {
-            var exportRouterIndex = _.findIndex(body, function (statement) {
-              return statement.type === 'ExportDefaultDeclaration';
-            });
-            routeBody.splice(exportRouterIndex < 0 ? 0 : exportRouterIndex, 0, middlewareString);
-          } else {
-            var actualMiddlewareCode = recast.print(body[lastMiddlewareIndex]).code;
-            routeBody.splice(lastMiddlewareIndex < 0 ? 0 : lastMiddlewareIndex, 0, middlewareString);
-          }
-        }
-      }
-
-      /**
-       * API Controller File Injection
-       */
-      if (this.fs.exists(apiControllerFile)) {
-        var controllerAst = recast.parse(this.fs.read(apiControllerFile));
-        var controllerBody = controllerAst.program.body;
-        var injectApiController = true;
-
-        recast.visit(controllerAst, {
-          visitAssignmentExpression: function(path) {          
-            let left = path.node.left;
-            if (left.object.name === 'exports' && left.property.name === name) {
-              injectApiController = false;
-              return false;
-            }
-            this.traverse(path);
-          },
-
-        });
-
-        if (injectApiController) {
-          var lastExportIndex = _.findLastIndex(controllerBody, function (statement) {
-            const expr = statement.expression;
-            return expr && expr.type === 'AssignmentExpression'
-          });
-          
-          const exportString = `/**\n * ${name}\n * @public\n */\nexports.${name} = async (req, res, next) => {\n\ttry {\n\t\tres.status(httpStatus.OK);\n\t\treturn res.json({ message: 'OK' });\n\t} catch (error) {\n\t\treturn next(error);\n\t}\n};`
-          controllerBody.splice(lastExportIndex < 0 ? 0 : lastExportIndex, 0, exportString);
-        }
-      }
-
-      /**
-       * Validation File Injection
-       */
-      if (this.fs.exists(apiValidationFile)) {
-        var validationAst = recast.parse(this.fs.read(apiValidationFile));
-        var validationBody = validationAst.program.body;
-        var injectApiValidation = true;
-
-        recast.visit(validationAst, {
-          visitExpression: function(path) {          
-            const value = path.value;
-            if (value && value.type === 'MemberExpression' 
-              && value.object.name === 'exports' 
-              && value.property.name === name) {
-              injectApiValidation = false;
-              return false;
-            }
-            this.traverse(path);
-          },
-
-        });
-
-        if (injectApiValidation) {
-          
-          var lastValidationIndex = _.findLastIndex(validationBody, function (statement) {
-            var expr = statement.expression;
-            return expr 
-              && expr.type === 'AssignmentExpression'
-              && expr.left.object.name === 'exports';
-          });
-``
-          const validationString = [
-            `// ${props.method.toUpperCase()} ${props.apibase}/${props.apiversion}/${props.apigroup}/${name}`,
-            `exports.${name} = {`,
-            `\tbody: { },`,
-            '};'
-          ].join('\n');
-          validationBody.splice(lastValidationIndex, 0, validationString);
-          
-        }
-      }
-
-      /**
-       * Flush the ASTs
-       */
 
       if (injectRouterUse || injectRequire) {
-        rimraf(routesFile, () => {
-          this.fs.write(routesFile, recast.print(ast).code);
+        rimraf(routeFile, () => {
+          this.fs.write(routeFile, recast.print(ast).code);
         })
-      }
-
-      if (injectApiRoute) {
-        rimraf(apiRouteFile, () => {  
-          this.fs.write(apiRouteFile, recast.print(routeAst).code);
-        });
-      }
-
-      if (injectApiController) {
-        rimraf(apiControllerFile, () => {
-          this.fs.write(apiControllerFile, recast.print(controllerAst).code);
-        });
-      }
-
-      if (injectApiValidation) {
-        rimraf(apiValidationFile, ()=> {
-          this.fs.write(apiValidationFile, recast.print(validationAst).code);
-        });
       }
     }
   }
-
-
 }

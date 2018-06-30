@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
 const _ = require('lodash');
 
-const APIError = require('../../utils/APIError');
+const { APIError } = require('../../utils/APIError');
 const {
   getErrorCode, routes, services, codes, wrapError
 } = require('../../utils/ErrorCode');
@@ -25,7 +25,12 @@ const handler = (err, req, res, next) => {
     delete response.response.stack;
   }
 
-  res.status(err.status);
+  if (err.status >= 100 && err.status < 600) {
+    res.status(err.status);
+  } else {
+    res.status(500);
+  }
+
   res.json(response);
   res.end();
 };
