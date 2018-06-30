@@ -213,4 +213,14 @@ describe('Middleware - error', () => {
     sinon.assert.calledOnce(this.jsonStub);
     sinon.assert.calledOnce(this.endStub);
   });
+
+  it('handler middleware should convert error with http status = 0, into internal server error', () => {
+    const err = new Error();
+    err.status = 0;
+    handler(err, req, res);
+
+    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
+    sinon.assert.calledOnce(this.jsonStub);
+    sinon.assert.calledOnce(this.endStub);
+  });
 });

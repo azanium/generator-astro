@@ -72,6 +72,7 @@ module.exports = class extends Generator {
     const name = props.name.toLowerCase();
     const controllerName = `${name}.controller.js`;
     const validationName = `${name}.validation.js`;
+    const integrationName = `${name}.integration.test.js`;
     const testName = `${name}.spec.js`;
     const apiPath = `src/api/${this.apiversion}/${name}`;
     props.upperMethod = props.method.toUpperCase();
@@ -99,10 +100,17 @@ module.exports = class extends Generator {
     }
 
     /**
-     * Integration Test
+     * Unit Test
      */
     if (!this.fs.exists(dPath(`${apiPath}/${testName}`))) {
       copyTpl(tPath('_spec.ejs'), dPath(`${apiPath}/${testName}`), props);
+    }
+
+    /**
+     * Integration Test
+     */
+    if (!this.fs.exists(dPath(`${apiPath}/${integrationName}`))) {
+      copyTpl(tPath('_integration.ejs'), dPath(`${apiPath}/${integrationName}`), props);
     }
 
     done();
@@ -191,7 +199,7 @@ module.exports = class extends Generator {
        * Inject router.use() expression
        */
       if (injectRouterUse) {
-        var middlewareString = ['router.use(\'/', '\', ', name, 'Route);'].join('');
+        var middlewareString = ['router.use(\'/', name, '\', ', name, 'Route);'].join('');
         var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
           if (!statement.expression || !statement.expression.callee) {
             return false;

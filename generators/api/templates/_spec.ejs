@@ -1,34 +1,17 @@
 /* eslint-disable arrow-body-style */
-const request = require('supertest');
-const httpStatus = require('http-status');
-const { expect } = require('chai');
 const sinon = require('sinon');
-const app = require('../../../index');
+// const { expect } = require('chai');
 
-const sandbox = sinon.createSandbox();
-
-
-describe('<%= name %>', () => {
-  let body;
+describe('Test <%= name %>', () => {
+  let sandbox;
 
   beforeEach(async () => {
-    body = {};
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(() => sandbox.restore());
 
-  describe('POST /api/<%= apiversion %>/<%= name %>', () => {
-    it('should integrate api /<%= name %>', () => {
-      return request(app)
-        .post('/api/<%= apiversion %>/<%= name %>')
-        .send(body)
-        .expect(httpStatus.OK)
-        .then((res) => {
-          expect(res.body).to.have.a.property('responseCode');
-          expect(res.body).to.have.a.property('responseMessage');
-          expect(res.body.responseCode).equal(200);
-          expect(res.body.responseMessage).to.be.not.empty;  // eslint-disable-line
-        });
-    });
+  it('should unit test <% name %>', () => {
   });
+
 });
