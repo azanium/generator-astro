@@ -58,6 +58,7 @@
     "starter project"
   ],
   "dependencies": {
+    "async": "^2.6.1",
     "aws-sdk": "^2.253.1",
     "axios": "^0.18.0",
     "bcryptjs": "2.4.3",

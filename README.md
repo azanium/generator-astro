@@ -24,6 +24,7 @@ Yeoman generator for building RESTful APIs and microservices using Node.js, Expr
  - API documentation geratorion with [apidoc](http://apidocjs.com)
  - Continuous integration support with [travisCI](https://travis-ci.org)
  - Monitoring with [pm2](https://github.com/Unitech/pm2)
+ - Startup boot tasks that can be used for data migrations or pre startup task runner.
 
 ## Requirements
 

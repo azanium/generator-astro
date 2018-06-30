@@ -121,6 +121,11 @@ module.exports = class extends Generator {
     copy(tPath('src/index.js'), dPath('src/index.js'));
 
     /**
+     * boot folder
+     */
+    copy(tPath('src/boot'), dPath('src/boot'));
+
+    /**
      * api folder
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/api'));
@@ -132,6 +137,7 @@ module.exports = class extends Generator {
      */
     copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
     copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
+    copy(tPath('src/config/boot.js'), dPath('src/config/boot.js'));
     
     /**
      * utils

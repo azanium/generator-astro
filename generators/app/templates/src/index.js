@@ -1,12 +1,29 @@
 require('module-alias/register');
+const async = require('async');
 
 // make bluebird default Promise
 Promise = require('bluebird'); // eslint-disable-line no-global-assign
-const { port, env } = require('./config/vars');
 const app = require('./config/express');
+const startupBoot = require('./config/boot');
+const { port, env } = require('./config/vars');
+const { logger } = require('./utils/logger');
 
 // listen to requests
-app.listen(port, () => console.info(`server started on port ${port} (${env})`));
+const serverStartup = (next) => {
+  app.listen(port, () => {
+    next();
+  });
+};
+
+startupBoot.push(serverStartup);
+
+async.waterfall(startupBoot, (err) => {
+  if (err) {
+    logger.error('Unable to start server - please restart the service', err);
+  } else {
+    logger.info(`Server started on port ${port} (${env})`);
+  }
+});
 
 /**
 * Exports express
