@@ -1,10 +1,12 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-var pascalize = require('underscore.string/camelize');
-var recast = require('recast');
-var _ = require('lodash');
-var rimraf = require('rimraf');
+const camelize = require('underscore.string/camelize');
+const underscored = require('underscore.string/underscored');
+const capitalize = require('underscore.string/capitalize');
+const recast = require('recast');
+const _ = require('lodash');
+const rimraf = require('rimraf');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -27,6 +29,10 @@ module.exports = class extends Generator {
       }
     ]).then(answers => {
       that.props = answers;
+      const originalName = `${that.props.name}`;
+      that.props.name = camelize(that.props.name, true);
+      that.props.filename = underscored(that.props.name).replace('_', '-');
+      that.props.capitalizedName = capitalize(originalName);
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exiting');
@@ -34,7 +40,7 @@ module.exports = class extends Generator {
       }
 
       this.on('end', function() {
-        this.config.set('last_boot', that.props.name);
+        this.config.set('last_boot', originalName);
       });  
 
       done();
@@ -47,17 +53,11 @@ module.exports = class extends Generator {
     var copyTpl = this.fs.copyTpl.bind(this.fs);
     var tPath = this.templatePath.bind(this);
     var dPath = this.destinationPath.bind(this);
-
-    const name = props.name.toLowerCase();
     
-    const bootName = `${name}.boot.js`;
-    const testName = `${name}.spec.js`;
+    const bootName = `${props.filename}.boot.js`;
+    const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
-
-    const targetName = `src/boot/${name}`;
-    props.pascalizedeName = pascalize(name);
-    props.name = name;
-
+    const targetName = `src/boot/${props.filename}`;
 
     /**
      * Index
@@ -88,9 +88,6 @@ module.exports = class extends Generator {
 
     var props = this.props;
     var dPath = this.destinationPath.bind(this);
-
-    const name = props.name.toLowerCase();
-    const routeName = `${name}`;
     
     const indexFile = dPath(`src/boot/index.js`);
 
@@ -118,20 +115,13 @@ module.exports = class extends Generator {
           if (declarations.length > 0) {
             let decl = declarations[0]
             var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
-            if (arg && arg.trim() === `./${name}`) {
+            if (arg && arg.trim() === `./${props.name}`) {
               injectRequire = false;
               return injectRequire;
             }
           }          
           this.traverse(path);
         },
-
-        /* visitMemberExpression: (path) => {
-          const { node } = path;
-          const isModuleExport = node.object.name === 'module' && node.property.name === 'exports';
-
-          this.traverse(path);
-        }*/
       });
 
       // Inject const = require()
@@ -141,7 +131,7 @@ module.exports = class extends Generator {
           return statement.type === 'VariableDeclaration';
         });
         var actualImportCode = recast.print(body[lastImportIndex]).code;
-        var importString = ['const { ', name, 'Boot } = require(\'./', routeName, '\');'].join('');
+        var importString = ['const { ', props.name, 'Boot } = require(\'./', props.filename, '\');'].join('');
         
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 1, importString);
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 0, actualImportCode);
@@ -168,7 +158,7 @@ module.exports = class extends Generator {
         // We first create the declaration
         let exportString = 'module.exports = [\n';
 
-        const bootName = `${name}Boot`
+        const bootName = `${props.name}Boot`;
 
         // Add our boot name into the array 
         exportString += `\t${bootName}`;
