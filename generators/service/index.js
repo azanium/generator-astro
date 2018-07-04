@@ -1,10 +1,9 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-var pascalize = require('underscore.string/capitalize');
-var recast = require('recast');
-var _ = require('lodash');
-var rimraf = require('rimraf');
+const camelize = require('underscore.string/camelize');
+const underscored = require('underscore.string/underscored');
+const capitalize = require('underscore.string/capitalize');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -15,8 +14,8 @@ module.exports = class extends Generator {
   }
 
   prompting() {
-    var done = this.async();
-    var that = this;
+    const done = this.async();
+    const that = this;
 
     this.prompt([
       {
@@ -27,6 +26,10 @@ module.exports = class extends Generator {
       }
     ]).then(answers => {
       that.props = answers;
+      const originalService = `${that.props.service}`;
+      that.props.service = camelize(that.props.service, true);
+      that.props.filename = underscored(that.props.service).replace('_', '-');
+      that.props.capitalizedService = capitalize(originalService);
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exiting');
@@ -34,7 +37,7 @@ module.exports = class extends Generator {
       }
 
       this.on('end', function() {
-        this.config.set('last_service', that.props.service);
+        this.config.set('last_service', originalService);
       });  
 
       done();
@@ -48,17 +51,11 @@ module.exports = class extends Generator {
     var tPath = this.templatePath.bind(this);
     var dPath = this.destinationPath.bind(this);
 
-    const service = props.service.toLowerCase();
-    const loweredService = service.toLowerCase();
-
-    const serviceName = `${service}.service.js`;
-    const testName = `${service}.spec.js`;
+    const serviceName = `${props.filename}.service.js`;
+    const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
-
-    const targetName = `src/services/${loweredService}`;
-    props.pascalizedService = pascalize(service);
-
-
+    const targetName = `src/services/${props.filename}`;
+    
     /**
      * Index
      */
