@@ -1,9 +1,9 @@
 /* eslint-disable arrow-body-style */
 const sinon = require('sinon');
 // const { expect } = require('chai');
-// const util = require('./<%= util %>')
+// const util = require('./<%= filename %>.util');
 
-describe('Utility - <%= util %>', () => {
+describe('Utility - <%= name %>', () => {
   let sandbox;
 
   beforeEach(async () => {
@@ -12,6 +12,6 @@ describe('Utility - <%= util %>', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should unit test <% util %>', () => {
+  it('should unit test <% name %>', () => {
   });
 });

@@ -1,7 +1,9 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-var pascalize = require('underscore.string/capitalize');
+const camelize = require('underscore.string/camelize');
+const underscored = require('underscore.string/underscored');
+const capitalize = require('underscore.string/capitalize');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -18,12 +20,16 @@ module.exports = class extends Generator {
     this.prompt([
       {
         type:     'input',
-        name:     'util',
+        name:     'name',
         message:  'Utility name?',
         default:  this.config.get('last_util') || 'util'
       }
     ]).then(answers => {
       that.props = answers;
+      const originalName = `${that.props.name}`;
+      that.props.name = camelize(that.props.name, true);
+      that.props.filename = underscored(that.props.name).replace('_', '-');
+      that.props.capitalizedName = capitalize(that.props.name);
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exiting');
@@ -31,7 +37,7 @@ module.exports = class extends Generator {
       }
 
       this.on('end', function() {
-        this.config.set('last_util', that.props.util);
+        this.config.set('last_util', originalName);
       });  
 
       done();
@@ -45,16 +51,11 @@ module.exports = class extends Generator {
     var tPath = this.templatePath.bind(this);
     var dPath = this.destinationPath.bind(this);
 
-    const util = props.util.toLowerCase();
-    const loweredUtil = util.toLowerCase();
-
-    const utilName = `${util}.util.js`;
-    const testName = `${util}.spec.js`;
+    const utilName = `${props.filename}.util.js`;
+    const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
-
-    const targetName = `src/utils/${loweredUtil}`;
-    props.pascalizedeUtil = pascalize(utilName);
-
+    const targetName = `src/utils/${props.filename}`;
+    
 
     /**
      * Index
