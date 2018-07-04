@@ -1,7 +1,9 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-var pascalize = require('underscore.string/capitalize');
+const camelize = require('underscore.string/camelize');
+const underscored = require('underscore.string/underscored');
+const capitalize = require('underscore.string/capitalize');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -24,6 +26,10 @@ module.exports = class extends Generator {
       }
     ]).then(answers => {
       that.props = answers;
+      const originalName = `${that.props.name}`;
+      that.props.name = camelize(that.props.name, true);
+      that.props.filename = underscored(that.props.name).replace('_', '-');
+      that.props.capitalizedName = capitalize(that.props.name);
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exiting');
@@ -31,7 +37,7 @@ module.exports = class extends Generator {
       }
 
       this.on('end', function() {
-        this.config.set('last_middleware', that.props.middleware);
+        this.config.set('last_middleware', originalName);
       });  
 
       done();
@@ -45,16 +51,10 @@ module.exports = class extends Generator {
     var tPath = this.templatePath.bind(this);
     var dPath = this.destinationPath.bind(this);
 
-    const name = props.name.toLowerCase();
-    const loweredName = name.toLowerCase();
-
-    const middlewareName = `${name}.middleware.js`;
-    const testName = `${name}.spec.js`;
+    const middlewareName = `${props.filename}.middleware.js`;
+    const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
-
-    const targetName = `src/middlewares/${loweredName}`;
-    props.pascalizedeName = pascalize(name);
-
+    const targetName = `src/middlewares/${props.filename}`;
 
     /**
      * Index
