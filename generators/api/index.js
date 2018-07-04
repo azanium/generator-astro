@@ -2,6 +2,7 @@
 
 const Generator = require('yeoman-generator');
 var camelize = require('underscore.string/camelize');
+var underscored = require('underscore.string/underscored');
 var recast = require('recast');
 var _ = require('lodash');
 var rimraf = require('rimraf');
@@ -43,6 +44,11 @@ module.exports = class extends Generator {
       that.props.injectRoute = false;
       that.props.apibase = that.config.get('apibase');
       that.props.apiversion = that.config.get('apiversion');
+      that.props.endpoint = `${that.props.name}`;
+      that.props.name = camelize(that.props.name, true);
+      that.props.filename = underscored(that.props.name).replace('_', '-');
+      that.props.upperMethod = that.props.method.toUpperCase();
+  
 
       if (that.projectname == undefined || that.apiversion == undefined) {
         console.log('Invalid Astro project!, exiting');
@@ -50,7 +56,7 @@ module.exports = class extends Generator {
       }
 
       this.on('end', function() {
-        this.config.set('last_endpoint', that.props.name);
+        this.config.set('last_endpoint', that.props.endpoint);
         this.config.set('last_apidesc', that.props.apidesc);
         this.config.set('last_method', that.props.method);
         this.config.set('apibase', that.props.apibase);
@@ -62,22 +68,18 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    var that = this;
     var done = this.async();
     var props = this.props;
     var copyTpl = this.fs.copyTpl.bind(this.fs);
     var tPath = this.templatePath.bind(this);
     var dPath = this.destinationPath.bind(this);
 
-    const name = props.name.toLowerCase();
-    const controllerName = `${name}.controller.js`;
-    const validationName = `${name}.validation.js`;
-    const integrationName = `${name}.integration.test.js`;
-    const testName = `${name}.spec.js`;
-    const apiPath = `src/api/${this.apiversion}/${name}`;
-    props.upperMethod = props.method.toUpperCase();
-
-
+    const controllerName = `${props.filename}.controller.js`;
+    const validationName = `${props.filename}.validation.js`;
+    const integrationName = `${props.filename}.integration.test.js`;
+    const testName = `${props.filename}.spec.js`;
+    const apiPath = `src/api/${this.apiversion}/${props.filename}`;
+    
     /**
      * Controller
      */
@@ -122,9 +124,7 @@ module.exports = class extends Generator {
     var props = this.props;
     var dPath = this.destinationPath.bind(this);
 
-    const name = props.name.toLowerCase();
-    const routeName = `${name}`;
-    
+    const routeName = `${props.filename}`;
     const routeFile = dPath(`src/api/${this.apiversion}/index.js`);
 
     /**
@@ -152,7 +152,7 @@ module.exports = class extends Generator {
             let decl = declarations[0]
             var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
 
-            if (decl.id.name.trim() === `${name}Route` && arg.trim() === `./${routeName}`) {
+            if (decl.id.name.trim() === `${props.name}Route` && arg.trim() === `./${routeName}`) {
               // We found that const route = require('') already exist, so prevent from re-injecting
               injectRequire = false;
               return false;
@@ -165,8 +165,8 @@ module.exports = class extends Generator {
           const callee = path.node.callee;
           if (callee.type === 'MemberExpression') {
             const args = path.node.arguments;
-            const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${name}`;
-            const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${name}Route`;
+            const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${props.name}`;
+            const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${props.name}Route`;
             const isValid = callee.object.name === 'router' && callee.property.name === 'use' && validFirstArgument && validSecondArgument;
             if (isValid) {
               injectRouterUse = !isValid
@@ -184,13 +184,11 @@ module.exports = class extends Generator {
           return statement.type === 'VariableDeclaration';
         });
         var actualImportCode = recast.print(body[lastImportIndex]).code;
-        var importString = ['const ', name, 'Route = require(\'./', routeName, '\');'].join('');
+        var importString = ['const ', props.name, 'Route = require(\'./', routeName, '\');'].join('');
         
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 1, importString);
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 0, actualImportCode);
       }
-      
-      console.log('last import', lastImportIndex);
 
       ast = recast.parse(recast.print(ast).code);
       body = ast.program.body;
@@ -199,7 +197,7 @@ module.exports = class extends Generator {
        * Inject router.use() expression
        */
       if (injectRouterUse) {
-        var middlewareString = ['router.use(\'/', name, '\', ', name, 'Route);'].join('');
+        var middlewareString = ['router.use(\'/', props.endpoint, '\', ', props.name, 'Route);'].join('');
         var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
           if (!statement.expression || !statement.expression.callee) {
             return false;

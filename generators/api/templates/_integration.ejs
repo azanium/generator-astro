@@ -7,7 +7,7 @@ const app = require('../../../index');
 
 const sandbox = sinon.createSandbox();
 
-describe('POST /api/<%= apiversion %>/<%= name %>', () => {
+describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
   let body;
 
   beforeEach(async () => {
@@ -16,9 +16,9 @@ describe('POST /api/<%= apiversion %>/<%= name %>', () => {
 
   afterEach(() => sandbox.restore());
 
-  it('should integrate api /<%= name %>', () => {
+  it('should integrate api /<%= endpoint %>', () => {
     return request(app)
-      .post('/api/<%= apiversion %>/<%= name %>')
+      .post('/api/<%= apiversion %>/<%= endpoint %>')
       .send(body)
       .expect(httpStatus.OK)
       .then((res) => {
