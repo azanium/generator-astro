@@ -95,7 +95,7 @@ module.exports = class extends Generator {
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
     copy(tPath('_.eslintrc'), dPath('.eslintrc'));
-    copyTpl(tPath('_README.md'), dPath('README'), props);
+    copyTpl(tPath('_README.md'), dPath('README.md'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
 
