@@ -152,7 +152,8 @@ module.exports = class extends Generator {
             let decl = declarations[0]
             var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
 
-            if (decl.id.name.trim() === `${props.name}Route` && arg.trim() === `./${routeName}`) {
+            // console.log('==>', decl.id.name);
+            if (decl.id.name === `${props.name}Route` && arg.trim() === `./${routeName}`) {
               // We found that const route = require('') already exist, so prevent from re-injecting
               injectRequire = false;
               return false;
