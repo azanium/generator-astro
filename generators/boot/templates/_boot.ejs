@@ -5,7 +5,7 @@
 
 const { logger } = require('../../utils/logger');
 
-const <%= name %>Boot = (next) => {
+const <%= name %>Boot = (app, next) => {
   logger.info('Starting <%= name %> boot task..');
   next();
 };

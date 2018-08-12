@@ -15,9 +15,13 @@ const serverStartup = (next) => {
   });
 };
 
-startupBoot.push(serverStartup);
+const startupTasks = [];
+startupBoot.forEach((boot) => {
+  startupTasks.push(async.apply(boot, app));
+});
+startupTasks.push(serverStartup);
 
-async.waterfall(startupBoot, (err) => {
+async.waterfall(startupTasks, (err) => {
   if (err) {
     logger.error('Unable to start server - please restart the service', err);
   } else {

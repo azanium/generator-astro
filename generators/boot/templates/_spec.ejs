@@ -13,8 +13,9 @@ describe('Boot - <%= name %>Boot', () => {
 
   it('should run task and pass sequence to next boot task', () => {
     const nextSpy = sandbox.spy();
+    const app = {};
 
-    <%= name %>Boot(nextSpy);
+    <%= name %>Boot(app, nextSpy);
 
     sinon.assert.calledOnce(nextSpy);
   });
