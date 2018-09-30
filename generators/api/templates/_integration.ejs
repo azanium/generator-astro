@@ -18,7 +18,7 @@ describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
 
   it('should integrate api /<%= endpoint %>', () => {
     return request(app)
-      .post('/<%= apibase %>/<%= apiversion %>/<%= endpoint %>')
+      .<%= method %>('/<%= apibase %>/<%= apiversion %>/<%= endpoint %>')
       .send(body)
       .expect(httpStatus.OK)
       .then((res) => {

@@ -70,6 +70,7 @@
     "cross-env": "^5.0.1",
     "dotenv-safe": "^5.0.1",
     "express": "^4.15.2",
+    "express-interceptor": "^1.2.0",
     "express-validation": "^1.0.2",
     "helmet": "^3.5.0",
     "http-status": "^1.0.1",
@@ -86,6 +87,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "4.0.0",
     "pm2": "^2.4.6",
+    "response-time": "^2.3.2",
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
     "winston-cloudwatch": "^2.0.2"
@@ -105,6 +107,7 @@
     "nodemon": "^1.11.0",
     "nyc": "^13.0.0",
     "opn-cli": "^3.1.0",
+    "rewire": "^4.0.1",
     "sinon": "^4.0.1",
     "sinon-chai": "^3.0.0",
     "supertest": "^3.0.0"
