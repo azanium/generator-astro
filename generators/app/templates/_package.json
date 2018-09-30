@@ -87,17 +87,17 @@
     "passport-jwt": "4.0.0",
     "pm2": "^2.4.6",
     "uuid": "^3.1.0",
-    "winston": "^2.1.1",
-    "winston-cloudwatch": "^1.13.1"
+    "winston": "^3.1.0",
+    "winston-cloudwatch": "^2.0.2"
   },
   "devDependencies": {
     "apidoc": "^0.17.6",
     "chai": "^4.1.0",
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.0",
-    "eslint": "^4.2.0",
-    "eslint-config-astro": "^1.0.3",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint": "^5.6.1",
+    "eslint-config-astro": "^1.0.6",
+    "eslint-plugin-import": "^2.14.0",
     "husky": "^0.14.3",
     "mocha": "^5.2.0",
     "mock-express-request": "^0.2.2",

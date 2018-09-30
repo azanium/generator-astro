@@ -26,7 +26,6 @@
   "homepage": "https://github.com/azanium/generator-astro#readme.md",
   "dependencies": {
     "decamelize": "^2.0.0",
-    "eslint-config-astro": "^1.0.3",
     "json5": "^1.0.1",
     "lodash": "^4.17.10",
     "recast": "^0.15.0",
@@ -39,5 +38,10 @@
   },
   "files": [
     "generators"
-  ]
+  ],
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-astro": "^1.0.6",
+    "eslint-plugin-import": "^2.14.0"
+  }
 }

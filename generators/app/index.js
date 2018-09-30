@@ -136,7 +136,7 @@ module.exports = class extends Generator {
      * config folder
      */
     copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
-    copy(tPath('src/config/vars.js'), dPath('src/config/vars.js'));
+    copyTpl(tPath('src/config/vars.js'), dPath('src/config/vars.js'), props);
     
     /**
      * utils

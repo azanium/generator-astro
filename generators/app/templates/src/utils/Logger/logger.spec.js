@@ -1,7 +1,9 @@
 const { describe, it } = require('mocha');
 const sinon = require('sinon');
 const MockRequest = require('mock-express-request');
-const { logger } = require('./logger');
+const rewire = require('rewire');
+
+const util = rewire('./logger');
 
 const sandbox = sinon.createSandbox();
 
@@ -10,25 +12,83 @@ const request = new MockRequest({
   url: '/api/status'
 });
 
-describe('Utils - logger', () => {
+describe('Utility - logger', () => {
   const req = request;
+  let infoSpy;
+  let errorSpy;
+  let debugSpy;
+  let warnSpy;
 
   beforeEach(() => {
+    infoSpy = sandbox.spy(util.logger, 'info');
+    errorSpy = sandbox.spy(util.logger, 'error');
+    debugSpy = sandbox.spy(util.logger, 'debug');
+    warnSpy = sandbox.spy(util.logger, 'warn');
   });
 
   afterEach(() => sandbox.restore());
 
   it('should write info log stream', () => {
-    const infoStub = sandbox.stub(logger, 'info');
-    logger.stream.write(req);
+    util.logger.stream.write(req);
 
-    sinon.assert.calledOnce(infoStub);
+    sinon.assert.calledOnce(infoSpy);
   });
 
   it('should write error log stream', () => {
-    const errorStub = sandbox.stub(logger, 'error');
-    logger.streamError.write(req);
+    util.logger.streamError.write(req);
 
-    sinon.assert.calledOnce(errorStub);
+    sinon.assert.calledOnce(errorSpy);
+  });
+
+  it('should write debug log', () => {
+    util.debug('method', 'message', { data: 1 });
+
+    sinon.assert.calledOnce(debugSpy);
+  });
+
+  it('should write warn log', () => {
+    util.warn('method', 'message', {}, {});
+
+    sinon.assert.calledOnce(warnSpy);
+  });
+
+  it('should capture error', () => {
+    util.captureError('title', { message: 'error' }, 'method');
+
+    sinon.assert.calledOnce(errorSpy);
+  });
+
+  it('should capture error response', () => {
+    const methodName = 'method';
+    const errorMessage = 'error';
+    const response = 'stupid';
+
+    const error = {
+      message: errorMessage,
+      response: {
+        data: response
+      }
+    };
+    util.captureError('title', error, methodName);
+
+    sinon.assert.calledOnce(errorSpy);
+  });
+
+  it('should capture error response with stack', () => {
+    const methodName = 'method';
+    const errorMessage = 'error';
+    const response = 'stupid';
+    const stack = 'stack';
+
+    const error = {
+      message: errorMessage,
+      response: {
+        data: response
+      },
+      stack
+    };
+    util.captureError('title', error, methodName);
+
+    sinon.assert.calledOnce(errorSpy);
   });
 });

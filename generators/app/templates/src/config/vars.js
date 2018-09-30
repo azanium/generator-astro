@@ -11,5 +11,5 @@ module.exports = {
   port: process.env.PORT,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpirationInterval: process.env.JWT_EXPIRATION_MINUTES,
-  logs: 'dev'
+  serviceName: '<%= name %>'
 };
