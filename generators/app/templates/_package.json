@@ -136,7 +136,6 @@
       "!src/**/*.validation.js",
       "!<rootDir>/node_modules/"
     ],
-    "collectCoverage": true,
     "coverageReporters": [
       "json",
       "html",

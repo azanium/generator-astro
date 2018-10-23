@@ -1,22 +1,17 @@
 /* eslint-disable arrow-body-style */
-const sinon = require('sinon');
 const { <%= name %>Boot } = require('./<%= filename %>.boot');
 
 describe('Boot - <%= name %>Boot', () => {
-  let sandbox;
+  beforeEach(() => {});
 
-  beforeEach(async () => {
-    sandbox = sinon.createSandbox();
-  });
+  afterEach(() => {});
 
-  afterEach(() => sandbox.restore());
-
-  it('should run task and pass sequence to next boot task', () => {
-    const nextSpy = sandbox.spy();
+  it('should run task and pass sequence to next boot task', (done) => {
     const app = {};
 
-    <%= name %>Boot(app, nextSpy);
-
-    sinon.assert.calledOnce(nextSpy);
+    <%= name %>Boot(app, (err) => {
+      expect(err).toBe(undefined);
+      done();
+    });
   });
 });
