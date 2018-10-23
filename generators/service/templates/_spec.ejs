@@ -1,17 +1,12 @@
 /* eslint-disable arrow-body-style */
-const sinon = require('sinon');
-// const { expect } = require('chai');
-// const service = require('./<%= filename %>.service');
+const service = require('./<%= filename %>.service');
 
 describe('Service - <%= service %>', () => {
-  let sandbox;
+  beforeEach(() => {});
 
-  beforeEach(async () => {
-    sandbox = sinon.createSandbox();
-  });
+  afterEach(() => {});
 
-  afterEach(() => sandbox.restore());
-
-  it('should unit test <% service %>', () => {
+  it('TODO: should do unit test for <% service %>', () => {
+    service();
   });
 });
