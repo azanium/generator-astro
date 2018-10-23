@@ -10,9 +10,13 @@ const { logger } = require('./utils/logger');
 
 // listen to requests
 const serverStartup = (next) => {
-  app.listen(port, () => {
+  if (process.env.NODE_ENV !== 'test') {
+    app.listen(port, () => {
+      next();
+    });
+  } else {
     next();
-  });
+  }
 };
 
 const startupTasks = [];

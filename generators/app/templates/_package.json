@@ -18,10 +18,10 @@
     "lint": "eslint **/*.js --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
-    "test": "cross-env NODE_ENV=test jest --coverage --coverageDirectory=coverage",
-    "test:unit": "cross-env NODE_ENV=test jest --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
-    "test:integration": "cross-env NODE_ENV=test jest --testPathPattern=\"(/src/.*)\\.(test).js$\"",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage",
+    "test:unit": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
+    "test:integration": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --forceExit --detectOpenHandles",
     "validate": "yarn lint && yarn test",
     "postpublish": "git push --tags",
     "docs": "apidoc -i src -o docs",
@@ -125,7 +125,24 @@
     "moduleFileExtensions": [
       "js"
     ],
+    "testPathIgnorePatterns": [
+      "\\index.js$",
+      "(/src/.*)\\.(validation|config|index).js$"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/config/**",
+      "!src/**/index.js",
+      "!src/**/*.validation.js",
+      "!<rootDir>/node_modules/"
+    ],
     "collectCoverage": true,
-    "coverageReporters": ["json", "html", "lcov", "text", "clover"]
+    "coverageReporters": [
+      "json",
+      "html",
+      "lcov",
+      "text",
+      "clover"
+    ]
   }
 }
