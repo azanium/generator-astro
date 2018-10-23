@@ -1,10 +1,5 @@
-const { describe, it } = require('mocha');
-const { expect } = require('chai');
 const httpStatus = require('http-status');
-const sinon = require('sinon');
 const APIError = require('./APIError');
-
-const sandbox = sinon.createSandbox();
 
 describe('Utils - APIError', () => {
   const message = 'message';
@@ -18,7 +13,7 @@ describe('Utils - APIError', () => {
   });
 
   afterEach(() => {
-    sandbox.restore();
+    jest.resetAllMocks();
   });
 
   it('should create a valid default APIError', () => {
@@ -27,17 +22,17 @@ describe('Utils - APIError', () => {
       errors,
       stack
     });
-    expect(sut).to.have.property('message');
-    expect(sut).to.have.property('errors');
-    expect(sut).to.have.property('route');
-    expect(sut).to.have.property('stack');
-    expect(sut).to.have.property('status');
-    expect(sut).to.have.property('isPublic');
-    expect(sut.message).equal(message);
-    expect(sut.errors).to.be.empty; // eslint-disable-line
-    expect(sut.route).equal('default');
-    expect(sut.status).equal(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(sut.isPublic).equal(false);
+    expect(sut).toHaveProperty('message');
+    expect(sut).toHaveProperty('errors');
+    expect(sut).toHaveProperty('route');
+    expect(sut).toHaveProperty('stack');
+    expect(sut).toHaveProperty('status');
+    expect(sut).toHaveProperty('isPublic');
+    expect(sut.message).toBe(message);
+    expect(sut.errors).toEqual([]);
+    expect(sut.route).toBe('default');
+    expect(sut.status).toBe(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(sut.isPublic).toBe(false);
   });
 
   it('should create a valid custom APIError', () => {
@@ -49,16 +44,16 @@ describe('Utils - APIError', () => {
       status,
       isPublic
     });
-    expect(sut).to.have.property('message');
-    expect(sut).to.have.property('errors');
-    expect(sut).to.have.property('route');
-    expect(sut).to.have.property('stack');
-    expect(sut).to.have.property('status');
-    expect(sut).to.have.property('isPublic');
-    expect(sut.message).equal(message);
-    expect(sut.errors).to.be.empty; // eslint-disable-line
-    expect(sut.route).equal(route);
-    expect(sut.status).equal(status);
-    expect(sut.isPublic).equal(isPublic);
+    expect(sut).toHaveProperty('message');
+    expect(sut).toHaveProperty('errors');
+    expect(sut).toHaveProperty('route');
+    expect(sut).toHaveProperty('stack');
+    expect(sut).toHaveProperty('status');
+    expect(sut).toHaveProperty('isPublic');
+    expect(sut.message).toBe(message);
+    expect(sut.errors).toEqual([]); // eslint-disable-line
+    expect(sut.route).toBe(route);
+    expect(sut.status).toBe(status);
+    expect(sut.isPublic).toBe(isPublic);
   });
 });

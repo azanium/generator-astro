@@ -1,25 +1,20 @@
-const sinon = require('sinon');
 const httpStatus = require('http-status');
-const { expect } = require('chai');
 const request = require('supertest');
 const express = require('express');
-const rewire = require('rewire');
+const middleware = require('./monitoring.middleware');
 
-const monitoringMiddleware = rewire('./monitoring.middleware');
+jest.mock('../../utils/logger');
+const { logger } = require('../../utils/logger');
+
 
 describe('Middleware - monitoringMiddleware', () => {
-  let sandbox;
   let app;
-  let loggerStub;
 
   beforeEach(async () => {
-    sandbox = sinon.createSandbox();
     app = express();
-    const logger = monitoringMiddleware.__get__('logger');
-    loggerStub = sandbox.stub(logger, 'info');
   });
 
-  afterEach(() => sandbox.restore());
+  afterEach(() => {});
 
   it('should pass request', () => {
     app.use((req, res, next) => {
@@ -30,7 +25,7 @@ describe('Middleware - monitoringMiddleware', () => {
       };
       next();
     });
-    app.use(monitoringMiddleware);
+    app.use(middleware);
     const router = express.Router();
     app.use('/', router);
 
@@ -42,9 +37,8 @@ describe('Middleware - monitoringMiddleware', () => {
       .get('/health')
       .set('useragent', 'Something')
       .expect(httpStatus.OK)
-      .then((res) => {
-        expect(res.text).equal('OK');
-        sinon.assert.calledOnce(loggerStub);
+      .then(() => {
+        expect(logger.info).toBeCalledTimes(1);
       });
   });
 });

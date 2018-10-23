@@ -1,15 +1,9 @@
-const { describe, it } = require('mocha');
-const sinon = require('sinon');
-const MockRequest = require('mock-express-request');
-const rewire = require('rewire');
+const { Request } = require('jest-express/lib/request');
+const util = require('./logger');
 
-const util = rewire('./logger');
 
-const sandbox = sinon.createSandbox();
-
-const request = new MockRequest({
-  method: 'PUT',
-  url: '/api/status'
+const request = new Request('/api/status', {
+  method: 'PUT'
 });
 
 describe('Utility - logger', () => {
@@ -20,42 +14,44 @@ describe('Utility - logger', () => {
   let warnSpy;
 
   beforeEach(() => {
-    infoSpy = sandbox.spy(util.logger, 'info');
-    errorSpy = sandbox.spy(util.logger, 'error');
-    debugSpy = sandbox.spy(util.logger, 'debug');
-    warnSpy = sandbox.spy(util.logger, 'warn');
+    infoSpy = jest.spyOn(util.logger, 'info');
+    errorSpy = jest.spyOn(util.logger, 'error');
+    debugSpy = jest.spyOn(util.logger, 'debug');
+    warnSpy = jest.spyOn(util.logger, 'warn');
   });
 
-  afterEach(() => sandbox.restore());
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-  it('should write info log stream', () => {
+  test('should write info log stream', () => {
     util.logger.stream.write(req);
 
-    sinon.assert.calledOnce(infoSpy);
+    expect(infoSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should write error log stream', () => {
     util.logger.streamError.write(req);
 
-    sinon.assert.calledOnce(errorSpy);
+    expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should write debug log', () => {
     util.debug('method', 'message', { data: 1 });
 
-    sinon.assert.calledOnce(debugSpy);
+    expect(debugSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should write warn log', () => {
     util.warn('method', 'message', {}, {});
 
-    sinon.assert.calledOnce(warnSpy);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should capture error', () => {
     util.captureError('title', { message: 'error' }, 'method');
 
-    sinon.assert.calledOnce(errorSpy);
+    expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should capture error response', () => {
@@ -71,7 +67,7 @@ describe('Utility - logger', () => {
     };
     util.captureError('title', error, methodName);
 
-    sinon.assert.calledOnce(errorSpy);
+    expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should capture error response with stack', () => {
@@ -89,6 +85,6 @@ describe('Utility - logger', () => {
     };
     util.captureError('title', error, methodName);
 
-    sinon.assert.calledOnce(errorSpy);
+    expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 });

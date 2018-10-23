@@ -24,6 +24,7 @@ startupTasks.push(serverStartup);
 async.waterfall(startupTasks, (err) => {
   if (err) {
     logger.error('Unable to start server - please restart the service', err);
+    process.exit(1);
   } else {
     logger.info(`Server started on port ${port} (${env})`);
   }

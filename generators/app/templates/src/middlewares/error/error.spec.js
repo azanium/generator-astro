@@ -1,12 +1,12 @@
 /* eslint-disable arrow-body-style */
 
 const httpStatus = require('http-status');
-const sinon = require('sinon');
-const MockRequest = require('mock-express-request');
-const MockResponse = require('mock-express-response');
+const { Request } = require('jest-express/lib/request');
+const { Response } = require('jest-express/lib/response');
+const toBeType = require('jest-tobetype');
 
-const { describe, it } = require('mocha');
-const { expect } = require('chai');
+expect.extend(toBeType);
+
 const { ValidationError } = require('express-validation');
 const {
   converter,
@@ -18,11 +18,9 @@ const {
 } = require('./error');
 
 
-const sandbox = sinon.createSandbox();
-const response = new MockResponse();
-const request = new MockRequest({
-  method: 'PUT',
-  url: '/api/v1/auth/login'
+const response = new Response();
+const request = new Request('/api/v1/auth/login', {
+  method: 'PUT'
 });
 
 describe('Middleware - error', () => {
@@ -39,147 +37,154 @@ describe('Middleware - error', () => {
   });
 
   beforeEach(() => {
-    this.statusStub = sandbox.stub(res, 'status');
-    this.jsonStub = sandbox.stub(res, 'json');
-    this.endStub = sandbox.stub(res, 'end');
+    this.statusStub = jest.spyOn(res, 'status');
+    this.jsonStub = jest.spyOn(res, 'json');
+    this.endStub = jest.spyOn(res, 'end');
   });
 
   afterEach(() => {
-    sandbox.restore();
+    jest.resetAllMocks();
   });
 
   it('should convert validation error into API error with custom route', () => {
-    req.path = '/idp/v1/auth/invalid';
+    req.path = '/api/v1/auth/error';
     const route = 'root';
     validationError.route = route;
     const apiError = convertValidationError(validationError, req);
 
-    expect(apiError).to.have.a.property('name');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('status');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('isPublic');
-    expect(apiError).to.have.a.property('route');
-    expect(apiError).to.have.a.property('isOperational');
-    expect(apiError.name).equal('APIError');
-    expect(apiError.status).equal(httpStatus.BAD_REQUEST);
-    expect(apiError.errors).to.be.an('array').that.is.not.empty;  // eslint-disable-line
-    expect(apiError.errors[0]).to.have.property('errorCode');
-    expect(apiError.errors[0].errorCode).equal('api:v1:auth:login:validationError');
-    expect(apiError.errors[0]).to.have.property('errorTitle');
-    expect(apiError.errors[0].errorTitle).equal('We seems to have a problem!');
-    expect(apiError.errors[0]).to.have.property('errorDescription');
-    expect(apiError.errors[0].errorDescription).equal('We have some trouble validating your data - please contact our customer support');
-    expect(apiError.errors[0]).to.have.property('errorDebugDescription');
-    expect(apiError.errors[0].errorDebugDescription).equal('"nonce" is required');
-    expect(apiError.route).equal(route);
+    expect(apiError).toHaveProperty('name');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('status');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('isPublic');
+    expect(apiError).toHaveProperty('route');
+    expect(apiError).toHaveProperty('isOperational');
+    expect(apiError.name).toBe('APIError');
+    expect(apiError.status).toBe(httpStatus.BAD_REQUEST);
+    expect(apiError.errors).toBeType('array');
+    expect(apiError.errors).not.toHaveLength(0);
+    expect(apiError.errors[0]).toHaveProperty('errorCode');
+    expect(apiError.errors[0].errorCode).toBe('api:v1:auth:error:validationError');
+    expect(apiError.errors[0]).toHaveProperty('errorTitle');
+    expect(apiError.errors[0].errorTitle).toBe('We seems to have a problem!');
+    expect(apiError.errors[0]).toHaveProperty('errorDescription');
+    expect(apiError.errors[0].errorDescription).toBe('We have some trouble validating your data - please contact our customer support');
+    expect(apiError.errors[0]).toHaveProperty('errorDebugDescription');
+    expect(apiError.errors[0].errorDebugDescription).toBe('"nonce" is required');
+    expect(apiError.route).toBe(route);
   });
 
   it('should convert validation error into API error with default route', () => {
-    req.path = '/idp/v1/auth/invalid';
+    req.path = '/api/v1/auth/error';
 
     delete validationError.route;
     const apiError = convertValidationError(validationError, req);
 
-    expect(apiError).to.have.a.property('name');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('status');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('isPublic');
-    expect(apiError).to.have.a.property('route');
-    expect(apiError).to.have.a.property('isOperational');
-    expect(apiError.name).equal('APIError');
-    expect(apiError.status).equal(httpStatus.BAD_REQUEST);
-    expect(apiError.errors).to.be.an('array').that.is.not.empty;  // eslint-disable-line
-    expect(apiError.errors[0]).to.have.property('errorCode');
-    expect(apiError.errors[0].errorCode).equal('api:v1:auth:login:validationError');
-    expect(apiError.errors[0]).to.have.property('errorTitle');
-    expect(apiError.errors[0].errorTitle).equal('We seems to have a problem!');
-    expect(apiError.errors[0]).to.have.property('errorDescription');
-    expect(apiError.errors[0].errorDescription).equal('We have some trouble validating your data - please contact our customer support');
-    expect(apiError.errors[0]).to.have.property('errorDebugDescription');
-    expect(apiError.errors[0].errorDebugDescription).equal('"nonce" is required');
-    expect(apiError.route).equal('default');
+    expect(apiError).toHaveProperty('name');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('status');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('isPublic');
+    expect(apiError).toHaveProperty('route');
+    expect(apiError).toHaveProperty('isOperational');
+    expect(apiError.name).toBe('APIError');
+    expect(apiError.status).toBe(httpStatus.BAD_REQUEST);
+    expect(apiError.errors).toBeType('array');
+    expect(apiError.errors).not.toHaveLength(0);
+    expect(apiError.errors[0]).toHaveProperty('errorCode');
+    expect(apiError.errors[0].errorCode).toBe('api:v1:auth:error:validationError');
+    expect(apiError.errors[0]).toHaveProperty('errorTitle');
+    expect(apiError.errors[0].errorTitle).toBe('We seems to have a problem!');
+    expect(apiError.errors[0]).toHaveProperty('errorDescription');
+    expect(apiError.errors[0].errorDescription).toBe('We have some trouble validating your data - please contact our customer support');
+    expect(apiError.errors[0]).toHaveProperty('errorDebugDescription');
+    expect(apiError.errors[0].errorDebugDescription).toBe('"nonce" is required');
+    expect(apiError.route).toBe('default');
   });
 
   it('should convert generic error into API error', () => {
+    req.path = '/api/v1/auth/error';
     const error = new Error('Something went wrong');
 
     const apiError = convertGenericError(error, req);
-    expect(apiError).to.have.a.property('name');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('status');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('isPublic');
-    expect(apiError).to.have.a.property('route');
-    expect(apiError).to.have.a.property('isOperational');
-    expect(apiError.name).equal('APIError');
-    expect(apiError.status).equal(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(apiError.errors).to.be.an('array').that.is.not.empty;  // eslint-disable-line
-    expect(apiError.errors[0]).to.have.property('errorCode');
-    expect(apiError.errors[0].errorCode).equal('api:v1:auth:login:unknown');
-    expect(apiError.errors[0]).to.have.property('errorTitle');
-    expect(apiError.errors[0].errorTitle).equal('We seems to have a problem!');
-    expect(apiError.errors[0]).to.have.property('errorDescription');
-    expect(apiError.errors[0].errorDescription).equal('Our internal system is having problem, please contact our administrator!');
-    expect(apiError.errors[0]).to.have.property('errorDebugDescription');
-    expect(apiError.errors[0].errorDebugDescription).equal('Something went wrong');
+    expect(apiError).toHaveProperty('name');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('status');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('isPublic');
+    expect(apiError).toHaveProperty('route');
+    expect(apiError).toHaveProperty('isOperational');
+    expect(apiError.name).toBe('APIError');
+    expect(apiError.status).toBe(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(apiError.errors).toBeType('array');
+    expect(apiError.errors).not.toHaveLength(0);
+    expect(apiError.errors[0]).toHaveProperty('errorCode');
+    expect(apiError.errors[0].errorCode).toBe('api:v1:auth:error:unknown');
+    expect(apiError.errors[0]).toHaveProperty('errorTitle');
+    expect(apiError.errors[0].errorTitle).toBe('We seems to have a problem!');
+    expect(apiError.errors[0]).toHaveProperty('errorDescription');
+    expect(apiError.errors[0].errorDescription).toBe('Our internal system is having problem, please contact our administrator!');
+    expect(apiError.errors[0]).toHaveProperty('errorDebugDescription');
+    expect(apiError.errors[0].errorDebugDescription).toBe('Something went wrong');
   });
+
 
   it('should generate Not Found API error', () => {
     const apiError = generateNotFoundError();
-    expect(apiError).to.have.a.property('name');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('status');
-    expect(apiError).to.have.a.property('errors');
-    expect(apiError).to.have.a.property('isPublic');
-    expect(apiError).to.have.a.property('route');
-    expect(apiError).to.have.a.property('isOperational');
-    expect(apiError.name).equal('APIError');
-    expect(apiError.status).equal(httpStatus.NOT_FOUND);
-    expect(apiError.errors).to.be.an('array').that.is.not.empty;  // eslint-disable-line
-    expect(apiError.errors[0]).to.have.property('errorCode');
-    expect(apiError.errors[0].errorCode).to.be.not.empty; // eslint-disable-line
-    expect(apiError.errors[0]).to.have.property('errorTitle');
-    expect(apiError.errors[0].errorTitle).equal('Oops! We have a problem.');
-    expect(apiError.errors[0]).to.have.property('errorDescription');
-    expect(apiError.errors[0].errorDescription).equal('We couldn\'t find what you\'re looking for - please contact our administrator!');
-    expect(apiError.errors[0]).to.have.property('errorDebugDescription');
-    expect(apiError.errors[0].errorDebugDescription).equal('Invalid API route');
+    expect(apiError).toHaveProperty('name');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('status');
+    expect(apiError).toHaveProperty('errors');
+    expect(apiError).toHaveProperty('isPublic');
+    expect(apiError).toHaveProperty('route');
+    expect(apiError).toHaveProperty('isOperational');
+    expect(apiError.name).toBe('APIError');
+    expect(apiError.status).toBe(httpStatus.NOT_FOUND);
+    expect(apiError.errors).toBeType('array');
+    expect(apiError.errors).not.toHaveLength(0);
+    expect(apiError.errors[0]).toHaveProperty('errorCode');
+    expect(apiError.errors[0].errorCode).not.toBe(''); // eslint-disable-line
+    expect(apiError.errors[0]).toHaveProperty('errorTitle');
+    expect(apiError.errors[0].errorTitle).toBe('Oops! We have a problem.');
+    expect(apiError.errors[0]).toHaveProperty('errorDescription');
+    expect(apiError.errors[0].errorDescription).toBe('We couldn\'t find what you\'re looking for - please contact our administrator!');
+    expect(apiError.errors[0]).toHaveProperty('errorDebugDescription');
+    expect(apiError.errors[0].errorDebugDescription).toBe('Invalid API route');
   });
+
 
   it('error converter should convert validation error', () => {
     converter(validationError, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.BAD_REQUEST);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('error converter should convert generic error', () => {
     const error = new Error('Something went wrongasdasdasddsa');
     converter(error, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('error converter should convert APIError', () => {
     const error = convertValidationError(validationError, req);
     converter(error, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.BAD_REQUEST);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('notFound middleware should generate not found error', () => {
     notFound(req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.NOT_FOUND);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.NOT_FOUND);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return http status message for error without message', () => {
@@ -187,9 +192,9 @@ describe('Middleware - error', () => {
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     handler(err, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return error with error stack', () => {
@@ -198,20 +203,20 @@ describe('Middleware - error', () => {
     process.env.NODE_ENV = 'development';
     handler(err, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return error without error stack', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
-    process.env.NODE_ENV = 'development';
+    process.env.NODE_ENV = 'test';
     handler(err, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should convert error with http status = 0, into internal server error', () => {
@@ -219,8 +224,8 @@ describe('Middleware - error', () => {
     err.status = 0;
     handler(err, req, res);
 
-    sinon.assert.calledWith(this.statusStub, httpStatus.INTERNAL_SERVER_ERROR);
-    sinon.assert.calledOnce(this.jsonStub);
-    sinon.assert.calledOnce(this.endStub);
+    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(this.jsonStub).toHaveBeenCalledTimes(1);
+    expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 });

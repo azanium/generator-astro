@@ -2,12 +2,10 @@
 
 const Generator = require('yeoman-generator');
 const yosay = require('yosay');
-const shelljs = require('shelljs');
 const path = require('path');
-var humanize = require('underscore.string/humanize');
-var slugify = require('underscore.string/slugify');
-var decamelize = require('decamelize');
-var mkdirp = require('mkdirp');
+const slugify = require('underscore.string/slugify');
+const decamelize = require('decamelize');
+const mkdirp = require('mkdirp');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -17,71 +15,70 @@ module.exports = class extends Generator {
     this.argument('projectname', { type: String, required: false });
     this.projectname = this.projectname || 'astro-service';
     this.projectname = decamelize(slugify(this.projectname), '-');
-    this.props = {}
+    this.props = {};
 
-    console.log(yosay('Welcome to Astro RESTful API generator!'))
+    console.log(yosay('Welcome to Astro RESTful API generator!'));
   }
 
   propmting() {
-    var done = this.async();
-    var that = this;
+    const done = this.async();
+    const that = this;
 
     this.prompt([
       {
-        type:     'input',
-        name:     'name',
-        message:  'What is your project name?',
-        default:  this.projectname
-      }, 
-      {
-        type:     'input',
-        name:     'apibase',
-        message:  'Your API base path?',
-        default:  'api',
+        type: 'input',
+        name: 'name',
+        message: 'What is your project name?',
+        default: this.projectname
       },
       {
-        type:     'input',
-        name:     'apiversion',
-        message:  'Your API version?',
-        default:  'v1',
+        type: 'input',
+        name: 'apibase',
+        message: 'Your API base path?',
+        default: 'api'
       },
       {
-        type:     'input',
-        name:     'version',
-        message:  'Version number',
-        default:  that.config.get('version') || '0.1.0',
+        type: 'input',
+        name: 'apiversion',
+        message: 'Your API version?',
+        default: 'v1'
       },
       {
-        type:     'input',
-        name:     'description',
-        message:  'Description',
-        default:  '',
+        type: 'input',
+        name: 'version',
+        message: 'Version number',
+        default: that.config.get('version') || '0.1.0'
       },
       {
-        type:     'input',
-        name:     'author',
-        message:  `Author's name`,
-        default:  that.config.get('author') || 'Suhendra Ahmad',
+        type: 'input',
+        name: 'description',
+        message: 'Description',
+        default: ''
       },
       {
-        type:     'input',
-        name:     'license',
-        message:  `License`,
-        default:  'MIT'
+        type: 'input',
+        name: 'author',
+        message: `Author's name`,
+        default: that.config.get('author') || 'Suhendra Ahmad'
+      },
+      {
+        type: 'input',
+        name: 'license',
+        message: `License`,
+        default: 'MIT'
       }
-    ]).then(answers => {
+    ]).then((answers) => {
       this.props = answers;
       done();
-    }) 
+    });
   }
 
   writing() {
-    
-    var props = this.props;
-    var copy = this.fs.copy.bind(this.fs);
-    var copyTpl = this.fs.copyTpl.bind(this.fs);
-    var tPath = this.templatePath.bind(this);
-    var dPath = this.destinationPath.bind(this);
+    const { props } = this;
+    const copy = this.fs.copy.bind(this.fs);
+    const copyTpl = this.fs.copyTpl.bind(this.fs);
+    const tPath = this.templatePath.bind(this);
+    const dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
 
@@ -98,6 +95,8 @@ module.exports = class extends Generator {
     copyTpl(tPath('_README.md'), dPath('README.md'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
+    copy(tPath('jest.json'), dPath('jest.json'));
+    copy(tPath('jsconfig.json'), dPath('jsconfig.json'));
 
     /**
      * License
@@ -105,7 +104,7 @@ module.exports = class extends Generator {
     if (props.license === 'MIT') {
       copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
     }
-    
+
     /**
      * Docker
      */
@@ -137,7 +136,7 @@ module.exports = class extends Generator {
      */
     copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
     copyTpl(tPath('src/config/vars.js'), dPath('src/config/vars.js'), props);
-    
+
     /**
      * utils
      */
@@ -156,26 +155,25 @@ module.exports = class extends Generator {
      * models
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
-    
+
     /**
      * services
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
 
-    
     this.config.save();
 
-    this.on('end', function() {
+    this.on('end', () => {
       this.config.set('name', props.name);
       this.config.set('apibase', props.apibase);
       this.config.set('apiversion', props.apiversion);
       this.config.set('version', props.version);
       this.config.set('description', props.description);
       this.config.set('author', props.author);
-    })
+    });
   }
 
   install() {
-    this.installDependencies({bower: false});
+    this.installDependencies({ bower: false });
   }
-}
+};
