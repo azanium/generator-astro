@@ -17,12 +17,10 @@ Yeoman generator for building RESTful APIs and microservices using Node.js, Expr
  - Request validation with [joi](https://github.com/hapijs/joi)
  - Gzip compression with [compression](https://github.com/expressjs/compression)
  - Linting with [eslint](http://eslint.org) with [eslint-config-astro](https://www.npmjs.com/package/eslint-config-astro) 
- - Tests with [mocha](https://mochajs.org), [chai](http://chaijs.com) and [sinon](http://sinonjs.org)
- - Code coverage with [istanbul](https://istanbul.js.org) and [coveralls](https://coveralls.io)
+ - Tests with [jest](https://jestjs.io/) along with coverage
  - Git hooks with [husky](https://github.com/typicode/husky) 
  - Logging with [winston](https://www.npmjs.com/package/winston), and [winston-cloudwatch](https://github.com/lazywithclass/winston-cloudwatch) for production log stream
  - API documentation geratorion with [apidoc](http://apidocjs.com)
- - Continuous integration support with [travisCI](https://travis-ci.org)
  - Monitoring with [pm2](https://github.com/Unitech/pm2)
  - Startup boot tasks that can be used for data migrations or pre startup task runner.
 
@@ -108,7 +106,7 @@ yarn lint:watch
 ## Test
 
 ```bash
-# run all tests with Mocha
+# run all tests with Jest with coverage
 yarn test
 
 # run unit tests
@@ -119,9 +117,6 @@ yarn test:integration
 
 # run all tests and watch for changes
 yarn test:watch
-
-# open nyc test coverage reports
-yarn coverage
 ```
 
 ## Validate

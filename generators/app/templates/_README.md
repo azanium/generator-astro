@@ -56,10 +56,10 @@ yarn lint:watch
 ## Test
 
 ```bash
-# run all tests with Mocha
+# run all tests with Jest
 yarn test
 
-# run unit tests
+# run unit tests with coverage
 yarn test:unit
 
 # run integration tests
@@ -67,9 +67,6 @@ yarn test:integration
 
 # run all tests and watch for changes
 yarn test:watch
-
-# open nyc test coverage reports
-yarn coverage
 ```
 
 ## Validate
