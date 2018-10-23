@@ -1,1 +1,6 @@
+generators/api/templates
 generators/app/templates
+generators/boot/templates
+generators/middleware/templates
+generators/service/templates
+generators/util/templates

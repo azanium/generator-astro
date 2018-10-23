@@ -1,11 +1,11 @@
 'user strict';
 
 const Generator = require('yeoman-generator');
-var camelize = require('underscore.string/camelize');
-var underscored = require('underscore.string/underscored');
-var recast = require('recast');
-var _ = require('lodash');
-var rimraf = require('rimraf');
+const camelize = require('underscore.string/camelize');
+const underscored = require('underscore.string/underscored');
+const recast = require('recast');
+const _ = require('lodash');
+const rimraf = require('rimraf');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -16,30 +16,30 @@ module.exports = class extends Generator {
   }
 
   prompting() {
-    var done = this.async();
-    var that = this;
+    const done = this.async();
+    const that = this;
 
     this.prompt([
       {
-        type:     'input',
-        name:     'name',
-        message:  'What is your API endpoint name?',
-        default:  this.config.get('last_endpoint') || 'endpoint'
+        type: 'input',
+        name: 'name',
+        message: 'What is your API endpoint name?',
+        default: this.config.get('last_endpoint') || 'endpoint'
       },
       {
-        type:     'input',
-        name:     'apidesc',
-        message:  'Please give API description for documentation!',
-        default:  this.config.get('last_apidesc') || 'description'
+        type: 'input',
+        name: 'apidesc',
+        message: 'Please give API description for documentation!',
+        default: this.config.get('last_apidesc') || 'description'
       },
       {
-        type:     'list',
-        name:     'method',
-        message:  'API Method?',
-        default:  this.config.get('last_method') || 'post',
-        choices:  ['get', 'post', 'put', 'delete']
+        type: 'list',
+        name: 'method',
+        message: 'API Method?',
+        default: this.config.get('last_method') || 'post',
+        choices: ['get', 'post', 'put', 'delete']
       }
-    ]).then(answers => {
+    ]).then((answers) => {
       that.props = answers;
       that.props.injectRoute = false;
       that.props.apibase = that.config.get('apibase');
@@ -48,38 +48,37 @@ module.exports = class extends Generator {
       that.props.name = camelize(that.props.name, true);
       that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.upperMethod = that.props.method.toUpperCase();
-  
 
-      if (that.projectname == undefined || that.apiversion == undefined) {
+      if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');
         process.exit();
       }
 
-      this.on('end', function() {
+      this.on('end', () => {
         this.config.set('last_endpoint', that.props.endpoint);
         this.config.set('last_apidesc', that.props.apidesc);
         this.config.set('last_method', that.props.method);
         this.config.set('apibase', that.props.apibase);
         this.config.set('apiversion', that.props.apiversion);
-      });  
+      });
 
       done();
-    }) 
+    });
   }
 
   writing() {
-    var done = this.async();
-    var props = this.props;
-    var copyTpl = this.fs.copyTpl.bind(this.fs);
-    var tPath = this.templatePath.bind(this);
-    var dPath = this.destinationPath.bind(this);
+    const done = this.async();
+    const { props } = this;
+    const copyTpl = this.fs.copyTpl.bind(this.fs);
+    const tPath = this.templatePath.bind(this);
+    const dPath = this.destinationPath.bind(this);
 
     const controllerName = `${props.filename}.controller.js`;
     const validationName = `${props.filename}.validation.js`;
     const integrationName = `${props.filename}.integration.test.js`;
     const testName = `${props.filename}.spec.js`;
     const apiPath = `src/api/${this.apiversion}/${props.filename}`;
-    
+
     /**
      * Controller
      */
@@ -93,7 +92,7 @@ module.exports = class extends Generator {
     if (!this.fs.exists(dPath(`${apiPath}/index.hs`))) {
       copyTpl(tPath('_index.ejs'), dPath(`${apiPath}/index.js`), props);
     }
-    
+
     /**
      * Validation
      */
@@ -116,13 +115,11 @@ module.exports = class extends Generator {
     }
 
     done();
-  } 
+  }
 
   injectApiRoutes() {
-    // var done = this.async();
-
-    var props = this.props;
-    var dPath = this.destinationPath.bind(this);
+    const { props } = this;
+    const dPath = this.destinationPath.bind(this);
 
     const routeName = `${props.filename}`;
     const routeFile = dPath(`src/api/${this.apiversion}/index.js`);
@@ -130,27 +127,25 @@ module.exports = class extends Generator {
     /**
      * Inject codes
      */
-    
+
     if (this.fs.exists(routeFile)) {
+      let ast = recast.parse(this.fs.read(routeFile));
+      let { body } = ast.program;
 
-      var ast = recast.parse(this.fs.read(routeFile));
-      var body = ast.program.body;
-
-      var injectRequire = true;
-      var injectRouterUse = true;
+      let injectRequire = true;
+      let injectRouterUse = true;
 
       /**
        * Route require injection to index.js
        */
       recast.visit(ast, {
-        visitVariableDeclaration: function(path) {
-          
-          const declarations = path.node.declarations
+        visitVariableDeclaration(path) {  // eslint-disable-line
+          const { declarations } = path.node;
 
           // Check for const = require variable declaration
           if (declarations.length > 0) {
-            let decl = declarations[0]
-            var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
+            const decl = declarations[0];
+            const arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
 
             // console.log('==>', decl.id.name);
             if (decl.id.name === `${props.name}Route` && arg.trim() === `./${routeName}`) {
@@ -158,19 +153,19 @@ module.exports = class extends Generator {
               injectRequire = false;
               return false;
             }
-          }          
+          }
           this.traverse(path);
         },
 
-        visitCallExpression: function(path) {
-          const callee = path.node.callee;
+        visitCallExpression(path) { // eslint-disable-line
+          const { callee } = path.node;
           if (callee.type === 'MemberExpression') {
             const args = path.node.arguments;
             const validFirstArgument = args.length > 0 && args[0].type === 'Literal' && args[0].value === `/${props.name}`;
             const validSecondArgument = args.length > 1 && args[1].type === 'Identifier' && args[1].name === `${props.name}Route`;
             const isValid = callee.object.name === 'router' && callee.property.name === 'use' && validFirstArgument && validSecondArgument;
             if (isValid) {
-              injectRouterUse = !isValid
+              injectRouterUse = !isValid;
               return false;
             }
           }
@@ -181,39 +176,35 @@ module.exports = class extends Generator {
       // Inject const = require()
       let lastImportIndex;
       if (injectRequire) {
-        lastImportIndex = _.findLastIndex(body, function(statement) {
-          return statement.type === 'VariableDeclaration';
-        });
-        var actualImportCode = recast.print(body[lastImportIndex]).code;
-        var importString = ['const ', props.name, 'Route = require(\'./', routeName, '\');'].join('');
-        
+        lastImportIndex = _.findLastIndex(body, statement => statement.type === 'VariableDeclaration');
+        const actualImportCode = recast.print(body[lastImportIndex]).code;
+        const importString = ['const ', props.name, 'Route = require(\'./', routeName, '\');'].join('');
+
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 1, importString);
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 0, actualImportCode);
       }
 
       ast = recast.parse(recast.print(ast).code);
-      body = ast.program.body;
+      body = ast.program.body;  // eslint-disable-line
 
       /**
        * Inject router.use() expression
        */
       if (injectRouterUse) {
-        var middlewareString = ['router.use(\'/', props.endpoint, '\', ', props.name, 'Route);'].join('');
-        var lastMiddlewareIndex = _.findLastIndex(body, function (statement) {
+        const middlewareString = ['router.use(\'/', props.endpoint, '\', ', props.name, 'Route);'].join('');
+        const lastMiddlewareIndex = _.findLastIndex(body, (statement) => {
           if (!statement.expression || !statement.expression.callee) {
             return false;
           }
-          var callee = statement.expression.callee;
+          const { callee } = statement.expression;
           return callee.object.name === 'router' && callee.property.name === 'use';
         });
 
         if (lastMiddlewareIndex === -1) {
-          var exportRouterIndex = _.findIndex(body, function (statement) {
-            return statement.type === 'ExpressionStatement' && statement.expression.right.name === 'router';
-          });
+          const exportRouterIndex = _.findIndex(body, statement => statement.type === 'ExpressionStatement' && statement.expression.right.name === 'router');
           body.splice(exportRouterIndex < 0 ? lastImportIndex : exportRouterIndex, 0, middlewareString);
         } else {
-          var actualMiddlewareCode = recast.print(body[lastMiddlewareIndex]).code;
+          const actualMiddlewareCode = recast.print(body[lastMiddlewareIndex]).code;
           body.splice(lastMiddlewareIndex < 0 ? lastImportIndex : lastMiddlewareIndex, 1, middlewareString);
           body.splice(lastMiddlewareIndex < 0 ? lastImportIndex : lastMiddlewareIndex, 0, actualMiddlewareCode);
         }
@@ -222,8 +213,8 @@ module.exports = class extends Generator {
       if (injectRouterUse || injectRequire) {
         rimraf(routeFile, () => {
           this.fs.write(routeFile, recast.print(ast).code);
-        })
+        });
       }
     }
   }
-}
+};

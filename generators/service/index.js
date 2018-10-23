@@ -19,43 +19,43 @@ module.exports = class extends Generator {
 
     this.prompt([
       {
-        type:     'input',
-        name:     'service',
-        message:  'Service name?',
-        default:  this.config.get('last_service') || 'service'
+        type: 'input',
+        name: 'service',
+        message: 'Service name?',
+        default: this.config.get('last_service') || 'service'
       }
-    ]).then(answers => {
+    ]).then((answers) => {
       that.props = answers;
       const originalService = `${that.props.service}`;
       that.props.service = camelize(that.props.service, true);
       that.props.filename = underscored(that.props.service).replace('_', '-');
       that.props.capitalizedService = capitalize(originalService);
 
-      if (that.projectname == undefined || that.apiversion == undefined) {
+      if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');
         process.exit();
       }
 
-      this.on('end', function() {
+      this.on('end', () => {
         this.config.set('last_service', originalService);
-      });  
+      });
 
       done();
-    }) 
+    });
   }
 
   writing() {
-    var done = this.async();
-    var props = this.props;
-    var copyTpl = this.fs.copyTpl.bind(this.fs);
-    var tPath = this.templatePath.bind(this);
-    var dPath = this.destinationPath.bind(this);
+    const done = this.async();
+    const { props } = this;
+    const copyTpl = this.fs.copyTpl.bind(this.fs);
+    const tPath = this.templatePath.bind(this);
+    const dPath = this.destinationPath.bind(this);
 
     const serviceName = `${props.filename}.service.js`;
     const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
     const targetName = `src/services/${props.filename}`;
-    
+
     /**
      * Index
      */
@@ -69,7 +69,7 @@ module.exports = class extends Generator {
     if (!this.fs.exists(dPath(`${targetName}/${serviceName}`))) {
       copyTpl(tPath('_service.ejs'), dPath(`${targetName}/${serviceName}`), props);
     }
-    
+
     /**
      * Unit Test
      */
@@ -78,5 +78,5 @@ module.exports = class extends Generator {
     }
 
     done();
-  } 
-}
+  }
+};

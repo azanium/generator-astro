@@ -17,43 +17,43 @@ module.exports = class extends Generator {
   }
 
   prompting() {
-    var done = this.async();
-    var that = this;
+    const done = this.async();
+    const that = this;
 
     this.prompt([
       {
-        type:     'input',
-        name:     'name',
-        message:  'Boot task name?',
-        default:  this.config.get('last_boot') || 'boot'
+        type: 'input',
+        name: 'name',
+        message: 'Boot task name?',
+        default: this.config.get('last_boot') || 'boot'
       }
-    ]).then(answers => {
+    ]).then((answers) => {
       that.props = answers;
       const originalName = `${that.props.name}`;
       that.props.name = camelize(that.props.name, true);
       that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.capitalizedName = capitalize(originalName);
 
-      if (that.projectname == undefined || that.apiversion == undefined) {
+      if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');
         process.exit();
       }
 
-      this.on('end', function() {
+      this.on('end', () => {
         this.config.set('last_boot', originalName);
-      });  
+      });
 
       done();
-    }) 
+    });
   }
 
   writing() {
-    var done = this.async();
-    var props = this.props;
-    var copyTpl = this.fs.copyTpl.bind(this.fs);
-    var tPath = this.templatePath.bind(this);
-    var dPath = this.destinationPath.bind(this);
-    
+    const done = this.async();
+    const { props } = this;
+    const copyTpl = this.fs.copyTpl.bind(this.fs);
+    const tPath = this.templatePath.bind(this);
+    const dPath = this.destinationPath.bind(this);
+
     const bootName = `${props.filename}.boot.js`;
     const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
@@ -72,7 +72,7 @@ module.exports = class extends Generator {
     if (!this.fs.exists(dPath(`${targetName}/${bootName}`))) {
       copyTpl(tPath('_boot.ejs'), dPath(`${targetName}/${bootName}`), props);
     }
-    
+
     /**
      * Unit Test
      */
@@ -84,73 +84,64 @@ module.exports = class extends Generator {
   }
 
   injectExport() {
-    // var done = this.async();
+    const { props } = this;
+    const dPath = this.destinationPath.bind(this);
 
-    var props = this.props;
-    var dPath = this.destinationPath.bind(this);
-    
     const indexFile = dPath(`src/boot/index.js`);
 
     /**
      * Inject codes
      */
-    
+
     if (this.fs.exists(indexFile)) {
+      let ast = recast.parse(this.fs.read(indexFile));
+      let { body } = ast.program;
 
-      var ast = recast.parse(this.fs.read(indexFile));
-      var body = ast.program.body;
-
-      var injectRequire = true;
-      var injectExports = true;
+      let injectRequire = true;
+      const injectExports = true;
 
       /**
        * Route require injection to index.js
        */
       recast.visit(ast, {
-        visitVariableDeclaration: function(path) {
-          
-          const declarations = path.node.declarations
-         
+        visitVariableDeclaration(path) {  // eslint-disable-line
+          const { declarations } = path.node;
+
           // Check for const = require variable declaration
           if (declarations.length > 0) {
-            let decl = declarations[0]
-            var arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
+            const decl = declarations[0];
+            const arg = decl.init.arguments.length > 0 ? decl.init.arguments[0].value : '';
             if (arg && arg.trim() === `./${props.name}`) {
               injectRequire = false;
               return injectRequire;
             }
-          }          
+          }
           this.traverse(path);
-        },
+        }
       });
 
       // Inject const = require()
       let lastImportIndex;
       if (injectRequire) {
-        lastImportIndex = _.findLastIndex(body, function(statement) {
-          return statement.type === 'VariableDeclaration';
-        });
-        var actualImportCode = recast.print(body[lastImportIndex]).code;
-        var importString = ['const { ', props.name, 'Boot } = require(\'./', props.filename, '\');'].join('');
-        
+        lastImportIndex = _.findLastIndex(body, statement => statement.type === 'VariableDeclaration');
+        const actualImportCode = recast.print(body[lastImportIndex]).code;
+        const importString = ['const { ', props.name, 'Boot } = require(\'./', props.filename, '\');'].join('');
+
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 1, importString);
         body.splice(lastImportIndex < 0 ? 0 : lastImportIndex, 0, actualImportCode);
       }
-      
+
       ast = recast.parse(recast.print(ast).code);
-      body = ast.program.body;
+      body = ast.program.body; // eslint-disable-line
 
       /**
        * Inject router.use() expression
        */
       if (injectExports) {
         let elements = [];
-        var lastExportIndex = _.findLastIndex(body, function (statement) {
-          if (
-            statement.type === 'ExpressionStatement' 
-            && statement.expression && statement.expression.right.type === 'ArrayExpression'
-          ) {
-            elements = statement.expression.right.elements;  
+        const lastExportIndex = _.findLastIndex(body, (statement) => { // eslint-disable-line
+          if (statement.type === 'ExpressionStatement' && statement.expression && statement.expression.right.type === 'ArrayExpression') {
+            elements = statement.expression.right.elements; // eslint-disable-line
             return true;
           }
         });
@@ -160,7 +151,7 @@ module.exports = class extends Generator {
 
         const bootName = `${props.name}Boot`;
 
-        // Add our boot name into the array 
+        // Add our boot name into the array
         exportString += `\t${bootName}`;
         if (elements.length > 0) {
           exportString += ',\n';
@@ -169,7 +160,7 @@ module.exports = class extends Generator {
         // Readd current boot array
         elements.forEach((el) => {
           if (el.name !== `${bootName}`) {
-            exportString += `\t${el.name}`
+            exportString += `\t${el.name}`;
             if (elements.indexOf(el) < elements.length - 1) {
               exportString += ',\n';
             }
@@ -180,9 +171,7 @@ module.exports = class extends Generator {
         exportString += '\n];';
 
         if (lastExportIndex === -1) {
-          var exportRouterIndex = _.findIndex(body, function (statement) {
-            return (statement.type === 'ExpressionStatement' && statement.expression.right.type === 'ArrayExpression');
-          });
+          const exportRouterIndex = _.findIndex(body, statement => statement.type === 'ExpressionStatement' && statement.expression.right.type === 'ArrayExpression');
           body.splice(exportRouterIndex < 0 ? lastImportIndex : exportRouterIndex, 0, exportString);
         } else {
           // Delete the current array
@@ -196,9 +185,8 @@ module.exports = class extends Generator {
       if (injectExports || injectRequire) {
         rimraf(indexFile, () => {
           this.fs.write(indexFile, recast.print(ast).code);
-        })
+        });
       }
     }
   }
-
-}
+};

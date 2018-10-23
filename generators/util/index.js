@@ -14,48 +14,47 @@ module.exports = class extends Generator {
   }
 
   prompting() {
-    var done = this.async();
-    var that = this;
+    const done = this.async();
+    const that = this;
 
     this.prompt([
       {
-        type:     'input',
-        name:     'name',
-        message:  'Utility name?',
-        default:  this.config.get('last_util') || 'util'
+        type: 'input',
+        name: 'name',
+        message: 'Utility name?',
+        default: this.config.get('last_util') || 'util'
       }
-    ]).then(answers => {
+    ]).then((answers) => {
       that.props = answers;
       const originalName = `${that.props.name}`;
       that.props.name = camelize(that.props.name, true);
       that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.capitalizedName = capitalize(that.props.name);
 
-      if (that.projectname == undefined || that.apiversion == undefined) {
+      if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');
         process.exit();
       }
 
-      this.on('end', function() {
+      this.on('end', () => {
         this.config.set('last_util', originalName);
-      });  
+      });
 
       done();
-    }) 
+    });
   }
 
   writing() {
-    var done = this.async();
-    var props = this.props;
-    var copyTpl = this.fs.copyTpl.bind(this.fs);
-    var tPath = this.templatePath.bind(this);
-    var dPath = this.destinationPath.bind(this);
+    const done = this.async();
+    const { props } = this;
+    const copyTpl = this.fs.copyTpl.bind(this.fs);
+    const tPath = this.templatePath.bind(this);
+    const dPath = this.destinationPath.bind(this);
 
     const utilName = `${props.filename}.util.js`;
     const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
     const targetName = `src/utils/${props.filename}`;
-    
 
     /**
      * Index
@@ -70,7 +69,7 @@ module.exports = class extends Generator {
     if (!this.fs.exists(dPath(`${targetName}/${utilName}`))) {
       copyTpl(tPath('_util.ejs'), dPath(`${targetName}/${utilName}`), props);
     }
-    
+
     /**
      * Unit Test
      */
@@ -79,5 +78,5 @@ module.exports = class extends Generator {
     }
 
     done();
-  } 
-}
+  }
+};
