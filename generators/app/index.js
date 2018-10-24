@@ -155,6 +155,7 @@ module.exports = class extends Generator {
      * models
      */
     mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
+    mkdirp.sync(path.join(this.destinationPath(), 'src/migrations'));
 
     /**
      * services
