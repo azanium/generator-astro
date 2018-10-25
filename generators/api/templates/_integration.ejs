@@ -21,7 +21,7 @@ describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
         expect(res.body).toHaveProperty('responseCode');
         expect(res.body).toHaveProperty('responseMessage');
         expect(res.body.responseCode).toBe(200);
-        expect(res.body.responseMessage).not.toBe(undefined);  // eslint-disable-line
+        expect(res.body.responseMessage).not.toBe(undefined);
       });
   });
 });
