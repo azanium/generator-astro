@@ -158,7 +158,7 @@ module.exports = class extends Generator {
       copyTpl(tPath('_package-sequelize.json'), dPath('package.json'), props);
       copyTpl(tPath('.sequelizerc'), dPath('.sequelizerc'), props);
       copyTpl(tPath('src/config/database.js'), dPath('src/config/database.js'), props);
-      mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
+      copyTpl(tPath('src/models/index.js'), dPath('src/models/index.js'), props);
 
       /**
        * Docker
