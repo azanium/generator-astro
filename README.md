@@ -23,6 +23,8 @@ Yeoman generator for building RESTful APIs and microservices using Node.js, Expr
  - API documentation geratorion with [apidoc](http://apidocjs.com)
  - Monitoring with [pm2](https://github.com/Unitech/pm2)
  - Startup boot tasks that can be used for data migrations or pre startup task runner.
+ - ORM using Sequelize (optional) [sequelize](http://docs.sequelizejs.com/) with docker-compose migrations
+ - HTTP using axios with retry [axios](https://github.com/axios/axios)
 
 ## Requirements
 
@@ -101,6 +103,16 @@ yarn lint:fix
 
 # lint and watch for changes
 yarn lint:watch
+```
+
+## Sequelize Migrations (optional)
+
+```bash
+yarn db:migrate
+
+# to undo the migration
+
+yarn db:migrate:undo
 ```
 
 ## Test

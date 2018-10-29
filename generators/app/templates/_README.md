@@ -53,6 +53,16 @@ yarn lint:fix
 yarn lint:watch
 ```
 
+## Sequelize Migrations (optional)
+
+```bash
+yarn db:migrate
+
+# to undo the migration
+
+yarn db:migrate:undo
+```
+
 ## Test
 
 ```bash

@@ -1,0 +1,30 @@
+version: "2"
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_DB=<%= name %>-store
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=Dummy123
+    ports: 
+      - "9000:5432"
+  
+  migrations:
+    build: .
+    volumes: 
+      - .:/app
+    links: 
+      - postgres
+    depends_on: 
+      - postgres
+
+  <%= name %>:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    depends_on: 
+      - migrations
+    links: 
+      - postgres

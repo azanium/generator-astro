@@ -33,6 +33,13 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
+        name: 'sequelize',
+        message: 'You want to use sequelize?',
+        choices: ['y', 'n'],
+        default: 'y'
+      },
+      {
+        type: 'input',
         name: 'apibase',
         message: 'Your API base path?',
         default: 'api'
@@ -83,11 +90,6 @@ module.exports = class extends Generator {
     this.destinationRoot(props.name);
 
     /**
-     * package.json
-     */
-    copyTpl(tPath('_package.json'), dPath('package.json'), props);
-
-    /**
      * Etc
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
@@ -104,15 +106,6 @@ module.exports = class extends Generator {
     if (props.license === 'MIT') {
       copyTpl(tPath('_LICENSE'), dPath('LICENSE'), props);
     }
-
-    /**
-     * Docker
-     */
-    copy(tPath('Dockerfile'), dPath('Dockerfile'));
-    copyTpl(tPath('_docker-compose.yml'), dPath('docker-compose.yml'), props);
-    copyTpl(tPath('_docker-compose.dev.yml'), dPath('docker-compose.dev.yml'), props);
-    copyTpl(tPath('_docker-compose.test.yml'), dPath('docker-compose.test.yml'), props);
-    copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
 
     /**
      * index.js
@@ -137,6 +130,7 @@ module.exports = class extends Generator {
     copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
     copyTpl(tPath('src/config/vars.js'), dPath('src/config/vars.js'), props);
 
+
     /**
      * utils
      */
@@ -151,16 +145,44 @@ module.exports = class extends Generator {
      */
     copy(tPath('src/middlewares'), dPath('src/middlewares'));
 
-    /**
-     * models
-     */
-    mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
-    mkdirp.sync(path.join(this.destinationPath(), 'src/migrations'));
 
     /**
      * services
      */
-    mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
+    // mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
+    copy(tPath('src/services'), dPath('src/services'));
+
+    if (props.sequelize === 'y') {
+      mkdirp.sync(path.join(this.destinationPath(), 'src/database/migrations'));
+      mkdirp.sync(path.join(this.destinationPath(), 'src/database/seeders'));
+      copyTpl(tPath('_package-sequelize.json'), dPath('package.json'), props);
+      copyTpl(tPath('.sequelizerc'), dPath('.sequelizerc'), props);
+      copyTpl(tPath('src/config/database.js'), dPath('src/config/database.js'), props);
+      mkdirp.sync(path.join(this.destinationPath(), 'src/models'));
+
+      /**
+       * Docker
+       */
+      copy(tPath('Dockerfile'), dPath('Dockerfile'));
+      copyTpl(tPath('_docker-compose-seq.yml'), dPath('docker-compose.yml'), props);
+      copyTpl(tPath('_docker-compose-seq.dev.yml'), dPath('docker-compose.dev.yml'), props);
+      copyTpl(tPath('_docker-compose-seq.test.yml'), dPath('docker-compose.test.yml'), props);
+      copyTpl(tPath('_docker-compose-seq.prod.yml'), dPath('docker-compose.prod.yml'), props);
+    } else {
+      /**
+       * package.json
+       */
+      copyTpl(tPath('_package.json'), dPath('package.json'), props);
+
+      /**
+       * Docker
+       */
+      copy(tPath('Dockerfile'), dPath('Dockerfile'));
+      copyTpl(tPath('_docker-compose.yml'), dPath('docker-compose.yml'), props);
+      copyTpl(tPath('_docker-compose.dev.yml'), dPath('docker-compose.dev.yml'), props);
+      copyTpl(tPath('_docker-compose.test.yml'), dPath('docker-compose.test.yml'), props);
+      copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
+    }
 
     this.config.save();
 
@@ -171,6 +193,7 @@ module.exports = class extends Generator {
       this.config.set('version', props.version);
       this.config.set('description', props.description);
       this.config.set('author', props.author);
+      this.config.set('sequelize', props.sequelize);
     });
   }
 

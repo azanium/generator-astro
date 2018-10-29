@@ -18,8 +18,10 @@
     "lint": "eslint '**/*.js' --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
+    "pretest": "NODE_ENV=test sequelize db:migrate",
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage",
     "test:unit": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
+    "pretest:integration": "NODE_ENV=test sequelize db:migrate",
     "test:integration": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
     "test:watch": "cross-env NODE_ENV=test jest --watch --forceExit --detectOpenHandles",
     "validate": "yarn lint && yarn test",
@@ -28,7 +30,9 @@
     "docker:start": "cross-env NODE_ENV=production pm2-docker start ./src/index.js",
     "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
-    "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --abort-on-container-exit"
+    "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --abort-on-container-exit",
+    "db:migrate": "sequelize db:migrate",
+    "db:migrate:undo": "sequelize db:migrate:undo"
   },
   "keywords": [
     "express",
@@ -80,8 +84,11 @@
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "4.0.0",
+    "pg": "^7.6.0",
+    "pg-hstore": "^2.3.2",
     "pm2": "^2.4.6",
     "response-time": "^2.3.2",
+    "sequelize": "^4.41.0",
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
     "winston-cloudwatch": "^2.0.2"
@@ -102,6 +109,7 @@
     "opn-cli": "^3.1.0",
     "prettier-eslint": "^8.8.2",
     "proxyquire": "^2.1.0",
+    "sequelize-cli": "^5.2.0",
     "supertest": "^3.0.0"
   },
   "_moduleAliases": {
