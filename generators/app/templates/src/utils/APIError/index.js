@@ -1,5 +1,6 @@
-const APIError = require('./APIError');
+const { APIError, generateError } = require('./APIError');
 
 module.exports = {
-  APIError
+  APIError,
+  generateError
 };

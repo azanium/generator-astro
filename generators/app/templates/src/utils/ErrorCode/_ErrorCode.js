@@ -1,9 +1,11 @@
+/* istanbul ignore file */
+const { serviceName } = require('../../config/vars');
+
 exports.routes = {
   root: 'default'
 };
 
 exports.services = {
-  dynamoDB: 'dynamoDB',
   input: 'input',
   route: 'route'
 };
@@ -17,17 +19,6 @@ exports.codes = {
 };
 
 exports.getErrorCode = (route, service, code) => {
-  const result = ['<%= name %>', route, service, code].join(':');
-  return result;
-};
-
-exports.wrapError = (errCode, errTitle, errDesc, errDebugDesc, errAttributes) => {
-  const result = {
-    errorCode: errCode,
-    errorTitle: errTitle,
-    errorDescription: errDesc,
-    errorDebugDescription: errDebugDesc,
-    errorAttributes: errAttributes
-  };
+  const result = [serviceName, route, service, code].join(':');
   return result;
 };

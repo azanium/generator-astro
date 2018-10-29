@@ -2,9 +2,9 @@ const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
 const _ = require('lodash');
 
-const { APIError } = require('../../utils/APIError');
+const { APIError, generateError } = require('../../utils/APIError');
 const {
-  getErrorCode, routes, services, codes, wrapError
+  getErrorCode, routes, services, codes
 } = require('../../utils/ErrorCode');
 
 /**
@@ -46,7 +46,7 @@ exports.handler = handler;
 const convertValidationError = (err, req) => {
   const formattedErrors = [];
   err.errors.forEach((error) => {
-    formattedErrors.push(wrapError(
+    formattedErrors.push(generateError(
       [req.path.replace('/', '').split('/').join(':'), codes.validationError].join(':'),
       'We seems to have a problem!',
       'We have some trouble validating your data - please contact our customer support',
@@ -74,7 +74,7 @@ exports.convertValidationError = convertValidationError;
  * @oublic
  */
 const convertGenericError = (err, req) => {
-  const wrappedError = wrapError(
+  const wrappedError = generateError(
     err.code || [req.path.replace('/', '').split('/').join(':'), codes.unknown].join(':'),
     'We seems to have a problem!',
     'Our internal system is having problem, please contact our administrator!',
