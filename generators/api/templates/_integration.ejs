@@ -20,8 +20,8 @@ describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
       .then((res) => {
         expect(res.body).toHaveProperty('responseCode');
         expect(res.body).toHaveProperty('responseMessage');
-        expect(res.body.responseCode).toBe(200);
-        expect(res.body.responseMessage).not.toBe(undefined);
+        expect(res.body.responseCode).toBe(httpStatus.OK);
+        expect(res.body.responseMessage).toEqual(expect.any(String));
       });
   });
 });
