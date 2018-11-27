@@ -6,7 +6,7 @@ describe('Middleware - <%= name %>Middleware', () => {
 
   afterEach(() => {});
 
-  it('should pass request', (done) => {
+  test('should pass request', (done) => {
     <%= name %>Middleware({}, {}, (err) => {
       expect(err).toBe(undefined);
       done();

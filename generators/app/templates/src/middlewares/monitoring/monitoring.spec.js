@@ -16,7 +16,7 @@ describe('Middleware - monitoringMiddleware', () => {
 
   afterEach(() => {});
 
-  it('should pass request', () => {
+  test('should pass request', () => {
     app.use((req, res, next) => {
       req.useragent = {
         browser: 'mocha',

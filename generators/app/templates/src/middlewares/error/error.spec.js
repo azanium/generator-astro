@@ -46,7 +46,7 @@ describe('Middleware - error', () => {
     jest.resetAllMocks();
   });
 
-  it('should convert validation error into API error with custom route', () => {
+  test('should convert validation error into API error with custom route', () => {
     req.path = '/api/v1/auth/error';
     const route = 'root';
     validationError.route = route;
@@ -74,7 +74,7 @@ describe('Middleware - error', () => {
     expect(apiError.route).toBe(route);
   });
 
-  it('should convert validation error into API error with default route', () => {
+  test('should convert validation error into API error with default route', () => {
     req.path = '/api/v1/auth/error';
 
     delete validationError.route;
@@ -102,7 +102,7 @@ describe('Middleware - error', () => {
     expect(apiError.route).toBe('default');
   });
 
-  it('should convert generic error into API error', () => {
+  test('should convert generic error into API error', () => {
     req.path = '/api/v1/auth/error';
     const error = new Error('Something went wrong');
 
@@ -129,7 +129,7 @@ describe('Middleware - error', () => {
   });
 
 
-  it('should generate Not Found API error', () => {
+  test('should generate Not Found API error', () => {
     const apiError = generateNotFoundError();
     expect(apiError).toHaveProperty('name');
     expect(apiError).toHaveProperty('errors');
@@ -153,7 +153,7 @@ describe('Middleware - error', () => {
   });
 
 
-  it('error converter should convert validation error', () => {
+  test('error converter should convert validation error', () => {
     converter(validationError, req, res);
 
     expect(this.statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
@@ -161,7 +161,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('error converter should convert generic error', () => {
+  test('error converter should convert generic error', () => {
     const error = new Error('Something went wrongasdasdasddsa');
     converter(error, req, res);
 
@@ -170,7 +170,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('error converter should convert APIError', () => {
+  test('error converter should convert APIError', () => {
     const error = convertValidationError(validationError, req);
     converter(error, req, res);
 
@@ -179,7 +179,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('notFound middleware should generate not found error', () => {
+  test('notFound middleware should generate not found error', () => {
     notFound(req, res);
 
     expect(this.statusStub).toBeCalledWith(httpStatus.NOT_FOUND);
@@ -187,7 +187,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('handler middleware should return http status message for error without message', () => {
+  test('handler middleware should return http status message for error without message', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     handler(err, req, res);
@@ -197,7 +197,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('handler middleware should return error with error stack', () => {
+  test('handler middleware should return error with error stack', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     process.env.NODE_ENV = 'development';
@@ -208,7 +208,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('handler middleware should return error without error stack', () => {
+  test('handler middleware should return error without error stack', () => {
     const err = new Error();
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     process.env.NODE_ENV = 'test';
@@ -219,7 +219,7 @@ describe('Middleware - error', () => {
     expect(this.endStub).toHaveBeenCalledTimes(1);
   });
 
-  it('handler middleware should convert error with http status = 0, into internal server error', () => {
+  test('handler middleware should convert error with http status = 0, into internal server error', () => {
     const err = new Error();
     err.status = 0;
     handler(err, req, res);

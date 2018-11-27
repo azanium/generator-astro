@@ -12,7 +12,7 @@ describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
 
   afterEach(() => {});
 
-  it('should integrate api /<%= endpoint %>', () => {
+  test('should integrate api /<%= endpoint %>', () => {
     return request(app)
       .<%= method %>('/<%= apibase %>/<%= apiversion %>/<%= endpoint %>')
       .send(body)

@@ -6,7 +6,7 @@ describe('Boot - startupBoot', () => {
 
   afterEach(() => {});
 
-  it('should run startupBoot and pass sequence to next boot task', (done) => {
+  test('should run startupBoot and pass sequence to next boot task', (done) => {
     const app = {};
 
     startupBoot(app, (err) => {

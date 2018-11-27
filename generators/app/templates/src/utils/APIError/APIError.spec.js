@@ -21,7 +21,7 @@ describe('Utils - APIError', () => {
     jest.resetAllMocks();
   });
 
-  it('should create a valid default APIError', () => {
+  test('should create a valid default APIError', () => {
     const sut = new APIError({
       message,
       errors,
@@ -40,7 +40,7 @@ describe('Utils - APIError', () => {
     expect(sut.isPublic).toBe(false);
   });
 
-  it('should create a valid default APIError without custom message', () => {
+  test('should create a valid default APIError without custom message', () => {
     const sut = new APIError({
       errors,
       stack
@@ -58,7 +58,7 @@ describe('Utils - APIError', () => {
     expect(sut.isPublic).toBe(false);
   });
 
-  it('should create a valid custom APIError', () => {
+  test('should create a valid custom APIError', () => {
     const sut = new APIError({
       message,
       errors,
@@ -80,7 +80,7 @@ describe('Utils - APIError', () => {
     expect(sut.isPublic).toBe(isPublic);
   });
 
-  it('should generate error', () => {
+  test('should generate error', () => {
     const error = generateError(errCode, errTitle, errDesc, errDebugDesc, errAttributes);
 
     expect(error).toHaveProperty('errorCode');
@@ -95,7 +95,7 @@ describe('Utils - APIError', () => {
     expect(error.errorAttributes).toEqual(errAttributes);
   });
 
-  it('should generate not found error', () => {
+  test('should generate not found error', () => {
     const sut = APIError.notFound();
 
     expect(sut).toHaveProperty('message');
@@ -110,7 +110,7 @@ describe('Utils - APIError', () => {
     expect(sut.isPublic).toEqual(expect.any(Boolean));
   });
 
-  it('should generate forbidden error', () => {
+  test('should generate forbidden error', () => {
     const sut = APIError.forbidden();
 
     expect(sut).toHaveProperty('message');

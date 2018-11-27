@@ -30,31 +30,31 @@ describe('Utility - logger', () => {
     expect(infoSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should write error log stream', () => {
+  test('should write error log stream', () => {
     util.logger.streamError.write(req);
 
     expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should write debug log', () => {
+  test('should write debug log', () => {
     util.debug('method', 'message', { data: 1 });
 
     expect(debugSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should write warn log', () => {
+  test('should write warn log', () => {
     util.warn('method', 'message', {}, {});
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should capture error', () => {
+  test('should capture error', () => {
     util.captureError('title', { message: 'error' }, 'method');
 
     expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should capture error response', () => {
+  test('should capture error response', () => {
     const methodName = 'method';
     const errorMessage = 'error';
     const response = 'stupid';
@@ -70,7 +70,7 @@ describe('Utility - logger', () => {
     expect(errorSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should capture error response with stack', () => {
+  test('should capture error response with stack', () => {
     const methodName = 'method';
     const errorMessage = 'error';
     const response = 'stupid';
