@@ -5,9 +5,15 @@
     "jest": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
   },
   "extends": [
     "astro"
-  ]
+  ],
+  "settings": {
+    "import/resolver": "module-alias"
+  }
 }

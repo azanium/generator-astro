@@ -93,6 +93,7 @@
     "babel-jest": "^23.6.0",
     "eslint": "^5.6.1",
     "eslint-config-astro": "^1.0.6",
+    "eslint-import-resolver-module-alias": "^0.1.0",
     "eslint-plugin-import": "^2.14.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
@@ -105,13 +106,16 @@
     "supertest": "^3.0.0"
   },
   "_moduleAliases": {
-    "@app"          : "src",
-    "@config"       : "src/config",
-    "@api"          : "src/api",
-    "@middlewares"  : "src/middlewares",
-    "@models"       : "src/models",
-    "@services"     : "src/services",
-    "@utils"        : "src/utils"
+    "#app": "src",
+    "#api": "src/api",
+    "#boot": "src/boot",
+    "#config": "src/config",
+    "#database": "src/database",
+    "#middlewares": "src/middlewares",
+    "#models": "src/models",
+    "#services": "src/services",
+    "#tests": "src/tests",
+    "#utils": "src/utils"
   },
   "nyc": {
     "include": "src",
@@ -124,27 +128,29 @@
   "jest": {
     "verbose": true,
     "moduleNameMapper": {
-      "^@app(.*)$": "<rootDir>/src$1",
-      "^@boot(.*)$": "<rootDir>/src/boot$1",
-      "^@config(.*)$": "<rootDir>/src/config$1",
-      "^@api(.*)$": "<rootDir>/src/api$1",
-      "^@middlewares(.*)$": "<rootDir>/src/middlewares$1",
-      "^@models(.*)$": "<rootDir>/src/models$1",
-      "^@services(.*)$": "<rootDir>/src/services$1",
-      "^@utils(.*)$": "<rootDir>/src/utils$1"
+      "#app(.*)$": "<rootDir>/src/$1",
+      "#api(.*)$": "<rootDir>/src/api/$1",
+      "#boot(.*)$": "<rootDir>/src/boot/$1",
+      "#config(.*)$": "<rootDir>/src/config/$1",
+      "#database(.*)$": "<rootDir>/src/database/$1",
+      "#middlewares(.*)$": "<rootDir>/src/middlewares/$1",
+      "#models(.*)$": "<rootDir>/src/models/$1",
+      "#services(.*)$": "<rootDir>/src/services/$1",
+      "#tests(.*)$": "<rootDir>/src/tests/$1",
+      "#utils(.*)$": "<rootDir>/src/utils/$1"
     },
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "moduleFileExtensions": [
-      "js", "json"
+      "js"
     ],
-    "modulePathIgnorePatterns":[
+    "modulePathIgnorePatterns": [
       "src/tests"
     ],
-    "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "\\index.js$",
       "(/src/.*)\\.(validation|config|index).js$"
     ],
+    "testEnvironment": "node",
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
       "!src/config/**",
@@ -161,5 +167,5 @@
       "text",
       "clover"
     ]
-  }  
+  }
 }
