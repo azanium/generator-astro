@@ -8,16 +8,16 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "#app/*": ["src/*"],
-      "#api/*": ["src/api/*"],
-      "#boot/*": ["src/boot/*"],
-      "#config/*": ["src/config/*"],
-      "#database/*": ["src/database/*"],
-      "#middlewares/*": ["src/middlewares/*"],
-      "#models/*": ["src/models/*"],
-      "#services/*": ["src/services/*"],
-      "#tests/*": ["src/tests/*"],
-      "#utils/*": ["src/utils/*"]
+      "@app/*": ["src/*"],
+      "@api/*": ["src/api/*"],
+      "@boot/*": ["src/boot/*"],
+      "@config/*": ["src/config/*"],
+      "@database/*": ["src/database/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@models/*": ["src/models/*"],
+      "@services/*": ["src/services/*"],
+      "@tests/*": ["src/tests/*"],
+      "@utils/*": ["src/utils/*"]
     }
   }
 }

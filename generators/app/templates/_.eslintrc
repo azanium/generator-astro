@@ -12,5 +12,8 @@
   ],
   "settings": {
     "import/resolver": "module-alias"
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": "off"
   }
 }
