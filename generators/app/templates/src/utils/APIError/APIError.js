@@ -64,7 +64,22 @@ class APIError extends ExtendableError {
     });
   }
 
-  static notFound() {
+  static badRequest(debugDescription) {
+    return new APIError({
+      message: 'Bad request',
+      status: httpStatus.BAD_REQUEST,
+      errors: [
+        generateError(
+          'BAD_REQUEST',
+          'Oops! Something is wrong',
+          'Bad request',
+          debugDescription || 'Bad request'
+        )
+      ]
+    });
+  }
+
+  static notFound(debugDescription) {
     return new APIError({
       message: 'Resource not found!',
       status: httpStatus.NOT_FOUND,
@@ -73,13 +88,13 @@ class APIError extends ExtendableError {
           'NOT_FOUND',
           'Oops! Something is wrong',
           'The resource you are looking for does not exist!',
-          'Client with that name is not exist'
+          debugDescription || 'Not found'
         )
       ]
     });
   }
 
-  static forbidden() {
+  static forbidden(debugDescription) {
     return new APIError({
       message: 'Request forbidden!',
       status: httpStatus.FORBIDDEN,
@@ -88,7 +103,7 @@ class APIError extends ExtendableError {
           'FORBIDDEN',
           'Oops! Something is wrong',
           'This name already exist, please choose another name',
-          'Client with that name is already exist'
+          debugDescription || 'Forbidden operation'
         )
       ]
     });

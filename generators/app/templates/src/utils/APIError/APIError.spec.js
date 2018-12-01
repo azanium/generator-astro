@@ -95,6 +95,21 @@ describe('Utils - APIError', () => {
     expect(error.errorAttributes).toEqual(errAttributes);
   });
 
+  test('should generate bad request error', () => {
+    const sut = APIError.badRequest();
+
+    expect(sut).toHaveProperty('message');
+    expect(sut).toHaveProperty('errors');
+    expect(sut).toHaveProperty('route');
+    expect(sut).toHaveProperty('stack');
+    expect(sut).toHaveProperty('status');
+    expect(sut).toHaveProperty('isPublic');
+    expect(sut.message).toEqual(expect.any(String));
+    expect(sut.route).toEqual(expect.any(String));
+    expect(sut.status).toEqual(httpStatus.BAD_REQUEST);
+    expect(sut.isPublic).toEqual(expect.any(Boolean));
+  });
+
   test('should generate not found error', () => {
     const sut = APIError.notFound();
 
