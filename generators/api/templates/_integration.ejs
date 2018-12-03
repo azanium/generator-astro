@@ -6,9 +6,13 @@ const app = require('../../../index');
 describe('POST /api/<%= apiversion %>/<%= endpoint %>', () => {
   let body;
 
-  beforeEach(() => {
+  beforeAll(async () => {
     body = {};
   });
+
+  afterAll(async () => {});
+
+  beforeEach(() => {});
 
   afterEach(() => {});
 

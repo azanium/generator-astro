@@ -5,10 +5,14 @@ const httpStatus = require('http-status');
  * @public
  */
 exports.<%= name %> = async (req, res, next) => {
-  res.status(httpStatus.OK);
-  return res.json({
-    responseCode: httpStatus.OK,
-    responseMessage: 'OK',
-    response: {}
-  });
+  try {
+    res.status(httpStatus.OK);
+    return res.json({
+      responseCode: httpStatus.OK,
+      responseMessage: 'OK',
+      response: {}
+    });
+  } catch (error) {
+    return next(error);
+  }
 };
