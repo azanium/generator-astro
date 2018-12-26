@@ -44,10 +44,12 @@ module.exports = class extends Generator {
       that.props.injectRoute = false;
       that.props.apibase = that.config.get('apibase');
       that.props.apiversion = that.config.get('apiversion');
+      that.props.author = that.config.get('author');
       that.props.endpoint = `${that.props.name}`;
       that.props.name = camelize(that.props.name, true);
       that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.upperMethod = that.props.method.toUpperCase();
+      that.props.date = new Date().toString();
 
       if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');

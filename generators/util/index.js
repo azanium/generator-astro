@@ -30,6 +30,8 @@ module.exports = class extends Generator {
       that.props.name = camelize(that.props.name, true);
       that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.capitalizedName = capitalize(that.props.name);
+      that.props.author = that.config.get('author');
+      that.props.date = new Date().toString();
 
       if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');

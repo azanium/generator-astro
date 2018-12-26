@@ -68,6 +68,7 @@
     "express-validation": "^1.0.2",
     "helmet": "^3.5.0",
     "http-status": "^1.0.1",
+    "jest-extended": "^0.11.0",
     "joi": "^14.3.0",
     "jws": "^3.1.5",
     "jwt-simple": "0.5.1",
@@ -168,6 +169,7 @@
       "lcov",
       "text",
       "clover"
-    ]
+    ],
+    "setupTestFrameworkScriptFile": "jest-extended"
   }
 }
