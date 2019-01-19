@@ -1,5 +1,3 @@
-'user strict';
-
 const Generator = require('yeoman-generator');
 const camelize = require('underscore.string/camelize');
 const underscored = require('underscore.string/underscored');
@@ -74,7 +72,7 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
 
     const controllerName = `${props.filename}.controller.js`;
-    const validationName = `${props.filename}.validation.js`;
+    const validationName = `${props.filename}.validator.js`;
     const integrationName = `${props.filename}.integration.test.js`;
     const testName = `${props.filename}.spec.js`;
     const apiPath = `src/api/${this.apiversion}/${props.filename}`;
@@ -97,7 +95,9 @@ module.exports = class extends Generator {
      * Validation
      */
     if (!this.fs.exists(dPath(`${apiPath}/${validationName}`))) {
-      copyTpl(tPath('_validation.ejs'), dPath(`${apiPath}/${validationName}`), props);
+      // As of v3.0.1 We no longer use validation
+      // copyTpl(tPath('_validation.ejs'), dPath(`${apiPath}/${validationName}`), props);
+      copyTpl(tPath('_validator.ejs'), dPath(`${apiPath}/${validationName}`), props);
     }
 
     /**

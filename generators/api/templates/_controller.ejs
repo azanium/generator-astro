@@ -7,7 +7,7 @@ const httpStatus = require('http-status');
 exports.<%= name %> = async (req, res, next) => {
   res.status(httpStatus.OK);
   return res.json({
-    responseCode: 200,
+    responseCode: httpStatus.OK,
     responseMessage: 'OK',
     response: {}
   });
