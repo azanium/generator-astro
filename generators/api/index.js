@@ -1,3 +1,6 @@
+const path = require('path');
+const mkdirp = require('mkdirp');
+const urlJoin = require('url-join');
 const Generator = require('yeoman-generator');
 const camelize = require('underscore.string/camelize');
 const underscored = require('underscore.string/underscored');
@@ -22,7 +25,8 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'name',
         message: 'What is your API endpoint name?',
-        default: this.config.get('last_endpoint') || 'endpoint'
+        default: this.config.get('last_endpoint') || 'endpoint',
+        validate: value => value !== undefined && value !== ''
       },
       {
         type: 'input',
@@ -43,9 +47,28 @@ module.exports = class extends Generator {
       that.props.apibase = that.config.get('apibase');
       that.props.apiversion = that.config.get('apiversion');
       that.props.endpoint = `${that.props.name}`;
-      that.props.name = camelize(that.props.name, true);
-      that.props.filename = underscored(that.props.name).replace('_', '-');
       that.props.upperMethod = that.props.method.toUpperCase();
+      that.props.filename = underscored(that.props.name).replace('_', '-');
+
+      // Handle nested api path
+      let { name } = that.props;
+
+      // Dirname by default is the filename
+      let dirname = that.props.filename;
+      if (name.indexOf('/') > -1) {
+        // Create dirname
+        dirname = underscored(path.dirname(name)).replace('_', '-');
+        mkdirp.sync(path.join(this.destinationPath(), dirname));
+        name = path.basename(name);
+
+        // now filename only store the basename
+        that.props.filename = underscored(name).replace('_', '-');
+
+        // dirname should be full path
+        dirname = urlJoin(dirname, that.props.filename);
+      }
+      that.props.dirname = dirname;
+      that.props.name = camelize(name, true);
 
       if (!that.projectname || !that.apiversion) {
         console.log('Invalid Astro project!, exiting');
@@ -70,12 +93,13 @@ module.exports = class extends Generator {
     const copyTpl = this.fs.copyTpl.bind(this.fs);
     const tPath = this.templatePath.bind(this);
     const dPath = this.destinationPath.bind(this);
-
     const controllerName = `${props.filename}.controller.js`;
     const validationName = `${props.filename}.validator.js`;
     const integrationName = `${props.filename}.integration.test.js`;
     const testName = `${props.filename}.spec.js`;
-    const apiPath = `src/api/${this.apiversion}/${props.filename}`;
+    const apiRootPath = `src/api/${this.apiversion}`;
+    const apiPath = `${apiRootPath}/${props.dirname}`;
+    props.indexfilename = props.dirname ? `${props.name}` : `${props.filename}`;
 
     /**
      * Controller
@@ -87,7 +111,7 @@ module.exports = class extends Generator {
     /**
      * Route
      */
-    if (!this.fs.exists(dPath(`${apiPath}/index.hs`))) {
+    if (!this.fs.exists(dPath(`${apiPath}/index.js`))) {
       copyTpl(tPath('_index.ejs'), dPath(`${apiPath}/index.js`), props);
     }
 
@@ -121,7 +145,7 @@ module.exports = class extends Generator {
     const { props } = this;
     const dPath = this.destinationPath.bind(this);
 
-    const routeName = `${props.filename}`;
+    const routeName = `${props.dirname}`;
     const routeFile = dPath(`src/api/${this.apiversion}/index.js`);
 
     /**
