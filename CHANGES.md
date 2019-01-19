@@ -6,6 +6,7 @@
 - Update celebrate and joi package
 - Make port optional, so user can change them upon generation
 - Changed validation into validator with joi schema
+- Add nested api name when using astro:api sub generator
 
 # Version 1.0 - 3.0.0 
 
