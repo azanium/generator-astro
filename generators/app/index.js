@@ -27,32 +27,49 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'name',
         message: 'What is your project name?',
-        default: this.projectname
+        default: that.config.get('name') || this.projectname,
+        validate: value => value !== undefined && value !== ''
       },
       {
-        type: 'input',
+        type: 'list',
         name: 'sequelize',
         message: 'You want to use sequelize?',
-        choices: ['y', 'n'],
-        default: 'y'
+        choices: [
+          { name: 'yes', value: 'y' },
+          { name: 'no', value: 'n' }
+        ],
+        default: 'n'
       },
       {
         type: 'input',
         name: 'apibase',
         message: 'Your API base path?',
-        default: 'api'
+        default: that.config.get('apibase') || 'api',
+        validate: value => value !== undefined && value !== ''
       },
       {
         type: 'input',
         name: 'apiversion',
         message: 'Your API version?',
-        default: 'v1'
+        default: that.config.get('apiversion') || 'v1',
+        validate: value => value !== undefined && value !== ''
+      },
+      {
+        type: 'input',
+        name: 'port',
+        message: 'Your service port?',
+        default: that.config.get('port') || '5000',
+        validate: (value) => {
+          const regex = new RegExp(/[0-9]/g);
+          return regex.test(value);
+        }
       },
       {
         type: 'input',
         name: 'version',
         message: 'Version number',
-        default: that.config.get('version') || '0.1.0'
+        default: that.config.get('version') || '0.1.0',
+        validate: value => value !== undefined && value !== ''
       },
       {
         type: 'input',
@@ -150,36 +167,23 @@ module.exports = class extends Generator {
     // mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
     copy(tPath('src/services'), dPath('src/services'));
 
+    copyTpl(tPath('_package.json.ejs'), dPath('package.json'), props);
+
+    /**
+     * Docker
+     */
+    copyTpl(tPath('Dockerfile'), dPath('Dockerfile'), props);
+    copyTpl(tPath('_docker-compose.yml'), dPath('docker-compose.yml'), props);
+    copyTpl(tPath('_docker-compose.dev.yml'), dPath('docker-compose.dev.yml'), props);
+    copyTpl(tPath('_docker-compose.test.yml'), dPath('docker-compose.test.yml'), props);
+    copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
+
     if (props.sequelize === 'y') {
       mkdirp.sync(path.join(this.destinationPath(), 'src/database/migrations'));
       mkdirp.sync(path.join(this.destinationPath(), 'src/database/seeders'));
-      copyTpl(tPath('_package-sequelize.json'), dPath('package.json'), props);
       copyTpl(tPath('.sequelizerc'), dPath('.sequelizerc'), props);
       copyTpl(tPath('src/config/database.js'), dPath('src/config/database.js'), props);
       copyTpl(tPath('src/models/index.js'), dPath('src/models/index.js'), props);
-
-      /**
-       * Docker
-       */
-      copy(tPath('Dockerfile'), dPath('Dockerfile'));
-      copyTpl(tPath('_docker-compose-seq.yml'), dPath('docker-compose.yml'), props);
-      copyTpl(tPath('_docker-compose-seq.dev.yml'), dPath('docker-compose.dev.yml'), props);
-      copyTpl(tPath('_docker-compose-seq.test.yml'), dPath('docker-compose.test.yml'), props);
-      copyTpl(tPath('_docker-compose-seq.prod.yml'), dPath('docker-compose.prod.yml'), props);
-    } else {
-      /**
-       * package.json
-       */
-      copyTpl(tPath('_package.json'), dPath('package.json'), props);
-
-      /**
-       * Docker
-       */
-      copy(tPath('Dockerfile'), dPath('Dockerfile'));
-      copyTpl(tPath('_docker-compose.yml'), dPath('docker-compose.yml'), props);
-      copyTpl(tPath('_docker-compose.dev.yml'), dPath('docker-compose.dev.yml'), props);
-      copyTpl(tPath('_docker-compose.test.yml'), dPath('docker-compose.test.yml'), props);
-      copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
     }
 
     this.config.save();
@@ -188,6 +192,7 @@ module.exports = class extends Generator {
       this.config.set('name', props.name);
       this.config.set('apibase', props.apibase);
       this.config.set('apiversion', props.apiversion);
+      this.config.set('port', props.port);
       this.config.set('version', props.version);
       this.config.set('description', props.description);
       this.config.set('author', props.author);

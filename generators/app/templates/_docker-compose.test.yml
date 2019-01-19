@@ -1,4 +1,20 @@
 version: "2"
-services:
-  <%= name %>:
+services: <% if (sequelize === 'y') {%>
+  migrations:
+    environment:
+      - NODE_ENV=test
+      - PORT=<%= port %>
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - DB_URL=postgres://username:Dummy123@postgres/<%= name %>-store
+      - DB_URL_TEST=postgres://username:Dummy123@postgres/<%= name %>-store
+    command: yarn db:migrate
+
+  <% } %>
+  <%= name %>: <% if (sequelize === 'y') {%>
+    environment:
+      - NODE_ENV=test
+      - PORT=<%= port %>
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - DB_URL=postgres://username:Dummy123@postgres/<%= name %>-store
+      - DB_URL_TEST=postgres://username:Dummy123@postgres/<%= name %>-store <% } %>
     command: yarn test

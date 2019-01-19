@@ -1,13 +1,13 @@
-FROM node:9-alpine
+FROM node:10-alpine
 
-EXPOSE 3000
+EXPOSE <%= port %>
 
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
 
 RUN mkdir /app
 WORKDIR /app
-ADD package.json yarn.lock /app/
+ADD package.json /app/
 RUN yarn --pure-lockfile
 ADD . /app
 
