@@ -1,5 +1,3 @@
-'user strict';
-
 const Generator = require('yeoman-generator');
 const yosay = require('yosay');
 const path = require('path');
