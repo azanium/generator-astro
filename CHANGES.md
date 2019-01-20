@@ -1,3 +1,6 @@
+# Version 3.3.2
+- Fixed package.json for sequelize, by removing comma dangling
+
 # Version 3.3.1
 - Changed src into optional variable that can be changed in .yo-rc.json, and user can use this as relative path for src for all subgenerators.
 
