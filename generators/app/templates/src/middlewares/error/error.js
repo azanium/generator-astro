@@ -2,10 +2,10 @@ const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
 const _ = require('lodash');
 
-const { APIError, generateError } = require('../../utils/APIError');
+const { APIError, generateError } = require('@utils/APIError');
 const {
   getErrorCode, routes, services, codes
-} = require('../../utils/ErrorCode');
+} = require('@utils/ErrorCode');
 
 /**
  * Error handler. Send stacktrace only during development

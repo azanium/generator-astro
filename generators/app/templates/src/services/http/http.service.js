@@ -5,8 +5,8 @@
  */
 const axios = require('axios');
 const axiosRetry = require('axios-retry');
-const { logger } = require('./../../utils/logger');
-const { http } = require('../../config/vars');
+const { logger } = require('@utils/logger');
+const { http } = require('@config/vars');
 
 const instance = axios.create({
   timeout: http.timeout,

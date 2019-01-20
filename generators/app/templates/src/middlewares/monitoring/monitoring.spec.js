@@ -1,11 +1,10 @@
 const httpStatus = require('http-status');
 const request = require('supertest');
 const express = require('express');
+const { logger } = require('@utils/logger');
 const middleware = require('./monitoring.middleware');
 
-jest.mock('../../utils/logger');
-const { logger } = require('../../utils/logger');
-
+jest.mock('@utils/logger');
 
 describe('Middleware - monitoringMiddleware', () => {
   let app;
@@ -17,6 +16,7 @@ describe('Middleware - monitoringMiddleware', () => {
   afterEach(() => {});
 
   it('should pass request', () => {
+    logger.info = jest.fn();
     app.use((req, res, next) => {
       req.useragent = {
         browser: 'mocha',

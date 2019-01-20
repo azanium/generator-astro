@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { routes } = require('./../ErrorCode');
+const { routes } = require('@utils/ErrorCode');
 
 /**
  * Wrap Error

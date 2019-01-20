@@ -3,7 +3,7 @@ const WinstonCloudWatch = require('winston-cloudwatch');
 const sanitizer = require('node-sanitizer');
 // Uncomment the following line if you use elastic APM
 // const apm = require('elastic-apm-node');
-const { serviceName, sanitizedFields } = require('../../config/vars');
+const { serviceName, sanitizedFields } = require('@config/vars');
 
 const {
   combine,

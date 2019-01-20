@@ -5,9 +5,15 @@
     "jest": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 9
   },
   "extends": [
     "astro"
-  ]
+  ],
+  "settings": {
+    "import/resolver": "module-alias"
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": "off"
+  }
 }

@@ -3,7 +3,7 @@
   "version": "<%= version %>",
   "description": "<%= description %>",
   "author": "<%= author %>",
-  "main": "src/index.js",
+  "main": "<%= src %>/index.js",
   "private": false,
   "license": "<%= license %>",
   "engines": {
@@ -13,8 +13,8 @@
   "scripts": {
     "precommit": "yarn validate",
     "prestart": "yarn docs",
-    "start": "cross-env NODE_ENV=production pm2 start ./src/index.js",
-    "dev": "NODE_ENV=development nodemon ./src/index.js",
+    "start": "cross-env NODE_ENV=production pm2 start ./<%= src %>/index.js",
+    "dev": "NODE_ENV=development nodemon ./<%= src %>/index.js",
     "lint": "eslint '**/*.js' --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
     "lint:watch": "yarn lint -- --watch",
@@ -25,7 +25,7 @@
     "validate": "yarn lint && yarn test",
     "postpublish": "git push --tags",
     "docs": "apidoc -i src -o docs",
-    "docker:start": "cross-env NODE_ENV=production pm2-docker start ./src/index.js",
+    "docker:start": "cross-env NODE_ENV=production pm2-docker start ./<%= src %>/index.js",
     "docker:prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up",
     "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
     "docker:test": "docker-compose -f docker-compose.yml -f docker-compose.test.yml up --abort-on-container-exit"<% if (sequelize === 'y') { %>,
@@ -90,7 +90,10 @@
     "response-time": "^2.3.2",
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
-    "winston-cloudwatch": "^2.0.2"
+    "winston-cloudwatch": "^2.0.2"<% if (sequelize === 'y') {%>,
+    "sequelize": "^4.41.0",
+    "pg": "^7.6.0",
+    "pg-hstore": "^2.3.2"<% } %>
   },
   "devDependencies": {
     "@types/jest": "^23.3.3",
@@ -99,6 +102,7 @@
     "babel-jest": "^23.6.0",
     "eslint": "^5.6.1",
     "eslint-config-astro": "^1.0.6",
+    "eslint-import-resolver-module-alias": "^0.1.0",
     "eslint-plugin-import": "^2.14.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
@@ -108,16 +112,17 @@
     "opn-cli": "^3.1.0",
     "prettier-eslint": "^8.8.2",
     "proxyquire": "^2.1.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0"<% if (sequelize === 'y') {%>,
+    "sequelize-cli": "^5.2.0",<% } %>
   },
   "_moduleAliases": {
-    "@app"          : "src",
-    "@config"       : "src/config",
-    "@api"          : "src/api",
-    "@middlewares"  : "src/middlewares",
-    "@models"       : "src/models",
-    "@services"     : "src/services",
-    "@utils"        : "src/utils"
+    "@app"          : "<%= src %>",
+    "@config"       : "<%= src %>/config",
+    "@api"          : "<%= src %>/api",
+    "@middlewares"  : "<%= src %>/middlewares",
+    "@models"       : "<%= src %>/models",
+    "@services"     : "<%= src %>/services",
+    "@utils"        : "<%= src %>/utils"
   },
   "nyc": {
     "include": "src",
@@ -129,14 +134,14 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "^@app(.*)$": "<rootDir>/src$1",
-      "^@boot(.*)$": "<rootDir>/src/boot$1",
-      "^@config(.*)$": "<rootDir>/src/config$1",
-      "^@api(.*)$": "<rootDir>/src/api$1",
-      "^@middlewares(.*)$": "<rootDir>/src/middlewares$1",
-      "^@models(.*)$": "<rootDir>/src/models$1",
-      "^@services(.*)$": "<rootDir>/src/services$1",
-      "^@utils(.*)$": "<rootDir>/src/utils$1"
+      "^@app(.*)$": "<rootDir>/<%= src %>$1",
+      "^@boot(.*)$": "<rootDir>/<%= src %>/boot$1",
+      "^@config(.*)$": "<rootDir>/<%= src %>/config$1",
+      "^@api(.*)$": "<rootDir>/<%= src %>/api$1",
+      "^@middlewares(.*)$": "<rootDir>/<%= src %>/middlewares$1",
+      "^@models(.*)$": "<rootDir>/<%= src %>/models$1",
+      "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
+      "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1"
     },
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "moduleFileExtensions": [
@@ -144,15 +149,16 @@
     ],
     "testPathIgnorePatterns": [
       "\\index.js$",
-      "(/src/.*)\\.(validation|config|index).js$"
+      "(/src/.*)\\.(validator|validation|config|index).js$"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
-      "!src/config/**",
       "!src/**/index.js",
-      "!src/database/**",
-      "!src/models/**",
       "!src/**/*.validation.js",
+      "!src/**/*.validator.js",
+      "!<%= src %>/config/**",
+      "!<%= src %>/database/**",
+      "!<%= src %>/models/**",
       "!<rootDir>/node_modules/"
     ],
     "coverageReporters": [

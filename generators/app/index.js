@@ -1,4 +1,5 @@
 const Generator = require('yeoman-generator');
+const urlJoin = require('url-join');
 const yosay = require('yosay');
 const path = require('path');
 const slugify = require('underscore.string/slugify');
@@ -103,6 +104,8 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
+    props.src = 'src/server';
+    props.apiPath = urlJoin(props.src, props.apibase);
 
     /**
      * Etc
@@ -112,8 +115,8 @@ module.exports = class extends Generator {
     copyTpl(tPath('_README.md'), dPath('README.md'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
-    copy(tPath('jest.json'), dPath('jest.json'));
-    copy(tPath('jsconfig.json'), dPath('jsconfig.json'));
+    copyTpl(tPath('jest.json'), dPath('jest.json'), props);
+    copyTpl(tPath('jsconfig.json'), dPath('jsconfig.json'), props);
 
     /**
      * License
@@ -125,47 +128,46 @@ module.exports = class extends Generator {
     /**
      * index.js
      */
-    copy(tPath('src/index.js'), dPath('src/index.js'));
+    copy(tPath('src/index.js'), dPath(urlJoin(props.src, 'index.js')));
 
     /**
      * boot folder
      */
-    copy(tPath('src/boot'), dPath('src/boot'));
+    copy(tPath('src/boot'), dPath(urlJoin(props.src, 'boot')));
 
     /**
      * api folder
      */
-    mkdirp.sync(path.join(this.destinationPath(), 'src/api'));
-    copyTpl(tPath(`src/api/_index.ejs`), dPath(`src/api/index.js`), props);
-    copy(tPath(`src/api/apiversion/index.js`), dPath(`src/api/${props.apiversion}/index.js`));
+    mkdirp.sync(path.join(this.destinationPath(), urlJoin(props.src, props.apibase)));
+    copyTpl(tPath(`src/api/_index.ejs`), dPath(urlJoin(props.apiPath, 'index.js')), props);
+    copy(tPath(`src/api/apiversion/index.js`), dPath(urlJoin(props.apiPath, props.apiversion, 'index.js')));
 
     /**
      * config folder
      */
-    copyTpl(tPath('src/config/_express.ejs'), dPath('src/config/express.js'), props);
-    copyTpl(tPath('src/config/vars.js'), dPath('src/config/vars.js'), props);
+    copyTpl(tPath('src/config/_express.ejs'), dPath(urlJoin(props.src, 'config', 'express.js')), props);
+    copyTpl(tPath('src/config/vars.js'), dPath(urlJoin(props.src, 'config', 'vars.js')), props);
 
 
     /**
      * utils
      */
-    copy(tPath('src/utils/APIError'), dPath('src/utils/APIError'));
-    mkdirp.sync(path.join(this.destinationPath(), `src/utils/ErrorCode`));
-    copy(tPath('src/utils/ErrorCode/index.js'), dPath('src/utils/ErrorCode/index.js'));
-    copyTpl(tPath('src/utils/ErrorCode/_ErrorCode.js'), dPath('src/utils/ErrorCode/ErrorCode.js'), props);
-    copy(tPath('src/utils/logger'), dPath('src/utils/logger'));
+    copy(tPath('src/utils/APIError'), dPath(urlJoin(props.src, 'utils', 'APIError')));
+    mkdirp.sync(path.join(this.destinationPath(), urlJoin(props.src, 'utils', 'ErrorCode')));
+    copy(tPath('src/utils/ErrorCode/index.js'), dPath(urlJoin(props.src, 'utils', 'ErrorCode', 'index.js')));
+    copyTpl(tPath('src/utils/ErrorCode/ErrorCode.js'), dPath(urlJoin(props.src, 'utils', 'ErrorCode', 'ErrorCode.js')), props);
+    copy(tPath('src/utils/logger'), dPath(urlJoin(props.src, 'utils', 'logger')));
 
     /**
      * middlewares
      */
-    copy(tPath('src/middlewares'), dPath('src/middlewares'));
+    copy(tPath('src/middlewares'), dPath(urlJoin(props.src, 'middlewares')));
 
 
     /**
      * services
      */
-    // mkdirp.sync(path.join(this.destinationPath(), 'src/services'));
-    copy(tPath('src/services'), dPath('src/services'));
+    copy(tPath('src/services'), dPath(urlJoin(props.src, 'services')));
 
     copyTpl(tPath('_package.json.ejs'), dPath('package.json'), props);
 
@@ -179,11 +181,11 @@ module.exports = class extends Generator {
     copyTpl(tPath('_docker-compose.prod.yml'), dPath('docker-compose.prod.yml'), props);
 
     if (props.sequelize === 'y') {
-      mkdirp.sync(path.join(this.destinationPath(), 'src/database/migrations'));
-      mkdirp.sync(path.join(this.destinationPath(), 'src/database/seeders'));
+      mkdirp.sync(path.join(this.destinationPath(), urlJoin(props.src, 'database', 'migrations')));
+      mkdirp.sync(path.join(this.destinationPath(), urlJoin(props.src, 'database', 'seeders')));
       copyTpl(tPath('.sequelizerc'), dPath('.sequelizerc'), props);
-      copyTpl(tPath('src/config/database.js'), dPath('src/config/database.js'), props);
-      copyTpl(tPath('src/models/index.js'), dPath('src/models/index.js'), props);
+      copyTpl(tPath('src/config/database.js'), dPath(urlJoin(props.src, 'config', 'database.js')), props);
+      copyTpl(tPath('src/models/index.js'), dPath(urlJoin(props.src, 'models', 'index.js')), props);
     }
 
     this.config.save();
@@ -197,6 +199,7 @@ module.exports = class extends Generator {
       this.config.set('description', props.description);
       this.config.set('author', props.author);
       this.config.set('sequelize', props.sequelize);
+      this.config.set('src', props.src);
     });
   }
 

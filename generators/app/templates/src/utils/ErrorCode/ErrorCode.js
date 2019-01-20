@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-const { serviceName } = require('../../config/vars');
+const { serviceName } = require('@config/vars');
 
 exports.routes = {
   root: 'default'
