@@ -104,7 +104,7 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
-    props.src = 'src/server';
+    props.src = 'src';
     props.apiPath = urlJoin(props.src, props.apibase);
 
     /**

@@ -1,4 +1,7 @@
-# Version 3.0.1
+# Version 3.3.1
+- Changed src into optional variable that can be changed in .yo-rc.json, and user can use this as relative path for src for all subgenerators.
+
+# Version 3.2.0
 - Refactor package.json using conditional if, and deleted extra files.
 - Refactor docker-compose.xxx.yml by removing duplicate files
 - Update alpine to node:10-alpine
