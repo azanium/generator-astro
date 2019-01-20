@@ -1,6 +1,5 @@
-'user strict';
-
 const Generator = require('yeoman-generator');
+const urlJoin = require('url-join');
 const camelize = require('underscore.string/camelize');
 const underscored = require('underscore.string/underscored');
 const capitalize = require('underscore.string/capitalize');
@@ -49,6 +48,7 @@ module.exports = class extends Generator {
 
   writing() {
     const done = this.async();
+    this.props.src = this.config.get('src');
     const { props } = this;
     const copyTpl = this.fs.copyTpl.bind(this.fs);
     const tPath = this.templatePath.bind(this);
@@ -57,7 +57,7 @@ module.exports = class extends Generator {
     const bootName = `${props.filename}.boot.js`;
     const testName = `${props.filename}.spec.js`;
     const indexName = `index.js`;
-    const targetName = `src/boot/${props.filename}`;
+    const targetName = urlJoin(props.src, 'boot', props.filename);
 
     /**
      * Index
@@ -84,10 +84,11 @@ module.exports = class extends Generator {
   }
 
   injectExport() {
+    this.props.src = this.config.get('src');
     const { props } = this;
     const dPath = this.destinationPath.bind(this);
 
-    const indexFile = dPath(`src/boot/index.js`);
+    const indexFile = dPath(urlJoin(props.src, 'boot', 'index.js'));
 
     /**
      * Inject codes
