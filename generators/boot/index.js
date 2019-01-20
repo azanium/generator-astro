@@ -48,7 +48,7 @@ module.exports = class extends Generator {
 
   writing() {
     const done = this.async();
-    this.props.src = this.config.get('src');
+    this.props.src = this.config.get('src') || 'src';
     const { props } = this;
     const copyTpl = this.fs.copyTpl.bind(this.fs);
     const tPath = this.templatePath.bind(this);
@@ -84,7 +84,7 @@ module.exports = class extends Generator {
   }
 
   injectExport() {
-    this.props.src = this.config.get('src');
+    this.props.src = this.config.get('src') || 'src';
     const { props } = this;
     const dPath = this.destinationPath.bind(this);
 

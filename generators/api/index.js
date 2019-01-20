@@ -44,12 +44,12 @@ module.exports = class extends Generator {
     ]).then((answers) => {
       that.props = answers;
       that.props.injectRoute = false;
-      that.props.apibase = that.config.get('apibase');
-      that.props.apiversion = that.config.get('apiversion');
+      that.props.apibase = that.config.get('apibase') || 'api';
+      that.props.apiversion = that.config.get('apiversion') || 'v1';
       that.props.endpoint = `${that.props.name}`;
       that.props.upperMethod = that.props.method.toUpperCase();
       that.props.filename = underscored(that.props.name).replace('_', '-');
-      that.props.src = that.config.get('src');
+      that.props.src = that.config.get('src') || 'src';
       that.props.apiPath = urlJoin(that.props.src, that.props.apibase);
 
       // Handle nested api path
