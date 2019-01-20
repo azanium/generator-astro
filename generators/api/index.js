@@ -49,6 +49,8 @@ module.exports = class extends Generator {
       that.props.endpoint = `${that.props.name}`;
       that.props.upperMethod = that.props.method.toUpperCase();
       that.props.filename = underscored(that.props.name).replace('_', '-');
+      that.props.src = that.config.get('src');
+      that.props.apiPath = urlJoin(that.props.src, that.props.apibase);
 
       // Handle nested api path
       let { name } = that.props;
@@ -97,7 +99,7 @@ module.exports = class extends Generator {
     const validationName = `${props.filename}.validator.js`;
     const integrationName = `${props.filename}.integration.test.js`;
     const testName = `${props.filename}.spec.js`;
-    const apiRootPath = `src/api/${this.apiversion}`;
+    const apiRootPath = urlJoin(props.apiPath, this.apiversion);
     const apiPath = `${apiRootPath}/${props.dirname}`;
     props.indexfilename = props.dirname ? `${props.name}` : `${props.filename}`;
 
@@ -146,7 +148,7 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
 
     const routeName = `${props.dirname}`;
-    const routeFile = dPath(`src/api/${this.apiversion}/index.js`);
+    const routeFile = dPath(urlJoin(props.apiPath, this.apiversion, 'index.js'));
 
     /**
      * Inject codes
