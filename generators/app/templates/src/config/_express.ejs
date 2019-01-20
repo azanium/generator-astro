@@ -31,7 +31,10 @@ app.use(helmet());
 
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
-
+<% if (kind === 'fullstack') {%>
+// Serve the client
+app.use(express.static('dist'));
+<% } %>
 // Monitoring
 app.use(middlewareMonitoring);
 

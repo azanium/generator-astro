@@ -1,0 +1,41 @@
+{
+  <% if (kind === 'fullstack') {%>
+    "parser": "babel-eslint",
+    "extends": ["airbnb"],
+    "parserOptions": {
+      "ecmaVersion": 9
+    },
+    "env": {
+      "browser": true,
+      "node": true,
+      "mocha": true,
+      "jest": true
+    },
+    "settings": {
+      "import/resolver": "module-alias"
+    },
+    "rules": {
+      "no-console": "off",
+      "comma-dangle": "off",
+      "react/jsx-filename-extension": "off",
+      "import/no-extraneous-dependencies": "off",
+      "no-underscore-dangle": "off"
+    }<%} else {%>
+  "env": {
+    "node": true,
+    "mocha": true,
+    "jest": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 9
+  },
+  "extends": [
+    "astro"
+  ],
+  "settings": {
+    "import/resolver": "module-alias"
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": "off"
+  }<%}%>
+}
