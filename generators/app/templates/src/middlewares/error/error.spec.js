@@ -17,15 +17,11 @@ const {
   handler
 } = require('./error');
 
-
-const response = new Response();
-const request = new Request('/api/v1/auth/login', {
-  method: 'PUT'
-});
-
 describe('Middleware - error', () => {
-  const req = request;
-  const res = response;
+  const req = new Request('/api/v1/auth/login', {
+    method: 'PUT'
+  });
+  const res = new Response();
   const validationError = new ValidationError([{
     location: 'body',
     messages: ['"nonce" is required'],
