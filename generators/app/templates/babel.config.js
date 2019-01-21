@@ -10,19 +10,14 @@ module.exports = (api) => {
   };
 
   let convertESM = true;
-  let ignoreLib = true;
-  let includeRuntime = false;
 
   switch (env) {
     // Configs used during bundling builds.
     case 'babel-parser':
       convertESM = false;
-      ignoreLib = false;
       break;
     case 'standalone':
       convertESM = false;
-      ignoreLib = false;
-      includeRuntime = true;
       break;
     case 'production':
       // Config during builds before publish.
@@ -54,10 +49,7 @@ module.exports = (api) => {
       // These may not be strictly necessary with the newly-limited scope of
       // babelrc searching, but including them for now because we had them
       // in our .babelignore before.
-      'packages/*/test/fixtures',
-      ignoreLib ? 'packages/*/lib' : null,
-      'packages/babel-standalone/babel.js',
-      'packages/babel-preset-env-standalone/babel-preset-env.js',
+      'src/**/fixtures',
     ].filter(Boolean),
     presets: [['@babel/env', envOpts], '@babel/preset-react'],
     plugins: [
@@ -74,46 +66,6 @@ module.exports = (api) => {
 
       // Explicitly use the lazy version of CommonJS modules.
       convertESM ? ['@babel/transform-modules-commonjs', { lazy: true }] : null,
-    ].filter(Boolean),
-    overrides: [
-      {
-        test: 'packages/babel-parser',
-        plugins: [
-          'babel-plugin-transform-charcodes',
-          ['@babel/transform-for-of', { assumeArray: true }],
-        ],
-      },
-      {
-        test: './packages/babel-register',
-        plugins: [
-          // Override the root options to disable lazy imports for babel-register
-          // because otherwise the require hook will try to lazy-import things
-          // leading to dependency cycles.
-          convertESM ? '@babel/transform-modules-commonjs' : null,
-        ].filter(Boolean),
-      },
-      {
-        // The vast majority of our src files are modules, but we use
-        // unambiguous to keep things simple until we get around to renaming
-        // the modules to be more easily distinguished from CommonJS
-        test: [
-          'packages/*/src',
-          'packages/*/test',
-          'codemods/*/src',
-          'codemods/*/test',
-        ],
-        sourceType: 'unambiguous',
-      },
-      {
-        // The runtime transform shouldn't process its own runtime or core-js.
-        exclude: [
-          'packages/babel-runtime',
-          /[\\/]node_modules[\\/](?:@babel\/runtime|babel-runtime|core-js)[\\/]/,
-        ],
-        plugins: [includeRuntime ? '@babel/transform-runtime' : null].filter(
-          Boolean
-        ),
-      },
     ].filter(Boolean),
   };
 
