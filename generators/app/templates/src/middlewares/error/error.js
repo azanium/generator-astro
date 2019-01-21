@@ -2,16 +2,16 @@ const httpStatus = require('http-status');
 const expressValidation = require('express-validation');
 const _ = require('lodash');
 
-const { APIError, generateError } = require('@utils/APIError');
+const { APIError, generateError } = require('../../utils/APIError');
 const {
   getErrorCode, routes, services, codes
-} = require('@utils/ErrorCode');
+} = require('../../utils/ErrorCode');
 
 /**
  * Error handler. Send stacktrace only during development
  * @public
  */
-const handler = (err, req, res) => {
+const handler = (err, req, res, next) => { // eslint-disable-line
   const response = {
     responseCode: err.status,
     responseMessage: err.message || httpStatus[err.status],
@@ -124,7 +124,7 @@ exports.generateNotFoundError = generateNotFoundError;
  * If error is not an instanceOf APIError, convert it.
  * @public
  */
-exports.converter = (err, req, res) => {
+exports.converter = (err, req, res, next) => {  // eslint-disable-line
   let convertedError = err;
   if (err instanceof expressValidation.ValidationError) {
     convertedError = convertValidationError(err, req);
@@ -139,4 +139,4 @@ exports.converter = (err, req, res) => {
  * Catch 404 and forward to error handler
  * @public
  */
-exports.notFound = (req, res) => handler(generateNotFoundError(), req, res);
+exports.notFound = (req, res, next) => handler(generateNotFoundError(), req, res); // eslint-disable-line

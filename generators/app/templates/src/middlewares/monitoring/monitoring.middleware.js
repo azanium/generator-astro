@@ -30,7 +30,7 @@ const monitoringMiddleware = responseTime((req, res, time) => {
     responseTime: time,
     statusCode: res.statusCode
   };
-  logger.info(`API Request`, logData);
+  logger.info('API Request', logData);
 });
 
 
