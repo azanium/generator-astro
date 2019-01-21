@@ -35,11 +35,14 @@ describe('Middleware - error', () => {
     status: 400,
     statusText: 'validation error'
   });
+  let statusStub;
+  let jsonStub;
+  let endStub;
 
   beforeEach(() => {
-    this.statusStub = jest.spyOn(res, 'status');
-    this.jsonStub = jest.spyOn(res, 'json');
-    this.endStub = jest.spyOn(res, 'end');
+    statusStub = jest.spyOn(res, 'status');
+    jsonStub = jest.spyOn(res, 'json');
+    endStub = jest.spyOn(res, 'end');
   });
 
   afterEach(() => {
@@ -156,35 +159,35 @@ describe('Middleware - error', () => {
   it('error converter should convert validation error', () => {
     converter(validationError, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('error converter should convert generic error', () => {
     const error = new Error('Something went wrongasdasdasddsa');
     converter(error, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('error converter should convert APIError', () => {
     const error = convertValidationError(validationError, req);
     converter(error, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.BAD_REQUEST);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('notFound middleware should generate not found error', () => {
     notFound(req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.NOT_FOUND);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.NOT_FOUND);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return http status message for error without message', () => {
@@ -192,9 +195,9 @@ describe('Middleware - error', () => {
     err.status = httpStatus.INTERNAL_SERVER_ERROR;
     handler(err, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return error with error stack', () => {
@@ -203,9 +206,9 @@ describe('Middleware - error', () => {
     process.env.NODE_ENV = 'development';
     handler(err, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should return error without error stack', () => {
@@ -214,9 +217,9 @@ describe('Middleware - error', () => {
     process.env.NODE_ENV = 'test';
     handler(err, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 
   it('handler middleware should convert error with http status = 0, into internal server error', () => {
@@ -224,8 +227,8 @@ describe('Middleware - error', () => {
     err.status = 0;
     handler(err, req, res);
 
-    expect(this.statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
-    expect(this.jsonStub).toHaveBeenCalledTimes(1);
-    expect(this.endStub).toHaveBeenCalledTimes(1);
+    expect(statusStub).toBeCalledWith(httpStatus.INTERNAL_SERVER_ERROR);
+    expect(jsonStub).toHaveBeenCalledTimes(1);
+    expect(endStub).toHaveBeenCalledTimes(1);
   });
 });

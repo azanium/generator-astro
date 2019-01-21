@@ -11,7 +11,7 @@ const {
  * Error handler. Send stacktrace only during development
  * @public
  */
-const handler = (err, req, res, next) => {
+const handler = (err, req, res) => {
   const response = {
     responseCode: err.status,
     responseMessage: err.message || httpStatus[err.status],
@@ -50,7 +50,7 @@ const convertValidationError = (err, req) => {
       [req.path.replace('/', '').split('/').join(':'), codes.validationError].join(':'),
       'We seems to have a problem!',
       'We have some trouble validating your data - please contact our customer support',
-      error.messages[0],
+      error.messages ? error.messages[0] : error.message,
       _.omit(error, ['messages'])
     ));
   });
@@ -104,7 +104,7 @@ const generateNotFoundError = () => {
     {
       errorCode: getErrorCode(routes.root, services.route, codes.notFound),
       errorTitle: 'Oops! We have a problem.',
-      errorDescription: `We couldn't find what you're looking for - please contact our administrator!`,
+      errorDescription: 'We couldn\'t find what you\'re looking for - please contact our administrator!',
       errorDebugDescription: 'Invalid API route',
       errorAttributes: {}
     }
@@ -124,7 +124,7 @@ exports.generateNotFoundError = generateNotFoundError;
  * If error is not an instanceOf APIError, convert it.
  * @public
  */
-exports.converter = (err, req, res, next) => {
+exports.converter = (err, req, res) => {
   let convertedError = err;
   if (err instanceof expressValidation.ValidationError) {
     convertedError = convertValidationError(err, req);
@@ -139,4 +139,4 @@ exports.converter = (err, req, res, next) => {
  * Catch 404 and forward to error handler
  * @public
  */
-exports.notFound = (req, res, next) => handler(generateNotFoundError(), req, res);
+exports.notFound = (req, res) => handler(generateNotFoundError(), req, res);

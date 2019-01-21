@@ -206,7 +206,8 @@ module.exports = class extends Generator {
       copy(tPath('public/favicon.ico'), dPath('public/favicon.ico'), props);
       copyTpl(tPath('public/index.html'), dPath('public/index.html'), props);
       copyTpl(tPath('webpack.config.js'), dPath('webpack.config.js'), props);
-      copy(tPath('_.babelrc'), dPath('.babelrc'));
+      // copy(tPath('_.babelrc'), dPath('.babelrc'));
+      copyTpl(tPath('babel.config.js'), dPath('babel.config.js'), props);
       copy(tPath('client'), dPath(props.client));
     }
 
