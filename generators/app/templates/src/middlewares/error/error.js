@@ -50,7 +50,7 @@ const convertValidationError = (err, req) => {
       [req.path.replace('/', '').split('/').join(':'), codes.validationError].join(':'),
       'We seems to have a problem!',
       'We have some trouble validating your data - please contact our customer support',
-      error.messages ? error.messages[0] : error.message,
+      error.messages[0],
       _.omit(error, ['messages'])
     ));
   });
