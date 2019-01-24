@@ -144,7 +144,9 @@ module.exports = class extends Generator {
     /**
      * boot folder
      */
-    copy(tPath('src/boot'), dPath(urlJoin(props.src, 'boot')));
+    copy(tPath('src/boot/startup'), dPath(urlJoin(props.src, 'boot/startup')));
+    copy(tPath('src/boot/server'), dPath(urlJoin(props.src, 'boot/server')));
+    copyTpl(tPath('src/boot/index.js'), dPath(urlJoin(props.src, 'boot/index.js')), props);
 
     /**
      * api folder
