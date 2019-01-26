@@ -1,0 +1,29 @@
+const http = require('http');
+const app = require('./server');
+
+const server = http.createServer(app);
+let currentApp = app;
+
+server.listen(3000, (error) => {
+  if (error) {
+    console.log(error);
+  }
+  console.log('🚀 started');
+});
+
+if (module.hot) {
+  console.log('✅  Server-side HMR Enabled!');
+
+  module.hot.accept('./server', () => {
+    console.log('🔁  HMR Reloading `./server`...');
+
+    try {
+      const newApp = require('./server').default; // eslint-disable-line
+      server.removeListener('request', currentApp);
+      server.on('request', newApp);
+      currentApp = newApp;
+    } catch (error) {
+      console.error(error);
+    }
+  });
+}

@@ -139,7 +139,7 @@ module.exports = class extends Generator {
     /**
      * index.js
      */
-    copy(tPath('src/index.js'), dPath(urlJoin(props.src, 'index.js')));
+    copyTpl(tPath('src/index.ejs'), dPath(urlJoin(props.src, 'index.js')), props);
 
     /**
      * boot folder
@@ -205,11 +205,10 @@ module.exports = class extends Generator {
      * CLIENT SIDE
      */
     if (props.kind === 'fullstack') {
+      const srcRoot = path.dirname(props.src).split(path.sep).pop();
       copy(tPath('public/favicon.ico'), dPath('public/favicon.ico'), props);
-      copyTpl(tPath('public/index.html'), dPath('public/index.html'), props);
-      copyTpl(tPath('webpack.config.js'), dPath('webpack.config.js'), props);
-      // copy(tPath('_.babelrc'), dPath('.babelrc'));
-      copyTpl(tPath('babel.config.js'), dPath('babel.config.js'), props);
+      copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
+      copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
       copy(tPath('client'), dPath(props.client));
     }
 

@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const Class = require('es-class');
 const { routes } = require('@utils/ErrorCode');
 
 /**
@@ -23,11 +24,12 @@ const generateError = (errCode, errTitle, errDesc, errDebugDesc, errAttributes) 
 /**
  * @extends Error
  */
-class ExtendableError extends Error {
-  constructor({
+const ExtendableError = Class({
+  extends: Error,
+  constructor: function ({  // eslint-disable-line
     message, errors, route, status, isPublic, stack
   }) {
-    super(message);
+    this.super(message);
     this.name = this.constructor.name;
     this.message = message || 'Oops! Something is wrong';
     this.errors = errors;
@@ -36,9 +38,9 @@ class ExtendableError extends Error {
     this.route = route;
     this.isOperational = true; // This is required since bluebird 4 doesn't append it anymore.
     this.stack = stack;
-    // Error.captureStackTrace(this, this.constructor.name);
   }
-}
+});
+
 
 /**
  * Class representing an API error.

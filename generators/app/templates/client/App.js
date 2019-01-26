@@ -1,24 +1,15 @@
-import React, { Component } from 'react';
-import './app.css';
-import ReactImage from './react.png';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
+import Home from './Home';
+import './App.css';
 
-export default class App extends Component {
-  state = { username: null };
+const App = () => (
+  <div>
+    <h1>Hello, World! mf2 crazy guy</h1>
+    <Switch>
+      <Route exact path="/" component={Home} />
+    </Switch>
+  </div>
+);
 
-  componentDidMount() {
-    fetch('/api/getUsername')
-      .then(res => res.json())
-      .then(user => this.setState({ username: user.username }));
-  }
-
-  render() {
-    const { username } = this.state;
-    return (
-      <div>
-        {username ? <h1>{`Hello This ${username}`}</h1> : <h1>Loading.. please wait!</h1>}
-        <img src={ReactImage} alt="react" />
-        <img src="/images/quran.jpg" alt="react" />
-      </div>
-    );
-  }
-}
+export default App;
