@@ -6,7 +6,7 @@
 const React = require('react');
 const { StaticRouter } = require('react-router-dom');
 const { renderToString } = require('react-dom/server');
-const App = require('@client/App');
+const App = require('@containers/app');
 
 const renderReact = async (req, res) => {
   const context = {};

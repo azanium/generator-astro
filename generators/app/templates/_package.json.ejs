@@ -126,7 +126,6 @@
     "reza": "^1.0.9"<% } %>
   },
   "_moduleAliases": {
-    "@app"          : "<%= src %>",
     "@config"       : "<%= src %>/config",
     "@api"          : "<%= src %>/api",
     "@middlewares"  : "<%= src %>/middlewares",
@@ -134,7 +133,9 @@
     "@services"     : "<%= src %>/services",
     "@utils"        : "<%= src %>/utils",
     "@client"       : "<%= client %>",
-    "@components"   : "<%= client %>/components"
+    "@app"          : "<%= client %>/app",
+    "@components"   : "<%= client %>/components",
+    "@containers"   : "<%= client %>/containers"
   },
   "nyc": {
     "include": "src",
@@ -146,7 +147,6 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "^@app(.*)$": "<rootDir>/<%= src %>$1",
       "^@boot(.*)$": "<rootDir>/<%= src %>/boot$1",
       "^@config(.*)$": "<rootDir>/<%= src %>/config$1",
       "^@api(.*)$": "<rootDir>/<%= src %>/api$1",
@@ -155,7 +155,9 @@
       "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
       "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1",
       "^@client(.*)$": "<rootDir>/<%= client %>$1",
-      "^@components(.*)$": "<rootDir>/<%= client %>/components$1"
+      "^@app(.*)$": "<rootDir>/<%= client %>/app$1",
+      "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
+      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1"
     },<%if (kind !== 'fullstack') { %>
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "testPathIgnorePatterns": [

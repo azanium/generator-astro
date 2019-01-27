@@ -145,7 +145,9 @@ module.exports = class extends Generator {
      * boot folder
      */
     copy(tPath('src/boot/startup'), dPath(urlJoin(props.src, 'boot/startup')));
-    copy(tPath('src/boot/server'), dPath(urlJoin(props.src, 'boot/server')));
+    if (props.kind !== 'fullstack') {
+      copy(tPath('src/boot/server'), dPath(urlJoin(props.src, 'boot/server')));
+    }
     copyTpl(tPath('src/boot/index.ejs'), dPath(urlJoin(props.src, 'boot/index.js')), props);
 
     /**
@@ -210,6 +212,7 @@ module.exports = class extends Generator {
       copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
       copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
       copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
+      
       copy(tPath('client'), dPath(props.client));
     }
 

@@ -8,7 +8,6 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["<%= src %>/*"],
       "@api/*": ["<%= src %>/api/*"],
       "@boot/*": ["<%= src %>/boot/*"],
       "@config/*": ["<%= src %>/config/*"],
@@ -20,7 +19,9 @@
       "@utils/*": ["<%= src %>/utils/*"],
       "@routes/*": ["<%= src %>/routes/*"],
       "@client/*": ["<%= client %>/*"],
+      "@app/*": ["<%= client %>/app/*"],
       "@components/*": ["<%= client %>/components/*"],
+      "@containers/*": ["<%= client %>/containers/*"]
     }
   }
 }

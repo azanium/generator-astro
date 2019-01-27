@@ -3,7 +3,6 @@ const path = require('path');
 module.exports = {
   modify: (config) => {
     config.resolve.alias = {  // eslint-disable-line
-      '@app': path.resolve('<%= src %>/server'),
       '@config': path.resolve('<%= src %>/config'),
       '@api': path.resolve('<%= src %>/api'),
       '@middlewares': path.resolve('<%= src %>/middlewares'),
@@ -11,7 +10,9 @@ module.exports = {
       '@services': path.resolve('<%= src %>/services'),
       '@utils': path.resolve('<%= src %>/utils'),
       '@client': path.resolve('<%= client %>'),
-      '@components': path.resolve('<%= client %>/components')
+      '@app': path.resolve('<%= client %>/app'),
+      '@components': path.resolve('<%= client %>/components'),
+      '@containers': path.resolve('<%= client %>/containers')
     };
     return config;
   }
