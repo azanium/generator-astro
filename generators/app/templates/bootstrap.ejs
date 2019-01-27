@@ -1,24 +1,26 @@
 const http = require('http');
+const { port, env } = require('@config/vars');
+const { logger } = require('@utils/logger');
 const app = require('./server');
 
 const server = http.createServer(app);
 let currentApp = app;
 
-server.listen(3000, (error) => {
+server.listen(port || 3000, (error) => {
   if (error) {
-    console.log(error);
+    logger.error(error);
   }
-  console.log('🚀 started');
+  logger.info(`🚀 Server started on port ${port} (${env})`);
 });
 
 if (module.hot) {
-  console.log('✅  Server-side HMR Enabled!');
+  logger.info('✅  Server-side HMR Enabled!');
 
   module.hot.accept('./server', () => {
-    console.log('🔁  HMR Reloading `./server`...');
+    logger.info('🔁  HMR Reloading `./server`...');
 
     try {
-      const newApp = require('./server').default; // eslint-disable-line
+      const newApp = require('./server'); // eslint-disable-line
       server.removeListener('request', currentApp);
       server.on('request', newApp);
       currentApp = newApp;
