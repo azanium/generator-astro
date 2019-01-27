@@ -18,7 +18,9 @@
       "@services/*": ["<%= src %>/services/*"],
       "@tests/*": ["<%= src %>/tests/*"],
       "@utils/*": ["<%= src %>/utils/*"],
-      "@routes/*": ["<%= src %>/routes/*"]
+      "@routes/*": ["<%= src %>/routes/*"],
+      "@client/*": ["<%= client %>/*"],
+      "@components/*": ["<%= client %>/components/*"],
     }
   }
 }
