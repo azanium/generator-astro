@@ -79,7 +79,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'version',
         message: 'Version number',
-        default: that.config.get('version') || '0.1.0',
+        default: that.config.get('version') || '1.0.0',
         validate: value => value !== undefined && value !== ''
       },
       {

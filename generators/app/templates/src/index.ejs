@@ -41,9 +41,7 @@ server
   });
 
 module.exports = server;
-
-<% } else { %>
-require('module-alias/register');
+<%} else {%>require('module-alias/register');
 const async = require('async');
 
 // make bluebird default Promise
