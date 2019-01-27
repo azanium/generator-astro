@@ -25,6 +25,16 @@ module.exports = class extends Generator {
 
     this.prompt([
       {
+        type: 'list',
+        name: 'kind',
+        message: 'What kinf of project do you want to create?',
+        choices: [
+          { name: 'ExpressJS', value: 'service' },
+          { name: 'React + ExpressJS (alpha)', value: 'fullstack' }
+        ],
+        default: that.config.get('service') || 'service'
+      },
+      {
         type: 'input',
         name: 'name',
         message: 'What is your project name?',
@@ -39,7 +49,7 @@ module.exports = class extends Generator {
           { name: 'yes', value: 'y' },
           { name: 'no', value: 'n' }
         ],
-        default: 'n'
+        default: that.config.get('sequelize') || 'n'
       },
       {
         type: 'input',
@@ -69,14 +79,14 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'version',
         message: 'Version number',
-        default: that.config.get('version') || '0.1.0',
+        default: that.config.get('version') || '1.0.0',
         validate: value => value !== undefined && value !== ''
       },
       {
         type: 'input',
         name: 'description',
         message: 'Description',
-        default: ''
+        default: that.config.get('description') || 'This project generated using Astro Generator'
       },
       {
         type: 'input',
@@ -104,14 +114,15 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
 
     this.destinationRoot(props.name);
-    props.src = 'src';
+    props.src = props.kind === 'fullstack' ? 'src/server' : 'src';
+    props.client = props.kind === 'fullstack' ? 'src/client' : undefined;
     props.apiPath = urlJoin(props.src, props.apibase);
 
     /**
      * Etc
      */
     copy(tPath('_.gitignore'), dPath('.gitignore'));
-    copy(tPath('_.eslintrc'), dPath('.eslintrc'));
+    copyTpl(tPath('_.eslintrc.ejs'), dPath('.eslintrc'), props);
     copyTpl(tPath('_README.md'), dPath('README.md'), props);
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
@@ -128,12 +139,16 @@ module.exports = class extends Generator {
     /**
      * index.js
      */
-    copy(tPath('src/index.js'), dPath(urlJoin(props.src, 'index.js')));
+    copyTpl(tPath('src/index.ejs'), dPath(urlJoin(props.src, 'index.js')), props);
 
     /**
      * boot folder
      */
-    copy(tPath('src/boot'), dPath(urlJoin(props.src, 'boot')));
+    copy(tPath('src/boot/startup'), dPath(urlJoin(props.src, 'boot/startup')));
+    if (props.kind !== 'fullstack') {
+      copy(tPath('src/boot/server'), dPath(urlJoin(props.src, 'boot/server')));
+    }
+    copyTpl(tPath('src/boot/index.ejs'), dPath(urlJoin(props.src, 'boot/index.js')), props);
 
     /**
      * api folder
@@ -188,18 +203,31 @@ module.exports = class extends Generator {
       copyTpl(tPath('src/models/index.js'), dPath(urlJoin(props.src, 'models', 'index.js')), props);
     }
 
+    /**
+     * CLIENT SIDE
+     */
+    if (props.kind === 'fullstack') {
+      const srcRoot = path.dirname(props.src).split(path.sep).pop();
+      copy(tPath('public/favicon.ico'), dPath('public/favicon.ico'), props);
+      copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
+      copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
+      copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
+      
+      copy(tPath('client'), dPath(props.client));
+    }
+
     this.config.save();
 
     this.on('end', () => {
       this.config.set('name', props.name);
       this.config.set('apibase', props.apibase);
       this.config.set('apiversion', props.apiversion);
-      this.config.set('port', props.port);
       this.config.set('version', props.version);
       this.config.set('description', props.description);
       this.config.set('author', props.author);
-      this.config.set('sequelize', props.sequelize);
       this.config.set('src', props.src);
+      this.config.set('client', props.client);
+      this.config.set('kind', props.kind);
     });
   }
 

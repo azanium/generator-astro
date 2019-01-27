@@ -12,16 +12,23 @@
   },
   "scripts": {
     "precommit": "yarn validate",
-    "prestart": "yarn docs",
+    "prestart": "yarn docs",<% if (kind === 'fullstack') { %>
+    "build": "reza build",
+    "start": "rimraf dist/ && npm run build && cross-env NODE_ENV=production node ./dist/server.js",
+    "dev": "rimraf dist/ && cross-env NODE_ENV=development reza start",<% } else { %>
     "start": "cross-env NODE_ENV=production pm2 start ./<%= src %>/index.js",
-    "dev": "NODE_ENV=development nodemon ./<%= src %>/index.js",
+    "dev": "NODE_ENV=development nodemon ./<%= src %>/index.js",<% } %>
     "lint": "eslint '**/*.js' --ignore-path .gitignore --ignore-pattern internals/scripts",
     "lint:fix": "yarn lint -- --fix",
-    "lint:watch": "yarn lint -- --watch",
+    "lint:watch": "yarn lint -- --watch",<% if (kind === 'fullstack') { %>
+    "test": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage --testPathPattern=\"(/src/.*)\\.(test|spec).js$\"",
+    "test:unit": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
+    "test:integration": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
+    "test:watch": "cross-env NODE_ENV=test reza test --watch --forceExit --detectOpenHandles",<% } else { %>
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage",
     "test:unit": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
     "test:integration": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
-    "test:watch": "cross-env NODE_ENV=test jest --watch --forceExit --detectOpenHandles",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --forceExit --detectOpenHandles",<% } %>
     "validate": "yarn lint && yarn test",
     "postpublish": "git push --tags",
     "docs": "apidoc -i src -o docs",
@@ -69,25 +76,26 @@
     "cors": "^2.8.3",
     "cross-env": "^5.0.1",
     "dotenv-safe": "^5.0.1",
+    "es-class": "^2.1.1",
     "express": "^4.15.2",
     "express-interceptor": "^1.2.0",
     "express-validation": "^1.0.2",
     "helmet": "^3.5.0",
     "http-status": "^1.0.1",
     "joi": "^14.3.1",
-    "jws": "^3.1.5",
-    "jwt-simple": "0.5.1",
     "lodash": "^4.17.4",
     "method-override": "^2.3.8",
     "module-alias": "^2.0.6",
     "moment-timezone": "^0.5.13",
-    "mongoose": "^4.9.7",
     "node-sanitizer": "^1.0.3",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "4.0.0",
     "pm2": "^2.4.6",
-    "response-time": "^2.3.2",
+    "response-time": "^2.3.2",<% if (kind === 'fullstack') {%>
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-router-dom": "^4.3.1", <% } %>
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
     "winston-cloudwatch": "^2.0.2"<% if (sequelize === 'y') {%>,
@@ -98,31 +106,36 @@
   "devDependencies": {
     "@types/jest": "^23.3.3",
     "apidoc": "^0.17.6",
-    "babel-core": "^6.26.3",
-    "babel-jest": "^23.6.0",
     "eslint": "^5.6.1",
     "eslint-config-astro": "^1.0.6",
     "eslint-import-resolver-module-alias": "^0.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
     "jest-express": "^1.8.0",
     "jest-tobetype": "^1.2.0",
-    "nodemon": "^1.11.0",
     "opn-cli": "^3.1.0",
     "prettier-eslint": "^8.8.2",
-    "proxyquire": "^2.1.0",
-    "supertest": "^3.0.0"<% if (sequelize === 'y') {%>,
-    "sequelize-cli": "^5.2.0"<% } %>
+    "supertest": "^3.0.0",<% if (sequelize === 'y') {%>
+    "sequelize-cli": "^5.2.0",<% } %>
+    "nodemon": "^1.11.0"<% if (kind === 'fullstack') {%>,
+    "rimraf": "^2.6.3",
+    "reza": "^1.0.9"<% } %>
   },
   "_moduleAliases": {
-    "@app"          : "<%= src %>",
     "@config"       : "<%= src %>/config",
     "@api"          : "<%= src %>/api",
     "@middlewares"  : "<%= src %>/middlewares",
     "@models"       : "<%= src %>/models",
     "@services"     : "<%= src %>/services",
-    "@utils"        : "<%= src %>/utils"
+    "@utils"        : "<%= src %>/utils",
+    "@client"       : "<%= client %>",
+    "@app"          : "<%= client %>/app",
+    "@components"   : "<%= client %>/components",
+    "@containers"   : "<%= client %>/containers"
   },
   "nyc": {
     "include": "src",
@@ -134,22 +147,25 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "^@app(.*)$": "<rootDir>/<%= src %>$1",
       "^@boot(.*)$": "<rootDir>/<%= src %>/boot$1",
       "^@config(.*)$": "<rootDir>/<%= src %>/config$1",
       "^@api(.*)$": "<rootDir>/<%= src %>/api$1",
       "^@middlewares(.*)$": "<rootDir>/<%= src %>/middlewares$1",
       "^@models(.*)$": "<rootDir>/<%= src %>/models$1",
       "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
-      "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1"
-    },
+      "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1",
+      "^@client(.*)$": "<rootDir>/<%= client %>$1",
+      "^@app(.*)$": "<rootDir>/<%= client %>/app$1",
+      "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
+      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1"
+    },<%if (kind !== 'fullstack') { %>
     "testRegex": "(/src/.*)\\.(test|spec).js$",
-    "moduleFileExtensions": [
-      "js"
-    ],
     "testPathIgnorePatterns": [
       "\\index.js$",
       "(/src/.*)\\.(validator|validation|config|index).js$"
+    ],<% } %>
+    "moduleFileExtensions": [
+      "js", "jsx"
     ],
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
@@ -159,6 +175,8 @@
       "!<%= src %>/config/**",
       "!<%= src %>/database/**",
       "!<%= src %>/models/**",
+      "!<%= src %>/utils/ErrorCode/**",
+      "!<%= src %>/services/http/**",
       "!<rootDir>/node_modules/"
     ],
     "coverageReporters": [

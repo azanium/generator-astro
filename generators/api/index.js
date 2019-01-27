@@ -101,7 +101,6 @@ module.exports = class extends Generator {
     const testName = `${props.filename}.spec.js`;
     const apiRootPath = urlJoin(props.apiPath, this.apiversion);
     const apiPath = `${apiRootPath}/${props.dirname}`;
-    props.indexfilename = props.dirname ? `${props.name}` : `${props.filename}`;
 
     /**
      * Controller

@@ -1,3 +1,5 @@
+dist
+
 # Use yarn.lock instead
 package-lock.json
 

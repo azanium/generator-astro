@@ -4,17 +4,6 @@ const router = express.Router();
 const <%= apiversion %> = require('./<%= apiversion %>');
 
 /**
- * GET /status
- */
-router.get('/status', (req, res) => res.send('OK'));
-
-/**
- * GET <%= apiversion %>/docs
- */
-router.use('/docs', express.static('docs'));
-
-
-/**
  * GET <%= apiversion %>
  */
 router.use('/<%= apiversion %>', <%= apiversion %>);
