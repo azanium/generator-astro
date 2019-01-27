@@ -19,7 +19,6 @@
       "@utils/*": ["<%= src %>/utils/*"],
       "@routes/*": ["<%= src %>/routes/*"],
       "@client/*": ["<%= client %>/*"],
-      "@app/*": ["<%= client %>/app/*"],
       "@components/*": ["<%= client %>/components/*"],
       "@containers/*": ["<%= client %>/containers/*"]
     }
