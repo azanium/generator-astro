@@ -7,13 +7,21 @@ const helmet = require('helmet');
 const interceptor = require('express-interceptor');
 const api = require('@api');
 const { errorMiddleware } = require('@middlewares/error');
-const middlewareMonitoring = require('@middlewares/monitoring');
+const middlewareMonitoring = require('@middlewares/monitoring');<% if (kind==='fullstack') {%>
+const reactRender = require('./react');<% } %>
 
 /**
 * Express instance
 * @public
 */
-const app = express();
+const app = express();<% if (kind==='fullstack') {%>
+const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+
+// Load our assets
+app.use((req, res, next) => {
+  req.assets = assets;
+  next();
+}); <%}%>
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
@@ -65,7 +73,10 @@ app.use('/', healthRoute);
 
 // mount api routes
 app.use('/<%= apibase %>', api);
-
+<% if (kind === 'fullstack') {%>
+// Server our React Renderer
+app.get('/*', reactRender);
+<% } %>
 // if error is not an instanceOf APIError, convert it.
 app.use(errorMiddleware.converter);
 

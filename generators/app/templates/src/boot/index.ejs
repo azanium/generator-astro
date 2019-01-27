@@ -1,0 +1,7 @@
+const { startupBoot } = require('./startup');<% if (kind==='fullstack') {%>
+const { serverBoot } = require('./server');<%}%>
+
+module.exports = [
+  startupBoot<% if (kind==='fullstack') {%>,
+  serverBoot<%}%>
+];

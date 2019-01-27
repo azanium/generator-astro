@@ -146,7 +146,7 @@ module.exports = class extends Generator {
      */
     copy(tPath('src/boot/startup'), dPath(urlJoin(props.src, 'boot/startup')));
     copy(tPath('src/boot/server'), dPath(urlJoin(props.src, 'boot/server')));
-    copyTpl(tPath('src/boot/index.js'), dPath(urlJoin(props.src, 'boot/index.js')), props);
+    copyTpl(tPath('src/boot/index.ejs'), dPath(urlJoin(props.src, 'boot/index.js')), props);
 
     /**
      * api folder
@@ -209,6 +209,7 @@ module.exports = class extends Generator {
       copy(tPath('public/favicon.ico'), dPath('public/favicon.ico'), props);
       copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
       copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
+      copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
       copy(tPath('client'), dPath(props.client));
     }
 
