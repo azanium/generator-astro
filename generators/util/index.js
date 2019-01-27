@@ -46,7 +46,7 @@ module.exports = class extends Generator {
   writing() {
     const done = this.async();
     const { props } = this;
-    props.src = this.config.get('src');
+    props.src = this.config.get('src') || 'src';
     const copyTpl = this.fs.copyTpl.bind(this.fs);
     const tPath = this.templatePath.bind(this);
     const dPath = this.destinationPath.bind(this);
