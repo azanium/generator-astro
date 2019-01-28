@@ -212,6 +212,7 @@ module.exports = class extends Generator {
       copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
       copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
       copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
+      copy(tPath('test.setup.js'), dPath('test.setup.js'));
       copy(tPath('client'), dPath(props.client));
     }
 

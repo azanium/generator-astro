@@ -131,7 +131,9 @@
     "eslint-config-airbnb": "^17.0.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
+    "react-test-renderer": "^16.7.0",
     "react-testing-library": "^5.4.4",
+    "enzyme-adapter-react-16": "^1.8.0",
     "reza": "^1.0.10"<% } %>
   },
   "_moduleAliases": {
@@ -175,6 +177,9 @@
       "\\index.js$",
       "(/src/.*)\\.(validator|validation|config|index).js$"
     ],<% } %>
+    "setupFiles": [
+      "<rootDir>/test.setup.js"
+    ],
     "moduleFileExtensions": [
       "js", "jsx"
     ],
