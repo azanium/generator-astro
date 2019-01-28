@@ -90,6 +90,16 @@
     "response-time": "^2.3.2",<% if (kind === 'fullstack') {%>
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
+    "react-router-redux": "next",
+    "redux": "^4.0.1",
+    "redux-observable": "^1.0.0",
+    "redux-persist": "^5.10.0",
+    "response-time": "^2.3.2",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
+    "styled-components": "^4.1.3",
     "react-router-dom": "^4.3.1", <% } %>
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
@@ -105,9 +115,6 @@
     "eslint-config-astro": "^1.0.6",
     "eslint-import-resolver-module-alias": "^0.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
     "jest-dom": "^3.0.1",
@@ -119,6 +126,11 @@
     "sequelize-cli": "^5.2.0",<% } %>
     "nodemon": "^1.11.0"<% if (kind === 'fullstack') {%>,
     "rimraf": "^2.6.3",
+    "enzyme": "^3.8.0",
+    "babel-eslint": "^10.0.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
     "react-testing-library": "^5.4.4",
     "reza": "^1.0.10"<% } %>
   },
@@ -131,7 +143,9 @@
     "@utils"        : "<%= src %>/utils",
     "@client"       : "<%= client %>",
     "@components"   : "<%= client %>/components",
-    "@containers"   : "<%= client %>/containers"
+    "@containers"   : "<%= client %>/containers",
+    "@ducks"        : "<%= client %>/ducks",
+    "@hox"          : "<%= client %>/hox"
   },
   "nyc": {
     "include": "src",
@@ -152,7 +166,9 @@
       "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1",
       "^@client(.*)$": "<rootDir>/<%= client %>$1",
       "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
-      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1"
+      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1",
+      "^@ducks(.*)$": "<rootDir>/<%= client %>/ducks$1",
+      "^@hox(.*)$": "<rootDir>/<%= client %>/hox$1"
     },<%if (kind !== 'fullstack') { %>
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "testPathIgnorePatterns": [
@@ -163,7 +179,11 @@
       "js", "jsx"
     ],
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx}",
+      "src/**/*{js,jsx}",
+      "!src/**/*{epics|epic}.js",
+      "!src/**/*{reducers|reducer}.js",
+      "!src/**/*{store|store}.js",
+      "!src/**/*{actionTypes|action}.js",
       "!src/**/index.js",
       "!src/**/*.validation.js",
       "!src/**/*.validator.js",

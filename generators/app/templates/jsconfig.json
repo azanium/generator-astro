@@ -20,7 +20,9 @@
       "@routes/*": ["<%= src %>/routes/*"],
       "@client/*": ["<%= client %>/*"],
       "@components/*": ["<%= client %>/components/*"],
-      "@containers/*": ["<%= client %>/containers/*"]
+      "@containers/*": ["<%= client %>/containers/*"],
+      "@ducks/*": ["<%= client %>/ducks/*"],
+      "@hox/*": ["<%= client %>/hox/*"]
     }
   }
 }
