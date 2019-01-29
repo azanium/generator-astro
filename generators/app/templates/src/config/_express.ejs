@@ -42,6 +42,7 @@ app.use(cors());
 <% if (kind === 'fullstack') {%>
 // Serve the client
 app.use(express.static('dist'));
+app.use(express.static(process.env.RAZZLE_PUBLIC_DIR));
 <% } %>
 // Monitoring
 app.use(middlewareMonitoring);
