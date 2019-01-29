@@ -24,6 +24,9 @@ export const history = createHistory();
 // the epics middleware
 const epicMiddleware = createEpicMiddleware();
 
+const preloadedState = window.__PRELOADED_STATE__;
+delete window.__PRELOADED_STATE__;
+
 // the reducers
 const combinedReducers = combineReducers({
   ...reducers,
@@ -32,6 +35,7 @@ const combinedReducers = combineReducers({
 const reducer = hocReducer(combinedReducers); // adds reset reducer to our apps reducer
 const store = createStore(
   reducer,
+  preloadedState,
   applyMiddleware(epicMiddleware, routerMiddleware(history)),
 );
 

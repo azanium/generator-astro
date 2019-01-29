@@ -1,6 +1,6 @@
-import * as types from '@ducks/actionTypes';
 import persistReducer from 'redux-persist/lib/persistReducer';
 import storage from 'redux-persist/lib/storage';
+import * as types from './home.constant';
 
 const persistConfig = {
   key: 'home',
@@ -18,7 +18,7 @@ const initialState = {};
  * @param {Object} action the redux action instance
  * @returns {Object} returns the new state
  */
-function home(state = initialState, action) {
+function home(state = initialState, action) { // NOSONAR
   switch (action.type) {
     case types.HOME_TEST:
       return {

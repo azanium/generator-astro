@@ -15,7 +15,7 @@ renderMethod(
   <Provider store={store}>
     <PersistGate persistor={persistor}>
       <ConnectedRouter store={store} history={history}>
-        <App suppressHydrationWarning />
+        <App />
       </ConnectedRouter>
     </PersistGate>
   </Provider>,

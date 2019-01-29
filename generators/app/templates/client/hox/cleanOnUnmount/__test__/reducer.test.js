@@ -1,4 +1,3 @@
-import React from 'react';
 import * as types from '@ducks/actionTypes';
 import reducer from '../reducer';
 

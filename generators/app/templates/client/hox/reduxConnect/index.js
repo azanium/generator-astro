@@ -19,7 +19,7 @@ function mapStateToProps(state) {
  * @param {Object} state the state factory function
  * @returns {class} returns a react component
  */
-export default function(WrappedComponent, actions, state = mapStateToProps) {
+export default function (WrappedComponent, actions, state = mapStateToProps) {
   return withRouter(
     connect(
       state,
