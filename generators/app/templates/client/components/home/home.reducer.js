@@ -1,6 +1,6 @@
 import persistReducer from 'redux-persist/lib/persistReducer';
 import storage from 'redux-persist/lib/storage';
-import * as types from './home.constant';
+import * as types from './home.actionType';
 
 const persistConfig = {
   key: 'home',

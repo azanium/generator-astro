@@ -1,4 +1,4 @@
-import * as Home from '@components/home/home.constant';
+import * as Home from '@components/home/home.actionType';
 
 export { Home };
 

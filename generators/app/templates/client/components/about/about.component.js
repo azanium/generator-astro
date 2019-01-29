@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import './about.css';
+import './style.css';
 
 const Test = () => (
   <div>

@@ -1,4 +1,4 @@
-import * as types from './home.constant';
+import * as types from './home.actionType';
 
 /*
  * containers/home/action.js : HOME_TEST action factory

@@ -2,8 +2,6 @@ const Generator = require('yeoman-generator');
 const urlJoin = require('url-join');
 const yosay = require('yosay');
 const path = require('path');
-const slugify = require('underscore.string/slugify');
-const decamelize = require('decamelize');
 const mkdirp = require('mkdirp');
 
 module.exports = class extends Generator {
@@ -11,9 +9,6 @@ module.exports = class extends Generator {
     super(args, opts);
 
     // Process argument
-    this.argument('projectname', { type: String, required: false });
-    this.projectname = this.projectname || 'astro-service';
-    this.projectname = decamelize(slugify(this.projectname), '-');
     this.props = {};
 
     console.log(yosay('Welcome to Astro RESTful API generator!'));
@@ -38,7 +33,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'name',
         message: 'What is your project name?',
-        default: that.config.get('name') || this.projectname,
+        default: that.config.get('name') || 'astro',
         validate: value => value !== undefined && value !== ''
       },
       {
