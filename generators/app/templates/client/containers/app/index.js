@@ -14,7 +14,7 @@ class App extends React.Component {
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to Astro Generator</h2>
+          <h2>Welcome to Astro Generator Fullstack</h2>
         </div>
         <Switch>
           <Route exact path="/" component={Home} />

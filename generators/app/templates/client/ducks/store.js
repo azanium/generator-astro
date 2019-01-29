@@ -27,8 +27,8 @@ export const history = createHistory();
 const epicMiddleware = createEpicMiddleware({
   dependencies: {
     getJSON: ajax.getJSON,
-    of,
-  },
+    of
+  }
 });
 
 const preloadedState = window.__PRELOADED_STATE__;
@@ -37,7 +37,7 @@ delete window.__PRELOADED_STATE__;
 // the reducers
 const combinedReducers = combineReducers({
   ...reducers,
-  routing: routerReducer,
+  routing: routerReducer
 });
 const reducer = hocReducer(combinedReducers); // adds reset reducer to our apps reducer
 const store = createStore(
@@ -48,7 +48,7 @@ const store = createStore(
       epicMiddleware,
       routerMiddleware(history)
     )
-  ),
+  )
 );
 
 epicMiddleware.run(epics);
