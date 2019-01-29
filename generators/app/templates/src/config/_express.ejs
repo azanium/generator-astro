@@ -21,7 +21,7 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 app.use((req, res, next) => {
   req.assets = assets;
   next();
-}); <%}%>
+});<%}%>
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
