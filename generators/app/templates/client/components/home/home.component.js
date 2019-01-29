@@ -1,17 +1,26 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Link from 'react-router-dom/Link';
 import { reduxConnect } from '@hox';
 import * as actions from './home.action';
 
-import './home.css';
+import './home.style.css';
 
 class Home extends React.Component {
-  componentDidMount() {}
+  componentDidMount() {
+    const { home, test } = this.props;
+    if (!home.success) {
+      test('azanium');
+    }
+  }
 
   render() {
+    const { home } = this.props;
+    const status = home.success ? 'success' : 'loading';
     return (
       <div className="Home">
         <p className="Home-intro">Check out astro generator on how to add features</p>
+        <p className="Home-intro">Status: {status}</p>
         <ul className="Home-resources">
           <li>
             <Link to="/about">About</Link>
@@ -27,5 +36,19 @@ class Home extends React.Component {
     );
   }
 }
+
+Home.propTypes = {
+  test: PropTypes.func,
+  home: PropTypes.shape({
+    success: PropTypes.bool
+  })
+};
+
+Home.defaultProps = {
+  test: () => {},
+  home: {
+    success: false
+  }
+};
 
 export default reduxConnect(Home, actions);

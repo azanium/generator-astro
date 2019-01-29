@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Home from '@components/home';
 import About from '@components/about';
-// import { reduxConnect } from '@hox';
+import NotFound from '@components/notFound';
 import logo from './react.svg';
 import './app.css';
 
@@ -19,6 +19,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/about" component={About} />
+          <Route exact component={NotFound} />
         </Switch>
       </div>
     );

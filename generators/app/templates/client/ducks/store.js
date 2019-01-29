@@ -1,7 +1,9 @@
 import { routerMiddleware, routerReducer } from 'react-router-redux';
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { createEpicMiddleware } from 'redux-observable/lib/cjs/createEpicMiddleware';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import createHistory from 'history/createBrowserHistory';
+
 
 // rxjs observables
 import { ajax } from 'rxjs/observable/dom/ajax';
@@ -22,7 +24,12 @@ import 'rxjs/add/operator/takeUntil';
 export const history = createHistory();
 
 // the epics middleware
-const epicMiddleware = createEpicMiddleware();
+const epicMiddleware = createEpicMiddleware({
+  dependencies: {
+    getJSON: ajax.getJSON,
+    of,
+  },
+});
 
 const preloadedState = window.__PRELOADED_STATE__;
 delete window.__PRELOADED_STATE__;
@@ -36,14 +43,14 @@ const reducer = hocReducer(combinedReducers); // adds reset reducer to our apps 
 const store = createStore(
   reducer,
   preloadedState,
-  applyMiddleware(epicMiddleware, routerMiddleware(history)),
+  composeWithDevTools(
+    applyMiddleware(
+      epicMiddleware,
+      routerMiddleware(history)
+    )
+  ),
 );
 
-epicMiddleware.run(epics, {
-  dependencies: {
-    getJSON: ajax.getJSON,
-    of,
-  },
-});
+epicMiddleware.run(epics);
 
 export default store;
