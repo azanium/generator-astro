@@ -1,3 +1,17 @@
+# Version 4.0.0
+ - Transpiler with [Babel 6](https://babeljs.io/)
+ - Rendering with [reactjs](https://reactjs.org/)
+ - Component Styling with [styled-components](https://www.styled-components.com/)
+ - State management with [Redux](https://redux.js.org/)
+ - Redux Middleware with [redux-observable](https://redux-observable.js.org/)
+ - Reactive Programming for redux-observable with [rxjs](https://github.com/ReactiveX/rxjs)
+ - Routing with [react-router](https://github.com/ReactTraining/react-router)
+ - Redux Routing with [react-router-redux](https://github.com/reactjs/react-router-redux)
+ - Server side Routing with [react-router-dom](https://www.npmjs.com/package/react-router-dom)
+ - Module bundling with HMR using [webpack](https://webpack.js.org/)
+ - React DOM Testing with [react-testing-library](https://github.com/kentcdodds/react-testing-library)
+ - Optional React Testing with [enzyme](https://airbnb.io/enzyme/)
+
 # Version 3.4.0
 - Uses reza to construct react+express fullstack
 
