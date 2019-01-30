@@ -1,3 +1,3 @@
-import About from './about.component';
+import * as About from './about.component';
 
 export default About;

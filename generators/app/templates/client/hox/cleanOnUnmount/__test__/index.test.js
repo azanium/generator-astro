@@ -1,6 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import renderer from 'react-test-renderer';
+import { render } from 'react-testing-library';
 import { ConnectedRouter } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import store, { history } from '@ducks/store';
@@ -16,21 +15,15 @@ const AttachedTest = cleanOnUnmount(Test);
 
 describe('cleanOnUnmount HOC - HOC', () => {
   it('renders with no problem', () => {
-    const component = mount(
-      <Provider store={store}>
-        <ConnectedRouter store={store} history={history}>
-          <AttachedTest />
+    const { container } = render(
+      <Provider key="provider" store={store}>
+        <ConnectedRouter key="connectedRouter" store={store} history={history}>
+          <AttachedTest key="attachedTest" />
         </ConnectedRouter>
       </Provider>,
     );
-    const tree = renderer.create(component).toJSON();
-
-    expect(
-      component
-        .find('div')
-        .first()
-        .hasClass('clean-on-unmount'),
-    ).toEqual(true);
-    expect(tree).toMatchSnapshot();
+    const tree = container.querySelector('.clean-on-unmount');
+    expect(tree).toBeDefined();
+    expect(container).toMatchSnapshot();
   });
 });

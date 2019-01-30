@@ -6,7 +6,7 @@ import * as actions from './home.action';
 
 import './style.css';
 
-class Home extends React.Component {
+export class Home extends React.Component {
   componentDidMount() {
     const { home, test } = this.props;
     if (!home.success) {
@@ -20,7 +20,7 @@ class Home extends React.Component {
     return (
       <div className="Home">
         <p className="Home-intro">Check out astro generator on how to add features</p>
-        <p className="Home-intro">Status: {status}</p>
+        <p className="Home-intro" data-testid="status">Status: {status}</p>
         <ul className="Home-resources">
           <li>
             <Link to="/about">About</Link>

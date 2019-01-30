@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'react-router-dom/Link';
 import './style.css';
 
-const Test = () => (
+export const About = () => (
   <div>
     <h2>About Astro Generator</h2>
     <p>This generator was created to easily help fullstack developer to leverage CommonJS + ReactJS with the same basecode for server side</p>
@@ -22,4 +22,4 @@ const Test = () => (
   </div>
 );
 
-export default Test;
+export default About;
