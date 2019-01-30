@@ -2,8 +2,28 @@
 # Astro ExpressJS ES2017 RESTful Project Generator
 
 Yeoman generator for building RESTful APIs and microservices using Node.js, ExpressJS and Docker support.
+Astro Generator was designed to be scalable on containerized environment, and deisnged to be enterprise ready.
+The principle of the project structure is isolation, so multiple developers can work on the same project without high dependency.
 
-## Features
+## Technology Stack Supported
+ - ExpressJS project, with vanilla javascript, this is suitable for creating service only project.
+ - ReactJS Fullstack Project, this is for creating web app using Server Side Rendering.
+
+## Client Features (Only for Fullstack)
+ - Transpiler with [Babel 6](https://babeljs.io/)
+ - Rendering with [reactjs](https://reactjs.org/)
+ - Component Styling with [styled-components](https://www.styled-components.com/)
+ - State management with [Redux](https://redux.js.org/)
+ - Redux Middleware with [redux-observable](https://redux-observable.js.org/)
+ - Reactive Programming for redux-observable with [rxjs](https://github.com/ReactiveX/rxjs)
+ - Routing with [react-router](https://github.com/ReactTraining/react-router)
+ - Redux Routing with [react-router-redux](https://github.com/reactjs/react-router-redux)
+ - Server side Routing with [react-router-dom](https://www.npmjs.com/package/react-router-dom)
+ - Module bundling with HMR using [webpack](https://webpack.js.org/)
+ - React DOM Testing with [react-testing-library](https://github.com/kentcdodds/react-testing-library)
+ - Optional React Testing with [enzyme](https://airbnb.io/enzyme/)
+
+## Server Features
 
  - No transpilers, just vanilla javascript
  - ES2017 latest features like Async/Await
@@ -43,6 +63,20 @@ Generate a new project:
 ```bash
 yo astro
 ```
+Choose your project, either service or fullstack
+
+### Client Side Generator
+
+Generate a new component
+```
+yo astro:component
+```
+Upon creation on a component, a new component folder will be created on `src/components`, and entries will be injected on the following files:
+  - `src/client/ducks/routers.js`
+  - `src/client/ducks/epics.js`
+  - `src/client/ducks/reducers.js`
+
+### Server Side Generator
 
 Generate a new API:
 
