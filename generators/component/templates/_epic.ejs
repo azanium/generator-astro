@@ -1,0 +1,4 @@
+import * as types from './<%= filename %>.actionType';
+import * as actions from './<%= filename %>.action';
+
+export default (action$, store, { of }) => action$.ofType(types.<%= NAME %>_TEST).mergeMap(action => of(actions.testSuccess(action.payload)));

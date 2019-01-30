@@ -10,9 +10,10 @@ module.exports = {
       '@services': path.resolve('<%= src %>/services'),
       '@utils': path.resolve('<%= src %>/utils'),
       '@client': path.resolve('<%= client %>'),
-      '@app': path.resolve('<%= client %>/app'),
       '@components': path.resolve('<%= client %>/components'),
-      '@containers': path.resolve('<%= client %>/containers')
+      '@containers': path.resolve('<%= client %>/containers'),
+      '@ducks': path.resolve('<%= client %>/ducks'),
+      '@hox': path.resolve('<%= client %>/hox')
     };
     return config;
   }

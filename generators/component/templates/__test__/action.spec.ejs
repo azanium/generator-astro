@@ -1,0 +1,20 @@
+import * as actions from '../<%= filename %>.action';
+import * as types from '../<%= filename %>.actionType';
+
+describe('<%= name %> Component - actions', () => {
+  const payload = 'payload';
+
+  it('dispatch test action', () => {
+    expect(actions.test(payload)).toEqual({
+      type: types.<%= NAME %>_TEST,
+      payload
+    });
+  });
+
+  it('dispatch test success action', () => {
+    expect(actions.testSuccess(payload)).toEqual({
+      type: types.<%= NAME %>_TEST_SUCCESS,
+      payload
+    });
+  });
+});

@@ -1,3 +1,6 @@
+# Version 3.4.0
+- Uses reza to construct react+express fullstack
+
 # Version 3.3.2
 - Fixed package.json for sequelize, by removing comma dangling
 

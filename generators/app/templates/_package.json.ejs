@@ -19,16 +19,13 @@
     "start": "cross-env NODE_ENV=production pm2 start ./<%= src %>/index.js",
     "dev": "NODE_ENV=development nodemon ./<%= src %>/index.js",<% } %>
     "lint": "eslint '**/*.js' --ignore-path .gitignore --ignore-pattern internals/scripts",
-    "lint:fix": "yarn lint -- --fix",
-    "lint:watch": "yarn lint -- --watch",<% if (kind === 'fullstack') { %>
-    "test": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage --testPathPattern=\"(/src/.*)\\.(test|spec).js$\"",
-    "test:unit": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
-    "test:integration": "cross-env NODE_ENV=test reza test --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
-    "test:watch": "cross-env NODE_ENV=test reza test --watch --forceExit --detectOpenHandles",<% } else { %>
+    "lint:fix": "yarn lint -- --fix",<% if (kind === 'fullstack') { %>
+    "test": "cross-env NODE_ENV=test reza test --env=jsdom --forceExit --detectOpenHandles --coverage  --coverageDirectory=coverage --testPathPattern=\"(/src/.*)\\.(test|spec).js$\"",
+    "test:unit": "cross-env NODE_ENV=test reza test --env=jsdom --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
+    "test:integration": "cross-env NODE_ENV=test reza test --env=jsdom --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",<% } else { %>
     "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --coverage --coverageDirectory=coverage",
     "test:unit": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(spec).js$\"",
-    "test:integration": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",
-    "test:watch": "cross-env NODE_ENV=test jest --watch --forceExit --detectOpenHandles",<% } %>
+    "test:integration": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testPathPattern=\"(/src/.*)\\.(test).js$\"",<% } %>
     "validate": "yarn lint && yarn test",
     "postpublish": "git push --tags",
     "docs": "apidoc -i src -o docs",
@@ -47,8 +44,6 @@
     "express",
     "node",
     "node.js",
-    "mongodb",
-    "mongoose",
     "passport",
     "es6",
     "es7",
@@ -95,6 +90,16 @@
     "response-time": "^2.3.2",<% if (kind === 'fullstack') {%>
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-redux": "^6.0.0",
+    "react-router": "^4.3.1",
+    "react-router-redux": "next",
+    "redux": "^4.0.1",
+    "redux-observable": "^1.0.0",
+    "redux-persist": "^5.10.0",
+    "response-time": "^2.3.2",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
+    "styled-components": "^4.1.3",
     "react-router-dom": "^4.3.1", <% } %>
     "uuid": "^3.1.0",
     "winston": "^3.1.0",
@@ -110,11 +115,9 @@
     "eslint-config-astro": "^1.0.6",
     "eslint-import-resolver-module-alias": "^0.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
     "husky": "^0.14.3",
     "jest": "^23.6.0",
+    "jest-dom": "^3.0.1",
     "jest-express": "^1.8.0",
     "jest-tobetype": "^1.2.0",
     "opn-cli": "^3.1.0",
@@ -123,7 +126,17 @@
     "sequelize-cli": "^5.2.0",<% } %>
     "nodemon": "^1.11.0"<% if (kind === 'fullstack') {%>,
     "rimraf": "^2.6.3",
-    "reza": "^1.0.9"<% } %>
+    "enzyme": "^3.8.0",
+    "babel-eslint": "^10.0.1",
+    "prop-types": "^15.6.2",
+    "redux-devtools-extension": "^2.13.7",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "react-test-renderer": "^16.7.0",
+    "react-testing-library": "^5.4.4",
+    "enzyme-adapter-react-16": "^1.8.0",
+    "reza": "^1.0.10"<% } %>
   },
   "_moduleAliases": {
     "@config"       : "<%= src %>/config",
@@ -133,9 +146,10 @@
     "@services"     : "<%= src %>/services",
     "@utils"        : "<%= src %>/utils",
     "@client"       : "<%= client %>",
-    "@app"          : "<%= client %>/app",
     "@components"   : "<%= client %>/components",
-    "@containers"   : "<%= client %>/containers"
+    "@containers"   : "<%= client %>/containers",
+    "@ducks"        : "<%= client %>/ducks",
+    "@hox"          : "<%= client %>/hox"
   },
   "nyc": {
     "include": "src",
@@ -155,28 +169,37 @@
       "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
       "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1",
       "^@client(.*)$": "<rootDir>/<%= client %>$1",
-      "^@app(.*)$": "<rootDir>/<%= client %>/app$1",
       "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
-      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1"
+      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1",
+      "^@ducks(.*)$": "<rootDir>/<%= client %>/ducks$1",
+      "^@hox(.*)$": "<rootDir>/<%= client %>/hox$1"
     },<%if (kind !== 'fullstack') { %>
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "testPathIgnorePatterns": [
       "\\index.js$",
       "(/src/.*)\\.(validator|validation|config|index).js$"
     ],<% } %>
+    "setupFiles": [
+      "<rootDir>/test.setup.js"
+    ],
     "moduleFileExtensions": [
       "js", "jsx"
     ],
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx}",
+      "src/**/*{js,jsx}",
+      "!src/**/*{epics}.js",
+      "!src/**/*{reducers}.js",
+      "!src/**/*{store}.js",
+      "!src/**/*{routes|route}.js",
+      "!src/**/*{actionTypes}.js",
       "!src/**/index.js",
       "!src/**/*.validation.js",
       "!src/**/*.validator.js",
-      "!<%= src %>/config/**",
-      "!<%= src %>/database/**",
-      "!<%= src %>/models/**",
-      "!<%= src %>/utils/ErrorCode/**",
-      "!<%= src %>/services/http/**",
+      "!src/server/config/**",
+      "!src/server/database/**",
+      "!src/server/models/**",
+      "!src/server/utils/ErrorCode/**",
+      "!src/server/services/http/**",
       "!<rootDir>/node_modules/"
     ],
     "coverageReporters": [

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cleanOnUnmount HOC - HOC renders with no problem 1`] = `
+<div>
+  <div
+    class="clean-on-unmount"
+  >
+    cleanOnUnmount
+  </div>
+</div>
+`;
