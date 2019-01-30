@@ -1,7 +1,7 @@
 
-# Astro ExpressJS ES2017 RESTful Project Generator
+# Astro Generator
 
-Yeoman generator for building RESTful APIs and microservices using Node.js, ExpressJS and Docker support.
+Yeoman generator for building RESTful APIs and microservices using Node.js, ExpressJS and Docker support, and fullstack service with ReactJS, Redux, and Redux Observable.
 Astro Generator was designed to be scalable on containerized environment, and deisnged to be enterprise ready.
 The principle of the project structure is isolation, so multiple developers can work on the same project without high dependency.
 
