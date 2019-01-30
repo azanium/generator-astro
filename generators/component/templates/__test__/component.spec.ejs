@@ -1,0 +1,32 @@
+import React from 'react';
+import { render, cleanup } from 'react-testing-library';
+import { MemoryRouter } from 'react-router-dom';
+import { <%= name %> } from '../<%= filename %>.component';
+import 'jest-dom/extend-expect';
+
+const component = props => (
+  <MemoryRouter>
+    <<%= name %> {...props} />
+  </MemoryRouter>
+);
+
+describe('<%= name %> Component', () => {
+  let props;
+
+  beforeEach(() => {
+    props = {
+      <%= name %>: {
+        success: false,
+      },
+      test: jest.fn()
+    };
+  });
+
+  afterEach(cleanup);
+
+  it('should render', () => {
+    const { container } = render(component(props));
+    const element = container.querySelector('.<%= NAME %>');
+    expect(element).toHaveTextContent('<%= name %>');
+  });
+});

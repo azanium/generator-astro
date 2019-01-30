@@ -1,0 +1,35 @@
+import reducer from '../<%= filename %>.reducer';
+import * as types from '../<%= filename %>.actionType';
+
+describe('<%= name %> Container - reducers', () => {
+  it('sets loading state', () => {
+    expect(
+      reducer(
+        {},
+        {
+          type: types.<%= NAME %>_TEST
+        }
+      )
+    ).toEqual({
+      loading: true
+    });
+  });
+
+  it('sets success state', () => {
+    expect(
+      reducer(
+        {},
+        {
+          type: types.<%= NAME %>_TEST_SUCCESS
+        }
+      )
+    ).toEqual({
+      loading: false,
+      success: true
+    });
+  });
+
+  it('returns the initial state', () => {
+    expect(reducer(undefined, {})).toEqual({});
+  });
+});

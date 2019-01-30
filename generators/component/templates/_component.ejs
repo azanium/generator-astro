@@ -1,0 +1,22 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { reduxConnect } from '@hox';
+import * as actions from './<%= filename %>.action';
+
+import './style.css';
+
+export const <%= name %> = ({ page }) => (
+  <div className="<%= NAME %>">
+    <p><%= name %> Component {page}</p>
+  </div>
+);
+
+<%= name %>.propTypes = {
+  page: PropTypes.string
+};
+
+<%= name %>.defaultProps = {
+  page: 'Page'
+};
+
+export default reduxConnect(<%= name %>, actions);

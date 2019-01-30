@@ -2,8 +2,6 @@ const Generator = require('yeoman-generator');
 const urlJoin = require('url-join');
 const yosay = require('yosay');
 const path = require('path');
-const slugify = require('underscore.string/slugify');
-const decamelize = require('decamelize');
 const mkdirp = require('mkdirp');
 
 module.exports = class extends Generator {
@@ -11,9 +9,6 @@ module.exports = class extends Generator {
     super(args, opts);
 
     // Process argument
-    this.argument('projectname', { type: String, required: false });
-    this.projectname = this.projectname || 'astro-service';
-    this.projectname = decamelize(slugify(this.projectname), '-');
     this.props = {};
 
     console.log(yosay('Welcome to Astro RESTful API generator!'));
@@ -29,8 +24,8 @@ module.exports = class extends Generator {
         name: 'kind',
         message: 'What kinf of project do you want to create?',
         choices: [
-          { name: 'ExpressJS', value: 'service' },
-          { name: 'React + ExpressJS (alpha)', value: 'fullstack' }
+          { name: 'Service (ExpressJS)', value: 'service' },
+          { name: 'Fullstack (Express JS + React + React Redux + Redux Observable)', value: 'fullstack' }
         ],
         default: that.config.get('service') || 'service'
       },
@@ -38,7 +33,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'name',
         message: 'What is your project name?',
-        default: that.config.get('name') || this.projectname,
+        default: that.config.get('name') || 'astro',
         validate: value => value !== undefined && value !== ''
       },
       {
@@ -212,7 +207,7 @@ module.exports = class extends Generator {
       copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
       copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
       copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
-      
+      copy(tPath('test.setup.js'), dPath('test.setup.js'));
       copy(tPath('client'), dPath(props.client));
     }
 

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reduxConnect HOC - HOC renders with no problem 1`] = `
+<div>
+  <div
+    class="redux-connect"
+  >
+    reduxConnect
+  </div>
+</div>
+`;
