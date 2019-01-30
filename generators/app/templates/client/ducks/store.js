@@ -3,6 +3,7 @@ import { applyMiddleware, createStore, combineReducers } from 'redux';
 import { createEpicMiddleware } from 'redux-observable/lib/cjs/createEpicMiddleware';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createHistory from 'history/createBrowserHistory';
+import { combineEpics } from 'redux-observable/lib/cjs/combineEpics';
 
 
 // rxjs observables
@@ -12,7 +13,7 @@ import { of } from 'rxjs/observable/of';
 
 import hocReducer from '@hox/cleanOnUnmount/reducer';
 import * as reducers from '@ducks/reducers';
-import epics from '@ducks/epics';
+import * as epics from '@ducks/epics';
 
 // global definitions
 import 'rxjs/add/operator/map';
@@ -51,6 +52,7 @@ const store = createStore(
   )
 );
 
-epicMiddleware.run(epics);
+const allEpics = Object.values({ ...epics });
+epicMiddleware.run(combineEpics(...allEpics));
 
 export default store;

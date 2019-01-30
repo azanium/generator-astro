@@ -13,18 +13,16 @@ export default function asyncComponent(getComponent) {
       this.state = { Component: AsyncComponent.Component };
     }
 
-    componentWillMount() {
-      const { Component } = this.state;
+    render() {
+      let { Component } = this.state;
       if (!Component) {
         getComponent().then((cmp) => {
           AsyncComponent.Component = cmp;
+          Component = cmp;
           this.setState({ Component: cmp });
         });
       }
-    }
 
-    render() {
-      const { Component } = this.state;
       if (Component) {
         return <Component {...this.props} />;
       }

@@ -2,11 +2,11 @@ const path = require('path');
 const mkdirp = require('mkdirp');
 const urlJoin = require('url-join');
 const Generator = require('yeoman-generator');
-const camelize = require('underscore.string/camelize');
+const capitalize = require('underscore.string/capitalize');
 const underscored = require('underscore.string/underscored');
-// const recast = require('recast');
-// const _ = require('lodash');
-// const rimraf = require('rimraf');
+const recast = require('recast');
+const _ = require('lodash');
+const rimraf = require('rimraf');
 
 module.exports = class extends Generator {
   constructor(args, opts) {
@@ -56,7 +56,7 @@ module.exports = class extends Generator {
       that.props.client = that.config.get('client') || 'src/client';
 
       that.props.dirname = underscored(name).replace('_', '-');
-      that.props.name = camelize(name);
+      that.props.name = capitalize(name);
 
       this.on('end', () => {
         this.config.set('last_component_path', that.props.last_component_path);
@@ -75,6 +75,7 @@ module.exports = class extends Generator {
     const dPath = this.destinationPath.bind(this);
     const clientPath = props.client;
     const componentsPath = urlJoin(clientPath, 'components', props.dirname);
+    props.componentsPath = componentsPath;
 
     // Sync the components path directory
     mkdirp.sync(path.join(this.destinationPath(), componentsPath));
@@ -140,5 +141,61 @@ module.exports = class extends Generator {
     });
 
     done();
+  }
+
+  inject() {
+    const { props } = this;
+    const buildExportCode = componentType => `export { default as ${props.name} } from '@components/${props.dirname}/${props.filename}.${componentType}';`;
+
+    const paths = {
+      routes: {
+        target: urlJoin('ducks', 'routes.js'),
+        code: buildExportCode('route')
+      },
+      reducers: {
+        target: urlJoin('ducks', 'reducers.js'),
+        code: buildExportCode('reducer')
+      },
+      epics: {
+        target: urlJoin('ducks', 'epics.js'),
+        code: buildExportCode('epic')
+      }
+    };
+
+    Object.keys(paths).forEach((fileKey) => {
+      const file = paths[fileKey];
+      this._injectExport(file.target, file.code);
+    });
+  }
+
+  _injectExport(jsFile, exportString) {
+    const { props } = this;
+    const dPath = this.destinationPath.bind(this);
+
+    const targetFile = dPath(urlJoin(props.client, jsFile));
+
+    if (!this.fs.exists(targetFile)) {
+      return;
+    }
+
+    const ast = recast.parse(this.fs.read(targetFile));
+    const { body } = ast.program;
+
+    /* recast.visit(ast, {
+      visitExportSpecifier(path) { // eslint-disable-line
+        this.traverse(path);
+      }
+    }); */
+
+    const lastExportIndex = _.findLastIndex(body, statement => statement.type === 'ExportNamedDeclaration');
+
+    /**
+     * Inject codes
+     */
+    body.splice(lastExportIndex + 1, 0, exportString);
+
+    rimraf(targetFile, () => {
+      this.fs.write(targetFile, recast.print(ast).code);
+    });
   }
 };
