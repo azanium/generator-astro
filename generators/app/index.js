@@ -24,8 +24,8 @@ module.exports = class extends Generator {
         name: 'kind',
         message: 'What kinf of project do you want to create?',
         choices: [
-          { name: 'ExpressJS', value: 'service' },
-          { name: 'React + ExpressJS (alpha)', value: 'fullstack' }
+          { name: 'Service (ExpressJS)', value: 'service' },
+          { name: 'Fullstack (Express JS + React + React Redux + Redux Observable)', value: 'fullstack' }
         ],
         default: that.config.get('service') || 'service'
       },

@@ -1,10 +1,26 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Home from '@components/home';
-import About from '@components/about';
-import NotFound from '@components/notFound';
+import * as routes from '@ducks/routes';
+import notFoundRoute from '@components/notFound/notFound.route';
 import logo from './react.svg';
 import './style.css';
+
+/**
+ * Generate Route components for all routes
+ */
+const generateRoutesComponent = () => {
+  const components = [];
+  Object.keys(routes).forEach((routeKey) => {
+    const route = routes[routeKey];
+    components.push(route.path ? <Route key={route.path} exact path={route.path} component={route.component} /> : <Route key={route.path} exact component={route.component} />);
+  });
+
+  // Add not found route
+  components.push(
+    <Route key="notFound" component={notFoundRoute.component} />
+  );
+  return components;
+};
 
 class App extends React.Component {
   componentDidMount() {}
@@ -16,11 +32,7 @@ class App extends React.Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to Astro Generator Fullstack</h2>
         </div>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/about" component={About} />
-          <Route exact component={NotFound} />
-        </Switch>
+        <Switch>{generateRoutesComponent()}</Switch>
       </div>
     );
   }
