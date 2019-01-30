@@ -4,7 +4,7 @@ import Home from '@components/home';
 import About from '@components/about';
 import NotFound from '@components/notFound';
 import logo from './react.svg';
-import './app.css';
+import './style.css';
 
 class App extends React.Component {
   componentDidMount() {}
