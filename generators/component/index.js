@@ -40,9 +40,19 @@ module.exports = class extends Generator {
         validate: value => value !== undefined && value !== ''
       },
       {
+        type: 'list',
+        name: 'stateless',
+        message: 'Component type?',
+        validate: value => value !== undefined && value !== '',
+        choices: [
+          { name: 'stateless', value: 'y' },
+          { name: 'stateful', value: 'n' }
+        ]
+      },
+      {
         type: 'input',
         name: 'route',
-        message: 'Your component route path?',
+        message: 'Component route path?',
         default: this.config.get('last_component_path') || '/hello',
         validate: value => value !== undefined && value !== '' && value.indexOf('/') === 0
       }
@@ -83,11 +93,23 @@ module.exports = class extends Generator {
     const paths = {
       index: {
         source: '_index.ejs',
-        target: `index.js`
+        target: `index.js`,
+        stateless: true
       },
       style: {
         source: '_style.css.ejs',
-        target: `style.css`
+        target: `style.css`,
+        stateless: true
+      },
+      component: {
+        source: '_component.ejs',
+        target: `${props.filename}.component.js`,
+        stateless: true
+      },
+      route: {
+        source: '_route.ejs',
+        target: `${props.filename}.route.js`,
+        stateless: true
       },
       action: {
         source: '_action.ejs',
@@ -97,10 +119,6 @@ module.exports = class extends Generator {
         source: '_actionType.ejs',
         target: `${props.filename}.actionType.js`
       },
-      component: {
-        source: '_component.ejs',
-        target: `${props.filename}.component.js`
-      },
       epic: {
         source: '_epic.ejs',
         target: `${props.filename}.epic.js`
@@ -109,17 +127,14 @@ module.exports = class extends Generator {
         source: '_reducer.ejs',
         target: `${props.filename}.reducer.js`
       },
-      route: {
-        source: '_route.ejs',
-        target: `${props.filename}.route.js`
-      },
       actionSpec: {
         source: urlJoin('__test__', 'action.spec.ejs'),
         target: urlJoin('__test__', 'action.spec.js')
       },
       componentSpec: {
         source: urlJoin('__test__', 'component.spec.ejs'),
-        target: urlJoin('__test__', 'component.spec.js')
+        target: urlJoin('__test__', 'component.spec.js'),
+        stateless: true
       },
       epicSpec: {
         source: urlJoin('__test__', 'epic.spec.ejs'),
@@ -135,7 +150,11 @@ module.exports = class extends Generator {
       const file = paths[fileKey];
       const sourcePath = tPath(file.source);
       const destinationPath = dPath(urlJoin(componentsPath, file.target));
-      if (!this.fs.exists(destinationPath)) {
+      let copyFile = true;
+      if (props.stateless === 'y') {
+        copyFile = file.stateless;
+      }
+      if (!this.fs.exists(destinationPath) && copyFile) {
         copyTpl(sourcePath, destinationPath, props);
       }
     });
@@ -145,12 +164,14 @@ module.exports = class extends Generator {
 
   inject() {
     const { props } = this;
-    const buildExportCode = componentType => `export { default as ${props.name} } from '@components/${props.dirname}/${props.filename}.${componentType}';`;
+    const _name_ = props.name.toLowerCase();
+    const buildExportCode = componentType => `export { default as ${_name_} } from '@components/${props.dirname}/${props.filename}.${componentType}';`;
 
     const paths = {
       routes: {
         target: urlJoin('ducks', 'routes.js'),
-        code: buildExportCode('route')
+        code: buildExportCode('route'),
+        stateless: true
       },
       reducers: {
         target: urlJoin('ducks', 'reducers.js'),
@@ -164,7 +185,13 @@ module.exports = class extends Generator {
 
     Object.keys(paths).forEach((fileKey) => {
       const file = paths[fileKey];
-      this._injectExport(file.target, file.code);
+      let injectFile = true;
+      if (props.stateless === 'y') {
+        injectFile = file.stateless;
+      }
+      if (injectFile) {
+        this._injectExport(file.target, file.code);
+      }
     });
   }
 

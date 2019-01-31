@@ -1,1 +1,1 @@
-export { default as Home } from '@components/home/home.epic';
+export { default as home } from '@components/home/home.epic';
