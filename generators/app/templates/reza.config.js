@@ -16,5 +16,6 @@ module.exports = {
       '@hox': path.resolve('<%= client %>/hox')
     };
     return config;
-  }
+  },
+  plugins: ['scss']
 };

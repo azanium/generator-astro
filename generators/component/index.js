@@ -97,8 +97,8 @@ module.exports = class extends Generator {
         stateless: true
       },
       style: {
-        source: '_style.css.ejs',
-        target: `style.css`,
+        source: '_style.scss.ejs',
+        target: `style.scss`,
         stateless: true
       },
       component: {

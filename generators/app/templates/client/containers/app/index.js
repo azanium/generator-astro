@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import * as routes from '@ducks/routes';
 import notFoundRoute from '@components/notFound/notFound.route';
 import logo from './react.svg';
-import './style.css';
+import './style.scss';
 
 /**
  * Generate Route components for all routes

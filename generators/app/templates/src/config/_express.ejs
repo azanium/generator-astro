@@ -15,7 +15,7 @@ const reactRender = require('./react');<% } %>
 * @public
 */
 const app = express();<% if (kind==='fullstack') {%>
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+const assets = require(process.env.REZA_ASSETS_MANIFEST);
 
 // Load our assets
 app.use((req, res, next) => {
@@ -42,7 +42,7 @@ app.use(cors());
 <% if (kind === 'fullstack') {%>
 // Serve the client
 app.use(express.static('dist'));
-app.use(express.static(process.env.RAZZLE_PUBLIC_DIR));
+app.use(express.static(process.env.REZA_PUBLIC_DIR));
 <% } %>
 // Monitoring
 app.use(middlewareMonitoring);

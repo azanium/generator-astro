@@ -1,3 +1,8 @@
+# Version 4.0.2
+ - Add support for scss
+ - Refactor client boilerplate to use scss
+ - Update component subgenerator to use scss
+
 # Version 4.0.1
  - Fixes extra spaces on src/server/config/react.js
  - Fixes naming for export specifier for reducers, epics and routes.

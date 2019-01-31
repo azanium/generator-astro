@@ -4,7 +4,7 @@ import Link from 'react-router-dom/Link';
 import { reduxConnect } from '@hox';
 import * as actions from './home.action';
 
-import './style.css';
+import './style.scss';
 
 export class Home extends React.Component {
   componentDidMount() {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';<% if (stateless !== 'y') {%>
 import { reduxConnect } from '@hox';
 import * as actions from './<%= filename %>.action';<%}%>
 
-import './style.css';
+import './style.scss';
 
 <%if (stateless === 'y') {%>export const <%= name %> = ({ page }) => (
   <div className="<%= NAME %>">

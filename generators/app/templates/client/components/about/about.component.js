@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'react-router-dom/Link';
-import './style.css';
+import './style.scss';
 
 export const About = () => (
   <div>
