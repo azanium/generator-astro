@@ -1,3 +1,8 @@
+# Version 4.0.1
+ - Fixes extra spaces on src/server/config/react.js
+ - Fixes naming for export specifier for reducers, epics and routes.
+ - Add component type choice for component subgenerator, either stateless or stateful component.
+
 # Version 4.0.0
  - Transpiler with [Babel 6](https://babeljs.io/)
  - Rendering with [reactjs](https://reactjs.org/)
