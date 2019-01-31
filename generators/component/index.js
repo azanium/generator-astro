@@ -33,16 +33,9 @@ module.exports = class extends Generator {
 
     this.prompt([
       {
-        type: 'input',
-        name: 'name',
-        message: 'What is your component name?',
-        default: this.config.get('last_component_name') || 'Hello',
-        validate: value => value !== undefined && value !== ''
-      },
-      {
         type: 'list',
         name: 'stateless',
-        message: 'Component type?',
+        message: 'Select component type?',
         validate: value => value !== undefined && value !== '',
         choices: [
           { name: 'stateless', value: 'y' },
@@ -51,8 +44,15 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
+        name: 'name',
+        message: 'What is your component name?',
+        default: this.config.get('last_component_name') || 'Hello',
+        validate: value => value !== undefined && value !== ''
+      },
+      {
+        type: 'input',
         name: 'route',
-        message: 'Component route path?',
+        message: 'Component route path? (eg: /astro)',
         default: this.config.get('last_component_path') || '/hello',
         validate: value => value !== undefined && value !== '' && value.indexOf('/') === 0
       }
