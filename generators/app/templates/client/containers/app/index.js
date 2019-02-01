@@ -1,23 +1,24 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import * as routes from '@ducks/routes';
+import Loadable from 'react-loadable';
 import notFoundRoute from '@components/notFound/notFound.route';
 import logo from './react.svg';
 import './style.scss';
+
+const LoadableComponent = loader => Loadable({
+  loader,
+  loading: () => null,
+});
 
 /**
  * Generate Route components for all routes
  */
 const generateRoutesComponent = () => {
-  const components = [];
-  Object.keys(routes).forEach((routeKey) => {
-    const route = routes[routeKey];
-    components.push(route.path ? <Route key={route.path} exact path={route.path} component={route.component} /> : <Route key={route.path} exact component={route.component} />);
-  });
-
+  const components = Object.values(routes).map(route => <Route key={route.path} exact path={route.path} component={LoadableComponent(route.component)} />);
   // Add not found route
   components.push(
-    <Route key="notFound" component={notFoundRoute.component} />
+    <Route key="notFound" component={LoadableComponent(notFoundRoute.component)} />
   );
   return components;
 };

@@ -1,6 +1,4 @@
-import { asyncComponent } from '@hox';
-
 export default {
   path: '<%= route %>',
-  component: asyncComponent(() => import('./<%= filename %>.component').then(module => module.default))
+  component: () => import('./<%= filename %>.component')
 };
