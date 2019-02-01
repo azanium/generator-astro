@@ -1,3 +1,6 @@
+# Version 4.0.3
+ - Replace asyncComponent with react-loadable for async component loading
+ 
 # Version 4.0.2
  - Add support for scss
  - Refactor client boilerplate to use scss
