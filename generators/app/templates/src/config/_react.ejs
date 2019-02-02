@@ -4,34 +4,35 @@
  */
 
 const React = require('react');
+const fs = require('fs');
+const path = require('path');
+const { promisify } = require('util');
 const { Provider } = require('react-redux');
 const { combineReducers, createStore } = require('redux');
 const { StaticRouter } = require('react-router-dom');
 const { renderToString } = require('react-dom/server');
-const App = require('@containers/app');
 const reducers = require('@ducks/reducers');
+const App = require('@containers/app');
 
-// WARNING: See the following for security issues around embedding JSON in HTML:
-// http://redux.js.org/recipes/ServerRendering.html#security-considerations
-const renderPage = (html, css, clientJs, preloadedState) => (
-  `<!doctype html>
-      <html lang="">
-      <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta charset="utf-8" />
-        <title>Welcome to Astro Generator</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-      </head>
-      <body>
-        <div id="root">${html}</div>
-        <script>
-          window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}
-        </script>
-        ${css}
-        ${clientJs}
-      </body>
-    </html>`
-);
+const readFile = promisify(fs.readFile);
+const indexHtmlFile = path.resolve('<%= src %>/views/index.html');
+
+const renderPage = async (html, css, clientJs, preloadedState) => {
+  const injections = {
+    '<!--INJECT:SCRIPT-->': `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '\\u003c')}</script>`,
+    '<!--INJECT:CSS-->': css,
+    '<!--INJECT:JS-->': clientJs,
+    '<!--INJECT:ROOT-->': `<div id="root">${html}</div>`
+  };
+  return readFile(indexHtmlFile, 'utf8')
+    .then((data) => {
+      let renderedHtml = data;
+      Object.keys(injections).forEach((key) => {
+        renderedHtml = renderedHtml.replace(key, injections[key]);
+      });
+      return renderedHtml;
+    });
+};
 
 const renderReact = async (req, res) => {
   const combinedReducers = combineReducers({
@@ -44,7 +45,7 @@ const renderReact = async (req, res) => {
   const markup = renderToString(
     <Provider store={store}>
       <StaticRouter context={context} location={req.url}>
-        <App store={store} />
+        <App />
       </StaticRouter>
     </Provider>
   );
@@ -55,9 +56,10 @@ const renderReact = async (req, res) => {
   const { assets: { client } } = req;
   const css = (client && client.css) ? `<link rel="stylesheet" href="${client.css}">` : '';
   const clientJs = process.env.NODE_ENV === 'production' ? `<script src="${client.js}" defer></script>` : `<script src="${client.js}" defer crossorigin></script>`;
+  const renderedHtml = await renderPage(markup, css, clientJs, store.getState());
   res.status(200);
   return res.send(
-    renderPage(markup, css, clientJs, store.getState())
+    renderedHtml
   );
 };
 
