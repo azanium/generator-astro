@@ -24,7 +24,13 @@ const generateRoutesComponent = () => {
 };
 
 class App extends React.Component {
-  componentDidMount() {}
+  componentDidMount() {
+    const loadingElement = document.getElementById('ipl-progress-indicator');
+    if (loadingElement) {
+      loadingElement.classList.add('available');
+      setTimeout(() => { loadingElement.outerHTML = ''; }, 2000);
+    }
+  }
 
   render() {
     return (
