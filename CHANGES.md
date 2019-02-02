@@ -1,3 +1,7 @@
+# Version 4.0.4
+ - Refactor index.html from string in src/server/config/react moved into a file in src/server/views/index.html
+ - Add loading indicator and fade away once App container on client side loaded.
+
 # Version 4.0.3
  - Replace asyncComponent with react-loadable for async component loading
  
