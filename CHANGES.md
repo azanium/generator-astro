@@ -1,3 +1,7 @@
+# Version 4.0.6
+ - Fixed package.json, by removing test.setup.js from all types of project to only fullstack project.
+ - Fixed collectCovarage on package.json by using props
+
 # Version 4.0.5
  - Cleanup index.html for smaller footprints
 
