@@ -180,10 +180,10 @@
     "testPathIgnorePatterns": [
       "\\index.js$",
       "(/src/.*)\\.(validator|validation|config|index).js$"
-    ],<% } %>
+    ],<% } else { %>
     "setupFiles": [
       "<rootDir>/test.setup.js"
-    ],
+    ],<% } %>
     "moduleFileExtensions": [
       "js", "jsx"
     ],
@@ -197,11 +197,11 @@
       "!src/**/index.js",
       "!src/**/*.validation.js",
       "!src/**/*.validator.js",
-      "!src/server/config/**",
-      "!src/server/database/**",
-      "!src/server/models/**",
-      "!src/server/utils/ErrorCode/**",
-      "!src/server/services/http/**",
+      "!<%= src %>/config/**",
+      "!<%= src %>/database/**",
+      "!<%= src %>/models/**",
+      "!<%= src %>/utils/ErrorCode/**",
+      "!<%= src %>/services/http/**",
       "!<rootDir>/node_modules/"
     ],
     "coverageReporters": [
