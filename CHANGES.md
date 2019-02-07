@@ -1,3 +1,8 @@
+# Version 4.0.7
+ - Fixed underscore.string vulnerable version
+ - Refix test.setup on service only package.json
+ - Fix moduleMapper for client on package.json by removing extra /
+
 # Version 4.0.6
  - Fixed package.json, by removing test.setup.js from all types of project to only fullstack project.
  - Fixed collectCovarage on package.json by using props
