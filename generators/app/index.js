@@ -111,6 +111,7 @@ module.exports = class extends Generator {
     this.destinationRoot(props.name);
     props.src = props.kind === 'fullstack' ? 'src/server' : 'src';
     props.client = props.kind === 'fullstack' ? 'src/client' : undefined;
+    props.root = 'src';
     props.apiPath = urlJoin(props.src, props.apibase);
 
     /**

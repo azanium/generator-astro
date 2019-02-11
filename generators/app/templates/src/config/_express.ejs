@@ -15,7 +15,7 @@ const reactRender = require('./react');<% } %>
 * @public
 */
 const app = express();<% if (kind==='fullstack') {%>
-const assets = require(process.env.REZA_ASSETS_MANIFEST);
+const assets = process.env.NODE_ENV !== 'test' ? require(process.env.REZA_ASSETS_MANIFEST) : { client: { css: '', js: '' } };
 
 // Load our assets
 app.use((req, res, next) => {

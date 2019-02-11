@@ -141,6 +141,7 @@
     "reza": "^1.0.12"<% } %>
   },
   "_moduleAliases": {
+    "@app"          : "<%= root %>",
     "@config"       : "<%= src %>/config",
     "@api"          : "<%= src %>/api",
     "@middlewares"  : "<%= src %>/middlewares",
@@ -163,6 +164,7 @@
   },
   "jest": {
     "moduleNameMapper": {
+      "^@app(.*)$": "<rootDir>/<%= root %>$1",
       "^@boot(.*)$": "<rootDir>/<%= src %>/boot$1",
       "^@config(.*)$": "<rootDir>/<%= src %>/config$1",
       "^@api(.*)$": "<rootDir>/<%= src %>/api$1",
