@@ -18,12 +18,12 @@
       "@services/*": ["<%= src %>/services/*"],
       "@tests/*": ["<%= src %>/tests/*"],
       "@utils/*": ["<%= src %>/utils/*"],
-      "@routes/*": ["<%= src %>/routes/*"],
+      "@routes/*": ["<%= src %>/routes/*"]<% if (kind === 'fullstack') {%>,
       "@client/*": ["<%= client %>/*"],
       "@components/*": ["<%= client %>/components/*"],
       "@containers/*": ["<%= client %>/containers/*"],
       "@ducks/*": ["<%= client %>/ducks/*"],
-      "@hox/*": ["<%= client %>/hox/*"]
+      "@hox/*": ["<%= client %>/hox/*"]<%}%>
     }
   }
 }

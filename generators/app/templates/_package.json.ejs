@@ -147,12 +147,12 @@
     "@middlewares"  : "<%= src %>/middlewares",
     "@models"       : "<%= src %>/models",
     "@services"     : "<%= src %>/services",
-    "@utils"        : "<%= src %>/utils",
+    "@utils"        : "<%= src %>/utils"<% if (kind === 'fullstack') {%>,
     "@client"       : "<%= client %>",
     "@components"   : "<%= client %>/components",
     "@containers"   : "<%= client %>/containers",
     "@ducks"        : "<%= client %>/ducks",
-    "@hox"          : "<%= client %>/hox"
+    "@hox"          : "<%= client %>/hox"<%}%>
   },
   "nyc": {
     "include": "src",
@@ -171,12 +171,12 @@
       "^@middlewares(.*)$": "<rootDir>/<%= src %>/middlewares$1",
       "^@models(.*)$": "<rootDir>/<%= src %>/models$1",
       "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
-      "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1",
+      "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1"<% if (kind === 'fullstack') {%>,
       "^@client(.*)$": "<rootDir>/<%= client %>$1",
-      "^@components(.*)$": "<rootDir>/<%= client %>components$1",
-      "^@containers(.*)$": "<rootDir>/<%= client %>containers$1",
-      "^@ducks(.*)$": "<rootDir>/<%= client %>ducks$1",
-      "^@hox(.*)$": "<rootDir>/<%= client %>hox$1"
+      "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
+      "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1",
+      "^@ducks(.*)$": "<rootDir>/<%= client %>/ducks$1",
+      "^@hox(.*)$": "<rootDir>/<%= client %>/hox$1"<% } %>
     },<%if (kind !== 'fullstack') { %>
     "testRegex": "(/src/.*)\\.(test|spec).js$",
     "testPathIgnorePatterns": [

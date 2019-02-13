@@ -1,3 +1,7 @@
+# Version 4.0.9
+ - Fixed broken module alias mapper on client side
+ - Removed all client side module alias mapper
+ 
 # Version 4.0.8
  - Fixed broken integration test for service type astro:api generator, when nested api path will fail to look for the correct app index.
  - Fixed broken integration test for fullstack type astro:api generator, when it tried to look for non existent REZA_XXX folder on process.env

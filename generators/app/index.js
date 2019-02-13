@@ -123,7 +123,7 @@ module.exports = class extends Generator {
     copyTpl(tPath('_.env.example'), dPath('.env.example'), props);
     copyTpl(tPath('_.env.example'), dPath('.env'), props);
     copyTpl(tPath('jest.json'), dPath('jest.json'), props);
-    copyTpl(tPath('jsconfig.json'), dPath('jsconfig.json'), props);
+    copyTpl(tPath('jsconfig.json.ejs'), dPath('jsconfig.json'), props);
 
     /**
      * License
