@@ -172,7 +172,8 @@ module.exports = class extends Generator {
     /**
      * middlewares
      */
-    copy(tPath('src/middlewares'), dPath(urlJoin(props.src, 'middlewares')));
+    copy(tPath('src/middlewares/error'), dPath(urlJoin(props.src, 'middlewares', 'error')));
+    copy(tPath('src/middlewares/error'), dPath(urlJoin(props.src, 'middlewares', 'monitoring')));
 
 
     /**
