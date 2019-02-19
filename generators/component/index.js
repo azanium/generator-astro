@@ -90,13 +90,13 @@ module.exports = class extends Generator {
   writing() {
     const done = this.async();
     const { props } = this;
+    props.src = this.config.get('src') || 'src';
     const copyTpl = this.fs.copyTpl.bind(this.fs);
     const tPath = this.templatePath.bind(this);
     const dPath = this.destinationPath.bind(this);
-    const clientPath = props.client;
-    const componentsPath = urlJoin(clientPath, 'components', props.dirname);
-    props.componentsPath = componentsPath;
     props._name_ = props.name.toLowerCase();
+    const componentsPath = urlJoin(props.client, 'components', props.dirname);
+    const clientRoutePath = urlJoin(props.src, 'routes', props.dirname);
 
     // Sync the components path directory
     mkdirp.sync(path.join(this.destinationPath(), componentsPath));
@@ -154,6 +154,21 @@ module.exports = class extends Generator {
       reducerSpec: {
         source: urlJoin('__test__', 'reducer.spec.ejs'),
         target: urlJoin(componentsPath, '__test__', 'reducer.spec.js')
+      },
+      clientRouteMiddleware: {
+        source: urlJoin('middleware', 'middleware.ejs'),
+        target: urlJoin(clientRoutePath, `${props.filename}.middleware.js`),
+        stateless: 'both'
+      },
+      clientRouteIndex: {
+        source: urlJoin('middleware', 'index.ejs'),
+        target: urlJoin(clientRoutePath, 'index.js'),
+        stateless: 'both'
+      },
+      clientRouteSpec: {
+        source: urlJoin('middleware', 'spec.ejs'),
+        target: urlJoin(clientRoutePath, `${props.filename}.spec.js`),
+        stateless: 'both'
       }
     };
 
@@ -161,10 +176,7 @@ module.exports = class extends Generator {
       const file = paths[fileKey];
       const sourcePath = tPath(file.source);
       const destinationPath = dPath(file.target);
-      let copyFile = true;
-      if (props.stateless === 'y') {
-        copyFile = file.stateless;
-      }
+      const copyFile = file.stateless || file.stateless === 'both';
       if (!this.fs.exists(destinationPath) && copyFile) {
         copyTpl(sourcePath, destinationPath, props);
       }
@@ -179,7 +191,7 @@ module.exports = class extends Generator {
     const _name_ = props.name.toLowerCase();
     props._name_ = _name_;
     const buildExportCode = componentType => `export { default as ${_name_} } from '@components/${props.dirname}/${props.filename}.${componentType}';`;
-    const buildInlineExportCode = componentType => `export { default as ${_name_} } from './${props.dirname}/${props.filename}.${componentType}';`;
+    const buildInlineExportCode = () => `export { default as ${_name_} } from './${props.dirname}';`;
 
     const paths = {
       routes: {
@@ -200,16 +212,14 @@ module.exports = class extends Generator {
     if (props.middleware === 'y') {
       paths.clientRoute = {
         target: urlJoin(props.src, 'routes', 'index.js'),
-        code: buildInlineExportCode('middleware')
+        code: buildInlineExportCode(),
+        stateless: 'both'
       };
     }
 
     Object.keys(paths).forEach((fileKey) => {
       const file = paths[fileKey];
-      let injectFile = true;
-      if (props.stateless === 'y') {
-        injectFile = file.stateless;
-      }
+      const injectFile = file.stateless || file.stateless === 'both';
       if (injectFile) {
         this._injectExport(file.target, file.code);
       }

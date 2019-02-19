@@ -7,9 +7,6 @@ describe('Middleware - clientRoutesMiddleware', () => {
   const req = new MockRequest();
   const res = new MockResponse();
 
-  beforeEach(() => {
-  });
-
   it('should found grant for the route', (done) => {
     const id = 123;
     middleware({ id })(req, res, (err) => {
