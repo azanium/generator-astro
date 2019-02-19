@@ -1,3 +1,6 @@
+# Version 4.1.0
+ - Add client route middleware on component subgenerator
+ 
 # Version 4.0.9
  - Fixed broken module alias mapper on client side
  - Removed all client side module alias mapper
