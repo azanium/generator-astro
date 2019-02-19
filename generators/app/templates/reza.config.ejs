@@ -8,12 +8,13 @@ module.exports = {
       '@middlewares': path.resolve('<%= src %>/middlewares'),
       '@models': path.resolve('<%= src %>/models'),
       '@services': path.resolve('<%= src %>/services'),
-      '@utils': path.resolve('<%= src %>/utils'),
+      '@utils': path.resolve('<%= src %>/utils')<% if (kind === 'fullstack') {%>,
+      '@routes': path.resolve('<%= src %>/routes'),
       '@client': path.resolve('<%= client %>'),
       '@components': path.resolve('<%= client %>/components'),
       '@containers': path.resolve('<%= client %>/containers'),
       '@ducks': path.resolve('<%= client %>/ducks'),
-      '@hox': path.resolve('<%= client %>/hox')
+      '@hox': path.resolve('<%= client %>/hox')<% } %>
     };
     return config;
   },

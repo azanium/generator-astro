@@ -55,6 +55,16 @@ module.exports = class extends Generator {
         message: 'Component route path? (eg: /astro)',
         default: this.config.get('last_component_path') || '/hello',
         validate: value => value !== undefined && value !== '' && value.indexOf('/') === 0
+      },
+      {
+        type: 'list',
+        name: 'middleware',
+        message: 'Do you to generate client route middleware?',
+        default: 'n',
+        choices: [
+          { name: 'yes', value: 'y' },
+          { name: 'no', value: 'n' }
+        ]
       }
     ]).then((answers) => {
       that.props = answers;
@@ -86,6 +96,7 @@ module.exports = class extends Generator {
     const clientPath = props.client;
     const componentsPath = urlJoin(clientPath, 'components', props.dirname);
     props.componentsPath = componentsPath;
+    props._name_ = props.name.toLowerCase();
 
     // Sync the components path directory
     mkdirp.sync(path.join(this.destinationPath(), componentsPath));
@@ -93,63 +104,63 @@ module.exports = class extends Generator {
     const paths = {
       index: {
         source: '_index.ejs',
-        target: `index.js`,
+        target: urlJoin(componentsPath, `index.js`),
         stateless: true
       },
       style: {
         source: '_style.scss.ejs',
-        target: `style.scss`,
+        target: urlJoin(componentsPath, `style.scss`),
         stateless: true
       },
       component: {
         source: '_component.ejs',
-        target: `${props.filename}.component.js`,
+        target: urlJoin(componentsPath, `${props.filename}.component.js`),
         stateless: true
       },
       route: {
         source: '_route.ejs',
-        target: `${props.filename}.route.js`,
+        target: urlJoin(componentsPath, `${props.filename}.route.js`),
         stateless: true
       },
       action: {
         source: '_action.ejs',
-        target: `${props.filename}.action.js`
+        target: urlJoin(componentsPath, `${props.filename}.action.js`)
       },
       actionType: {
         source: '_actionType.ejs',
-        target: `${props.filename}.actionType.js`
+        target: urlJoin(componentsPath, `${props.filename}.actionType.js`)
       },
       epic: {
         source: '_epic.ejs',
-        target: `${props.filename}.epic.js`
+        target: urlJoin(componentsPath, `${props.filename}.epic.js`)
       },
       reducer: {
         source: '_reducer.ejs',
-        target: `${props.filename}.reducer.js`
+        target: urlJoin(componentsPath, `${props.filename}.reducer.js`)
       },
       actionSpec: {
         source: urlJoin('__test__', 'action.spec.ejs'),
-        target: urlJoin('__test__', 'action.spec.js')
+        target: urlJoin(componentsPath, '__test__', 'action.spec.js')
       },
       componentSpec: {
         source: urlJoin('__test__', 'component.spec.ejs'),
-        target: urlJoin('__test__', 'component.spec.js'),
+        target: urlJoin(componentsPath, '__test__', 'component.spec.js'),
         stateless: true
       },
       epicSpec: {
         source: urlJoin('__test__', 'epic.spec.ejs'),
-        target: urlJoin('__test__', 'epic.spec.js')
+        target: urlJoin(componentsPath, '__test__', 'epic.spec.js')
       },
       reducerSpec: {
         source: urlJoin('__test__', 'reducer.spec.ejs'),
-        target: urlJoin('__test__', 'reducer.spec.js')
+        target: urlJoin(componentsPath, '__test__', 'reducer.spec.js')
       }
     };
 
     Object.keys(paths).forEach((fileKey) => {
       const file = paths[fileKey];
       const sourcePath = tPath(file.source);
-      const destinationPath = dPath(urlJoin(componentsPath, file.target));
+      const destinationPath = dPath(file.target);
       let copyFile = true;
       if (props.stateless === 'y') {
         copyFile = file.stateless;
@@ -164,24 +175,34 @@ module.exports = class extends Generator {
 
   inject() {
     const { props } = this;
+    props.src = this.config.get('src') || 'src';
     const _name_ = props.name.toLowerCase();
+    props._name_ = _name_;
     const buildExportCode = componentType => `export { default as ${_name_} } from '@components/${props.dirname}/${props.filename}.${componentType}';`;
+    const buildInlineExportCode = componentType => `export { default as ${_name_} } from './${props.dirname}/${props.filename}.${componentType}';`;
 
     const paths = {
       routes: {
-        target: urlJoin('ducks', 'routes.js'),
+        target: urlJoin(props.client, 'ducks', 'routes.js'),
         code: buildExportCode('route'),
         stateless: true
       },
       reducers: {
-        target: urlJoin('ducks', 'reducers.js'),
+        target: urlJoin(props.client, 'ducks', 'reducers.js'),
         code: buildExportCode('reducer')
       },
       epics: {
-        target: urlJoin('ducks', 'epics.js'),
+        target: urlJoin(props.client, 'ducks', 'epics.js'),
         code: buildExportCode('epic')
       }
     };
+
+    if (props.middleware === 'y') {
+      paths.clientRoute = {
+        target: urlJoin(props.src, 'routes', 'index.js'),
+        code: buildInlineExportCode('middleware')
+      };
+    }
 
     Object.keys(paths).forEach((fileKey) => {
       const file = paths[fileKey];
@@ -196,10 +217,8 @@ module.exports = class extends Generator {
   }
 
   _injectExport(jsFile, exportString) {
-    const { props } = this;
     const dPath = this.destinationPath.bind(this);
-
-    const targetFile = dPath(urlJoin(props.client, jsFile));
+    const targetFile = dPath(jsFile);
 
     if (!this.fs.exists(targetFile)) {
       return;

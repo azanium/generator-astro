@@ -86,6 +86,7 @@
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "4.0.0",
+    "path-match": "^1.2.4",
     "pm2": "^2.4.6",
     "response-time": "^2.3.2",<% if (kind === 'fullstack') {%>
     "react": "^16.7.0",
@@ -103,6 +104,7 @@
     "styled-components": "^4.1.3",
     "react-router-dom": "^4.3.1", <% } %>
     "uuid": "^3.1.0",
+    "universal-cookie-express": "^3.0.7",
     "winston": "^3.1.0",
     "winston-cloudwatch": "^2.0.2"<% if (sequelize === 'y') {%>,
     "sequelize": "^4.41.0",
@@ -121,6 +123,8 @@
     "jest-dom": "^3.0.1",
     "jest-express": "^1.8.0",
     "jest-tobetype": "^1.2.0",
+    "mock-express-request": "^0.2.2",
+    "mock-express-response": "^0.2.2",
     "opn-cli": "^3.1.0",
     "prettier-eslint": "^8.8.2",
     "supertest": "^3.0.0",<% if (sequelize === 'y') {%>
@@ -138,7 +142,7 @@
     "react-testing-library": "^5.4.4",
     "enzyme-adapter-react-16": "^1.8.0",
     "reza-plugin-scss": "^1.0.2",
-    "reza": "^1.0.12"<% } %>
+    "reza": "^1.0.15"<% } %>
   },
   "_moduleAliases": {
     "@app"          : "<%= root %>",
@@ -148,6 +152,7 @@
     "@models"       : "<%= src %>/models",
     "@services"     : "<%= src %>/services",
     "@utils"        : "<%= src %>/utils"<% if (kind === 'fullstack') {%>,
+    "@routes"        : "<%= src %>/routes",
     "@client"       : "<%= client %>",
     "@components"   : "<%= client %>/components",
     "@containers"   : "<%= client %>/containers",
@@ -172,6 +177,7 @@
       "^@models(.*)$": "<rootDir>/<%= src %>/models$1",
       "^@services(.*)$": "<rootDir>/<%= src %>/services$1",
       "^@utils(.*)$": "<rootDir>/<%= src %>/utils$1"<% if (kind === 'fullstack') {%>,
+      "^@routes(.*)$": "<rootDir>/<%= src %>/routes$1",
       "^@client(.*)$": "<rootDir>/<%= client %>$1",
       "^@components(.*)$": "<rootDir>/<%= client %>/components$1",
       "^@containers(.*)$": "<rootDir>/<%= client %>/containers$1",

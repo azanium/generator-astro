@@ -8,6 +8,8 @@ const interceptor = require('express-interceptor');
 const api = require('@api');
 const { errorMiddleware } = require('@middlewares/error');
 const middlewareMonitoring = require('@middlewares/monitoring');<% if (kind==='fullstack') {%>
+const cookiesMiddleware = require('universal-cookie-express');
+const clientRoutesMiddleware = require('@middlewares/client-routes');
 const reactRender = require('./react');<% } %>
 
 /**
@@ -40,6 +42,9 @@ app.use(helmet());
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors());
 <% if (kind === 'fullstack') {%>
+// Cookies
+app.use(cookiesMiddleware());
+
 // Serve the client
 app.use(express.static('dist'));
 app.use(express.static(process.env.REZA_PUBLIC_DIR));
@@ -75,6 +80,9 @@ app.use('/', healthRoute);
 // mount api routes
 app.use('/<%= apibase %>', api);
 <% if (kind === 'fullstack') {%>
+// Apply client route middleware
+app.use(clientRoutesMiddleware);
+
 // Server our React Renderer
 app.get('/*', reactRender);
 <% } %>

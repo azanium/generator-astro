@@ -173,7 +173,7 @@ module.exports = class extends Generator {
      * middlewares
      */
     copy(tPath('src/middlewares/error'), dPath(urlJoin(props.src, 'middlewares', 'error')));
-    copy(tPath('src/middlewares/error'), dPath(urlJoin(props.src, 'middlewares', 'monitoring')));
+    copy(tPath('src/middlewares/monitoring'), dPath(urlJoin(props.src, 'middlewares', 'monitoring')));
 
 
     /**
@@ -206,12 +206,14 @@ module.exports = class extends Generator {
     if (props.kind === 'fullstack') {
       const srcRoot = path.dirname(props.src).split(path.sep).pop();
       copy(tPath('public/favicon.ico'), dPath('public/favicon.ico'), props);
-      copyTpl(tPath('reza.config.js'), dPath('reza.config.js'), props);
+      copyTpl(tPath('reza.config.ejs'), dPath('reza.config.js'), props);
       copyTpl(tPath('bootstrap.ejs'), dPath(urlJoin(srcRoot, 'index.js')), props);
       copyTpl(tPath('src/config/_react.ejs'), dPath(urlJoin(props.src, 'config', 'react.js')), props);
       copy(tPath('test.setup.js'), dPath('test.setup.js'));
       copy(tPath('src/views'), dPath(urlJoin(props.src, 'views')));
       copy(tPath('client'), dPath(props.client));
+      copy(tPath('src/routes'), dPath(urlJoin(props.src, 'routes')));
+      copy(tPath('src/middlewares/client-routes'), dPath(urlJoin(props.src, 'middlewares', 'client-routes')));
     }
 
     this.config.save();
