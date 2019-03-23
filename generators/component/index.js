@@ -105,22 +105,22 @@ module.exports = class extends Generator {
       index: {
         source: '_index.ejs',
         target: urlJoin(componentsPath, `index.js`),
-        stateless: true
+        stateless: 'both'
       },
       style: {
         source: '_style.scss.ejs',
         target: urlJoin(componentsPath, `style.scss`),
-        stateless: true
+        stateless: 'both'
       },
       component: {
         source: '_component.ejs',
         target: urlJoin(componentsPath, `${props.filename}.component.js`),
-        stateless: true
+        stateless: 'both'
       },
       route: {
         source: '_route.ejs',
         target: urlJoin(componentsPath, `${props.filename}.route.js`),
-        stateless: true
+        stateless: 'both'
       },
       action: {
         source: '_action.ejs',
@@ -150,7 +150,7 @@ module.exports = class extends Generator {
       componentSpec: {
         source: urlJoin('__test__', 'component.spec.ejs'),
         target: urlJoin(componentsPath, '__test__', 'component.spec.js'),
-        stateless: true
+        stateless: 'both'
       },
       epicSpec: {
         source: urlJoin('__test__', 'epic.spec.ejs'),
@@ -188,11 +188,7 @@ module.exports = class extends Generator {
       const file = paths[fileKey];
       const sourcePath = tPath(file.source);
       const destinationPath = dPath(file.target);
-      let copyFile = true;
-      if (file.stateless === 'y') {
-        copyFile = false;
-      }
-      if (!this.fs.exists(destinationPath) && (copyFile || file.stateless === 'both')) {
+      if (!this.fs.exists(destinationPath) && (file.stateless === 'both' || file.stateless === props.stateless)) {
         copyTpl(sourcePath, destinationPath, props);
       }
     });
@@ -212,7 +208,7 @@ module.exports = class extends Generator {
       routes: {
         target: urlJoin(props.client, 'ducks', 'routes.js'),
         code: buildExportCode('route'),
-        stateless: true
+        stateless: 'both'
       },
       reducers: {
         target: urlJoin(props.client, 'ducks', 'reducers.js'),
@@ -236,11 +232,7 @@ module.exports = class extends Generator {
 
     Object.keys(paths).forEach((fileKey) => {
       const file = paths[fileKey];
-      let injectFile = true;
-      if (file.stateless === 'y') {
-        injectFile = false;
-      }
-      if (injectFile || file.stateless === 'both') {
+      if (file.stateless === 'both' || file.stateless === props.stateless) {
         this._injectExport(file.target, file.code);
       }
     });

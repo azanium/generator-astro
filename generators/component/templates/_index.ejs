@@ -1,3 +1,6 @@
-import * as <%= name %> from './<%= filename %>.component';
+import Loadable from 'react-loadable';
 
-export default <%= name %>;
+export default Loadable({
+  loader: () => import('./<%= filename %>.component'),
+  loading: () => null
+});
