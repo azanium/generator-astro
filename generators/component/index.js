@@ -190,7 +190,7 @@ module.exports = class extends Generator {
       const destinationPath = dPath(file.target);
       let copyFile = true;
       if (file.stateless === 'y') {
-        copyFile = file.stateless;
+        copyFile = false;
       }
       if (!this.fs.exists(destinationPath) && (copyFile || file.stateless === 'both')) {
         copyTpl(sourcePath, destinationPath, props);
@@ -238,7 +238,7 @@ module.exports = class extends Generator {
       const file = paths[fileKey];
       let injectFile = true;
       if (file.stateless === 'y') {
-        injectFile = file.stateless;
+        injectFile = false;
       }
       if (injectFile || file.stateless === 'both') {
         this._injectExport(file.target, file.code);
