@@ -125,27 +125,27 @@ module.exports = class extends Generator {
       action: {
         source: '_action.ejs',
         target: urlJoin(componentsPath, `${props.filename}.action.js`),
-        stateless: false
+        stateless: 'n'
       },
       actionType: {
         source: '_actionType.ejs',
         target: urlJoin(componentsPath, `${props.filename}.actionType.js`),
-        stateless: false
+        stateless: 'n'
       },
       epic: {
         source: '_epic.ejs',
         target: urlJoin(componentsPath, `${props.filename}.epic.js`),
-        stateless: false
+        stateless: 'n'
       },
       reducer: {
         source: '_reducer.ejs',
         target: urlJoin(componentsPath, `${props.filename}.reducer.js`),
-        stateless: false
+        stateless: 'n'
       },
       actionSpec: {
         source: urlJoin('__test__', 'action.spec.ejs'),
         target: urlJoin(componentsPath, '__test__', 'action.spec.js'),
-        stateless: false
+        stateless: 'n'
       },
       componentSpec: {
         source: urlJoin('__test__', 'component.spec.ejs'),
@@ -155,12 +155,12 @@ module.exports = class extends Generator {
       epicSpec: {
         source: urlJoin('__test__', 'epic.spec.ejs'),
         target: urlJoin(componentsPath, '__test__', 'epic.spec.js'),
-        stateless: false
+        stateless: 'n'
       },
       reducerSpec: {
         source: urlJoin('__test__', 'reducer.spec.ejs'),
         target: urlJoin(componentsPath, '__test__', 'reducer.spec.js'),
-        stateless: false
+        stateless: 'n'
       }
     };
 
@@ -213,12 +213,12 @@ module.exports = class extends Generator {
       reducers: {
         target: urlJoin(props.client, 'ducks', 'reducers.js'),
         code: buildExportCode('reducer'),
-        stateless: false
+        stateless: 'n'
       },
       epics: {
         target: urlJoin(props.client, 'ducks', 'epics.js'),
         code: buildExportCode('epic'),
-        stateless: false
+        stateless: 'n'
       }
     };
 
