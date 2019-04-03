@@ -15,5 +15,6 @@ module.exports = {
     responseType: 'json',
     responseEncoding: 'utf8',
     retries: 3
-  }
+  },
+  sanitizedFields: []
 };
