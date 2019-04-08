@@ -1,5 +1,5 @@
 const path = require('path');
-const mkdirp = require('mkdirp');
+// const mkdirp = require('mkdirp');
 const urlJoin = require('url-join');
 const Generator = require('yeoman-generator');
 const camelize = require('underscore.string/camelize');
@@ -60,7 +60,7 @@ module.exports = class extends Generator {
       if (name.indexOf('/') > -1) {
         // Create dirname
         dirname = underscored(path.dirname(name)).replace('_', '-');
-        mkdirp.sync(path.join(this.destinationPath(), dirname));
+        // mkdirp.sync(path.join(this.destinationPath(), dirname));
         name = path.basename(name);
 
         // now filename only store the basename
