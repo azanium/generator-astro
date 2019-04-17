@@ -47,9 +47,7 @@ app.use(cookiesMiddleware());
 
 // Serve the client
 app.use('/', express.static('dist'));
-app.use('/', express.static('dist/public'));
-// This known to have problem on k8s, so for now uses hardcoded version
-// app.use(express.static(process.env.REZA_PUBLIC_DIR));
+app.use(express.static(process.env.REZA_PUBLIC_DIR));
 <% } %>
 // Monitoring
 app.use(middlewareMonitoring);
