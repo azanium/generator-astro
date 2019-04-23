@@ -19,7 +19,7 @@ module.exports = class extends Generator {
     }
 
     if (this.kind !== 'fullstack') {
-      console.log('astro:component only available for fullstack project!');
+      console.log('astro:element only available for fullstack project!');
       process.exit(1);
     }
   }
@@ -81,6 +81,10 @@ module.exports = class extends Generator {
       component: {
         source: '_component.ejs',
         target: urlJoin(elementsPath, `${props.filename}.component.js`)
+      },
+      componentSpec: {
+        source: urlJoin('__test__', 'component.spec.ejs'),
+        target: urlJoin(elementsPath, '__test__', 'component.spec.js')
       }
     };
 
