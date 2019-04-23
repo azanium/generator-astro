@@ -22,7 +22,7 @@ module.exports = class extends Generator {
       {
         type: 'list',
         name: 'kind',
-        message: 'What kinf of project do you want to create?',
+        message: 'What kind of project do you want to create?',
         choices: [
           { name: 'Service (ExpressJS)', value: 'service' },
           { name: 'Fullstack (Express JS + React + React Redux + Redux Observable)', value: 'fullstack' }
