@@ -11,7 +11,7 @@ module.exports = class extends Generator {
     // Process argument
     this.props = {};
 
-    console.log(yosay('Welcome to Astro RESTful API generator!'));
+    console.log(yosay('Welcome to Astro generator!'));
   }
 
   propmting() {

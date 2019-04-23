@@ -1,0 +1,37 @@
+import React from 'react';
+import PropTypes from 'prop-types';<% if (stateless !== 'y') {%>
+import { reduxConnect } from '@hox';
+import * as actions from './<%= filename %>.action';<%}%>
+
+import './style.scss';
+
+<%if (stateless === 'y') {%>export const <%= name %> = ({ page }) => (
+  <div className="<%= NAME %>">
+    <p><%= name %> Component {page}</p>
+  </div>
+);<% } else { %>export class <%= name %> extends React.PureComponent {
+  componentDidMount() {
+    const { page } = this.props;
+    console.log('Page', page);
+  }
+
+  render() {
+    const { page } = this.props;
+    return (
+      <div className="<%= NAME %>">
+        <p><%= name %> Component {page}</p>
+      </div>
+    );
+  }
+}
+<% } %>
+<%= name %>.propTypes = {
+  page: PropTypes.string
+};
+
+<%= name %>.defaultProps = {
+  page: 'Page'
+};
+<%if (stateless === 'y') {%>
+export default <%= name %>;<% } else {%>
+export default reduxConnect(<%= name %>, actions);<%}%>
