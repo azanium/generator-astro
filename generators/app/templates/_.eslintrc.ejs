@@ -1,7 +1,6 @@
-{
-  <% if (kind === 'fullstack') {%>
+{<% if (kind === 'fullstack') {%>
     "parser": "babel-eslint",
-    "extends": ["airbnb"],
+    "extends": ["airbnb", "plugin:jest/recommended"],
     "parserOptions": {
       "ecmaVersion": 9
     },
@@ -14,6 +13,9 @@
     "settings": {
       "import/resolver": "module-alias"
     },
+    "plugins": [
+      "jest"
+    ],
     "rules": {
       "no-console": "off",
       "comma-dangle": "off",
@@ -24,7 +26,12 @@
       "jsx-a11y/label-has-associated-control": "off",
       "max-len": ["error", { "code": 200 }],
       "react/jsx-one-expression-per-line": "off",
-      "import/prefer-default-export": "off"
+      "import/prefer-default-export": "off",
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error"
     }<%} else {%>
   "env": {
     "node": true,
@@ -35,12 +42,21 @@
     "ecmaVersion": 9
   },
   "extends": [
-    "astro"
+    "astro",
+    "plugin:jest/recommended"
   ],
   "settings": {
     "import/resolver": "module-alias"
   },
+  "plugins": [
+    "jest"
+  ],
   "rules": {
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
   }<%}%>
 }

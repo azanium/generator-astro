@@ -43,7 +43,7 @@
     "generators"
   ],
   "devDependencies": {
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "eslint-config-astro": "^1.0.6",
     "eslint-plugin-import": "^2.14.0"
   }
