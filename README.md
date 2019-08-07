@@ -1,4 +1,6 @@
 
+# DEPRECATED - THIS GENERATOR IS NO LONGER SUPPORTED, I HAVE MOVED THE DEVELOPMENT TO A NEW GENERATOR CALLED generator-noura that supports GraphQL and Helm chart
+
 # Astro Generator
 
 Yeoman generator for building RESTful APIs and microservices using Node.js, ExpressJS and Docker support, and fullstack service with ReactJS, Redux, and Redux Observable.
