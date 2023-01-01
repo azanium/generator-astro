@@ -27,7 +27,7 @@
   "homepage": "https://github.com/azanium/generator-astro#readme.md",
   "dependencies": {
     "decamelize": "^2.0.0",
-    "json5": "^1.0.1",
+    "json5": "^2.2.2",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
     "recast": "^0.15.0",
